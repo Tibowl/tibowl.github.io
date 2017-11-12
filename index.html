@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Flat is Justice!</title>
+        <meta name="theme-color" content="#082E6B"/>
+        <meta name=viewport content="width=device-width, initial-scale=1">
+        <meta name="description" content="Flat chest appreciation site">
+        <meta name="keywords" content="flat,chest,small,anime,justice">
+        <meta name="author" content="Tibi">
+    </head>
+    <body>
+        <div id="maintext">Flat is Justice</div>
+        <img id="gril" alt="gril" src="grills/0.png">
+        <div id="contact">If you got good pics/wanna contact me: <a href="mailto:tibo@flatisjustice.moe" target="">tibo@flatisjustice.moe</a>
+        <script type="text/javascript">
+            var amountOfImages = 20;
+            var imageId = Math.floor(Math.random() * amountOfImages);
+            document.getElementById('gril').src="grills/" + imageId + ".png"
+            setInterval(function() {
+                var newId = Math.floor(Math.random() * amountOfImages);
+                while(newId === imageId)
+                    newId = Math.floor(Math.random() * amountOfImages);
+                newId = (imageId + 1) % amountOfImages;
+                console.log(imageId + " -> " + newId)
+                imageId = newId;
+                document.getElementById('gril').src="grills/" + imageId + ".png"
+            }, 5000);
+        </script>
+    </body>
+</html>
+<link rel="stylesheet" href="style.css">

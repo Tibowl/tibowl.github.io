@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Open KC servers</title>
+        <meta name="theme-color" content="#082E6B"/>
+        <meta name="author" content="Tibi">
+        <script type="text/javascript">
+        var !apidata!;
+        var last_date="!lastupdate!";
+        var en_names=["Yokosuka Naval District", "Kure Naval District", "Sasebo Naval District", "Maizuru Naval District", "Ominato Guard District", "Truk Anchorage", "Lingga Anchorage", "Rabaul Naval Base", "Shortland Anchorage", "Buin Naval Base", "Tawi-Tawi Anchorage", "Palau Anchorage", "Brunei Anchorage", "Hitokappu Bay Anchorage", "Paramushir Anchorage", "Sukumo Bay Anchorage", "Kanoya Airfield", "Iwagawa Airfield", "Saiki Bay Anchorage", "Hashirajima Anchorage"];
+        </script>
+        <style>
+        table {
+            border-collapse: collapse;
+            display:inline;
+        }
+
+        tr {
+            border: 1px solid #f5f5f5;
+        }
+        
+        th {
+            height: 25px;
+        } 
+        
+        td {
+            height: 25px;
+        }
+        
+        #lastupdate {
+            font-weight: bold;
+        }
+        </style>
+    </head>
+    <body>
+        <script type="text/javascript">
+          let tableA = document.createElement("table"), tableB = document.createElement("table");
+          var topRow = document.createElement("tr");
+          topRow.innerHTML = "<th>ID</th><th>Server name (JP)</th><th>Server name (EN)</th><th>% Full</th>";
+          tableA.append(topRow);
+          tableB.append(topRow.cloneNode(true));
+          for(var i = 0; i < svdata.api_data.api_world_info.length; i++) {
+              var server = svdata.api_data.api_world_info[i];
+              console.log(server);
+              var bg = server.api_entry ? "92d177" : "d17b77";
+              var entry = document.createElement("tr");
+              entry.innerHTML = '<td>' + server.api_id + "</td><td>" + server.api_name +"</td><td>" + en_names[i] + "</td><td>" + server.api_rate+ "</td>";
+              entry.setAttribute("style", 'background-color: #' + bg);
+              if (i % 2 == 0)
+                tableA.append(entry);
+              else
+                tableB.append(entry);
+              }
+          document.body.append(tableA);
+          document.body.append(tableB);
+          document.write('<div id="lastupdate">Last updated: ' + last_date + '</div>');
+        </script>
+    </body>
+</html>

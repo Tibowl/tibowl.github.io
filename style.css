@@ -1,0 +1,44 @@
+@import url(https://fonts.googleapis.com/css?family=Advent+Pro:100);
+@import url(https://fonts.googleapis.com/css?family=Advent+Pro:100&effect=shadow-multiple);
+#maintext {
+    font-family: 'Advent Pro', sans-serif;
+    font-size: 6em;
+    margin: .15em .4em;
+    color: hotpink;
+    position: fixed;
+    right: 0;
+}
+#contact {
+    font-family: 'Advent Pro', sans-serif;
+    font-size: 1em;
+    font-weight: bold;
+    margin: .15em .4em;
+    color: hotpink;
+    position: fixed;
+    bottom: 0;
+}
+a {
+    color: lime;
+}
+html {
+    background: linear-gradient(
+      rgba(220, 220, 220, 0.6), 
+      rgba(190, 190, 190, 0.6)
+    ), url(/bg.jpg);
+    background-size: cover;
+}
+html,body{
+    margin:0;
+    height:100%;
+    overflow:hidden;
+}
+#gril {
+    height: auto; width: auto;
+    max-width: 30%;
+    max-height: 300%;
+    position: absolute;
+    right:0px;
+    bottom: 0px;
+    margin:auto;
+    pointer-events: none;
+}
