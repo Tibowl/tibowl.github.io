@@ -12,6 +12,9 @@
             input {
                 width:75px;
             }
+            canvas {
+                margin: 5px;
+            }
         </style>
     </head>
     <body>
@@ -21,20 +24,30 @@
         <br>
         Min attack: <input type="number" id="atkmin" min="0" max="9999" onchange="update();" onclick="update();" value=40><br>
         Max attack: <input type="number" id="atkmax" min="0" max="9999" onchange="update();" onclick="update();" value=140><br>
-        <br>
         <canvas id="graph" width="830" height="425" style="border:1px solid black;"></canvas><br>
-        <i>Based on <a href="http://kancolle-calc.net/suffering.html">KC-calc</a>, with fixed max armor roll (0.7*armor+0.6*(armor - 1) isn't included there)</i>
+        Attack: <input type="number" id="exatk" min="0" max="9999" onchange="update();" onclick="update();" value=70><br>
+        <canvas id="bar" width="400" height="10" style="border:1px solid black;"></canvas><br>
+        <div id="exatk-txt"></div>
+        <br><br>
+        <i>Assuming that:<br> </i>
+        <i>- armor rolls are: </i><code>finalArmor = 0.7 * armor + 0.6 * rng.nextInt(armor)</code><br>
+        <i>- damage: </i><code>dmg = floor(attack - finalArmor)</code><br>
+        <i>- overkill protection rolls are: </i><code>if(dmg >= currentHP) -> dmg = floor(0.5 * currentHP + 0.3 * rng.nextInt(currentHP))</code><br>
+        <i>where </i><code>nextInt</code><i> returns uniformly, 0 inclusive up to arg exclusive</i>
         <script type="text/javascript">
-            var prevarmor, prevmaxhp, prevcurrhp, prevatkmin, prevatkmax;
+            var prevarmor, prevmaxhp, prevcurrhp, prevatkmin, prevatkmax, prevexatk;
+            var armor, maxhp, currhp, atkmin, atkmax, exatk;
             function update() {
-                var armor = parseFloat(document.getElementById('armor').value);
-                var maxhp = parseFloat(document.getElementById('maxhp').value);
-                var currhp = parseFloat(document.getElementById('currhp').value);
-                var atkmin = parseFloat(document.getElementById('atkmin').value);
-                var atkmax = parseFloat(document.getElementById('atkmax').value) + 1;
+                armor = parseFloat(document.getElementById('armor').value);
+                maxhp = parseFloat(document.getElementById('maxhp').value);
+                currhp = parseFloat(document.getElementById('currhp').value);
+                atkmin = parseFloat(document.getElementById('atkmin').value);
+                atkmax = parseFloat(document.getElementById('atkmax').value) + 1;
+
+                exatk = parseFloat(document.getElementById('exatk').value);
 
                 if(prevarmor === armor && prevmaxhp === maxhp && prevcurrhp === currhp
-                    && prevatkmin === atkmin && prevatkmax == atkmax)
+                    && prevatkmin === atkmin && prevatkmax === atkmax && prevexatk === exatk)
                     return;
 
                 if(prevmaxhp != maxhp || currhp > maxhp) {
@@ -43,11 +56,37 @@
                     document.getElementById('currhp').value = currhp;
                     document.getElementById('currhp').max = maxhp;
                 }
+
                 prevarmor = armor;
                 prevmaxhp = maxhp;
                 prevcurrhp = currhp;
                 prevatkmin = atkmin;
                 prevatkmax = atkmax;
+                prevexatk = exatk;
+
+                let calculated = calculate(exatk);
+                document.getElementById('exatk-txt').innerHTML = `
+                Green: ${(calculated.ok * 100).toFixed(2)}%<br>
+                Shouha: ${(calculated.shouha * 100).toFixed(2)}%<br>
+                Chuuha: ${(calculated.chuuha * 100).toFixed(2)}%<br>
+                Taiha: ${(calculated.taiha * 100).toFixed(2)}%<br>
+                `;
+
+                var bar = document.getElementById("bar");
+                bar.width = bar.width;
+                var ctx = bar.getContext("2d");
+                let prev = 0;
+                ctx.fillStyle = "#2fd30a";
+                ctx.fillRect(prev, 0, calculated.ok * bar.width, bar.height);
+                prev += calculated.ok * bar.width;
+                ctx.fillStyle = "#d1d100";
+                ctx.fillRect(prev, 0, calculated.shouha * bar.width, bar.height);
+                prev += calculated.shouha * bar.width;
+                ctx.fillStyle = "#e5a416";
+                ctx.fillRect(prev, 0, calculated.chuuha * bar.width, bar.height);
+                prev += calculated.chuuha * bar.width;
+                ctx.fillStyle = "#e51616";
+                ctx.fillRect(prev, 0, calculated.taiha * bar.width, bar.height);
 
                 var canvas = document.getElementById("graph");
                 canvas.width = canvas.width;
@@ -57,46 +96,9 @@
 
                 // var status = [];
                 for(let atk = atkmin; atk < atkmax; atk++) {
-                    let dmgsDealth = {};
-                    for(let arm = 0; arm < armor; arm++) {
-                        let armorRoll = 0.7 * armor + arm * 0.6;
-                        let dmg = Math.floor(atk - armorRoll);
-
-                        if(dmg >= currhp && currhp > 0.25 * maxhp) { // Overkill protection
-                            let possibledmg = [];
-                            for(let hpRoll = 0; hpRoll < currhp; hpRoll++)
-                                possibledmg.push(Math.floor(0.5 * currhp + 0.3 * hpRoll));
-                            for(let posdmg of possibledmg)
-                                dmgsDealth[posdmg] = (dmgsDealth[posdmg] || 0) + (1.0 / possibledmg.length);
-                        } else {
-                            if (dmg < 0)
-                                dmg = 0;
-                            dmgsDealth[dmg] = (dmgsDealth[dmg] || 0) + 1.0;
-                        }
-                    }
-                    let sum = 0;
-                    for(let posdmg in dmgsDealth)
-                        sum += dmgsDealth[posdmg];
-                    let stages = {
-                        "taiha" : 0,
-                        "chuuha" : 0,
-                        "shouha" : 0,
-                        "ok" : 0
-                    };
-                    for(let posdmg in dmgsDealth) {
-                        let ch = dmgsDealth[posdmg], afterhp = currhp - posdmg;
-                        if(afterhp <= 0);
-                        else if(afterhp <= .25 * maxhp)
-                            stages.taiha += ch/sum;
-                        else if(afterhp <= .50 * maxhp)
-                            stages.chuuha += ch/sum;
-                        else if(afterhp <= .75 * maxhp)
-                            stages.shouha += ch/sum;
-                        else
-                            stages.ok += ch/sum;
-                    }
+                    let stages = calculate(atk);
                     // status[atk] = stages;
-                    let prev = 0;
+                    prev = 0;
                     context.fillStyle = "#2fd30a";
                     context.fillRect(width / (atkmax - atkmin) * (atk - atkmin), prev, width / (atkmax - atkmin), stages.ok * height);
                     prev += stages.ok * height;
@@ -108,9 +110,9 @@
                     prev += stages.chuuha * height;
                     context.fillStyle = "#e51616";
                     context.fillRect(width / (atkmax - atkmin) * (atk - atkmin), prev, width / (atkmax - atkmin), stages.taiha * height);
-                    context.fillStyle = "#666";
+                    context.fillStyle = "#606060";
                     if(atk % 5 == 0) {
-                        context.fillStyle = "#000";
+                        context.fillStyle = "#000000";
                         context.save();
                         context.translate(width / (atkmax - atkmin) * (atk - atkmin) + (width / (atkmax - atkmin)) / 2, height + 14);
                         context.rotate(-Math.PI/2);
@@ -119,8 +121,12 @@
                         context.restore();
                     }
                     context.fillRect(width / (atkmax - atkmin) * (atk - atkmin), 0, 1, height);
+                    if(atk === exatk) {
+                        context.fillStyle = "#ff0000";
+                        context.fillText("\u2191", width / (atkmax - atkmin) * (atk - atkmin) + (width / (atkmax - atkmin)) / 2 -2, height + 10);
+                    }
                 }
-                context.fillStyle = "#000";
+                context.fillStyle = "#000000";
                 context.fillRect(width, 0, 1, height+1);
                 for(let percentage of [1, .75, .5, .25, 0]) {
                     context.fillRect(0, percentage * height, width, 1);
@@ -128,6 +134,47 @@
                 }
 
                 //console.debug(status);
+            }
+            function calculate(atk) {
+                let dmgsDealth = {};
+                for(let arm = 0; arm < armor; arm++) {
+                    let armorRoll = 0.7 * armor + arm * 0.6;
+                    let dmg = Math.floor(atk - armorRoll);
+
+                    if(dmg >= currhp && currhp > 0.25 * maxhp) { // Overkill protection
+                        let possibledmg = [];
+                        for(let hpRoll = 0; hpRoll < currhp; hpRoll++)
+                            possibledmg.push(Math.floor(0.5 * currhp + 0.3 * hpRoll));
+                        for(let posdmg of possibledmg)
+                            dmgsDealth[posdmg] = (dmgsDealth[posdmg] || 0) + (1.0 / possibledmg.length);
+                    } else {
+                        if (dmg < 0)
+                            dmg = 0;
+                        dmgsDealth[dmg] = (dmgsDealth[dmg] || 0) + 1.0;
+                    }
+                }
+                let sum = 0;
+                for(let posdmg in dmgsDealth)
+                    sum += dmgsDealth[posdmg];
+                let stages = {
+                    "taiha" : 0,
+                    "chuuha" : 0,
+                    "shouha" : 0,
+                    "ok" : 0
+                };
+                for(let posdmg in dmgsDealth) {
+                    let ch = dmgsDealth[posdmg], afterhp = currhp - posdmg;
+                    if(afterhp <= 0);
+                    else if(afterhp <= .25 * maxhp)
+                        stages.taiha += ch/sum;
+                    else if(afterhp <= .50 * maxhp)
+                        stages.chuuha += ch/sum;
+                    else if(afterhp <= .75 * maxhp)
+                        stages.shouha += ch/sum;
+                    else
+                        stages.ok += ch/sum;
+                }
+                return stages;
             }
             update();
         </script>
