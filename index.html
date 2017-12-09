@@ -4,14 +4,78 @@
         <title>Flat is Justice!</title>
         <meta name="theme-color" content="#082E6B"/>
         <meta name=viewport content="width=device-width, initial-scale=1">
-        <meta name="description" content="Flat chest appreciation site">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:title" content="Flat is Justice">
+        <meta name="twitter:description" content="KC Tools: open servers, damage suffering, exp prog">
+        <meta name="twitter:image" content="http://flatisjustice.moe/grills/0.png">
         <meta name="keywords" content="flat,chest,small,anime,justice">
         <meta name="author" content="Tibi">
+        <style>
+        @import url(https://fonts.googleapis.com/css?family=Advent+Pro:100);
+        @import url(https://fonts.googleapis.com/css?family=Advent+Pro:100&effect=shadow-multiple);
+        #maintext {
+            font-family: 'Advent Pro', sans-serif;
+            font-size: 6em;
+            margin: .15em .4em;
+            color: #ff6868;
+            position: fixed;
+            right: 0;
+        }
+        #contact {
+            font-family: 'Advent Pro', sans-serif;
+            font-size: 1em;
+            font-weight: bolder;
+            margin: .15em .4em;
+            color: #ff6868;
+            position: fixed;
+            bottom: 0;
+        }
+        #links {
+            font-family: 'Advent Pro', sans-serif;
+            font-size: 1em;
+            font-weight: bolder;
+            margin: .15em .4em;
+            color: #ff6868;
+            position: fixed;
+            top: 0;
+        }
+        a {
+            color: #17d117;
+        }
+        html {
+            background: linear-gradient(
+              rgba(220, 220, 220, 0.6), 
+              rgba(190, 190, 190, 0.6)
+            ), url(/bg.jpg);
+            background-size: cover;
+        }
+        html,body{
+            margin:0;
+            height:100%;
+            overflow:hidden;
+        }
+        #gril {
+            height: auto; width: auto;
+            max-width: 30%;
+            max-height: 300%;
+            position: absolute;
+            right:0px;
+            bottom: 0px;
+            margin:auto;
+            pointer-events: none;
+        }
+        </style>
     </head>
     <body>
+        <div id="links">
+            KanColle Tools: <br>
+            <a href="/open_kc_servers" target="">Open servers</a><br>
+            <a href="/dmgsuffer" target="">Damage suffering</a><br>
+            <a href="/xpcalc" target="">Experience progress calc</a><br>
+        </div>
         <div id="maintext">Flat is Justice</div>
         <img id="gril" alt="gril" src="grills/0.png">
-        <div id="contact">If you got good pics/wanna contact me: <a href="mailto:tibo@flatisjustice.moe" target="">tibo@flatisjustice.moe</a>
+        <div id="contact">If you got good pics/wanna contact me: <a href="mailto:tibo@flatisjustice.moe" target="">tibo@flatisjustice.moe</a></div>
         <script type="text/javascript">
             var amountOfImages = 20;
             var imageId = Math.floor(Math.random() * amountOfImages);
@@ -28,4 +92,3 @@
         </script>
     </body>
 </html>
-<link rel="stylesheet" href="style.css">
