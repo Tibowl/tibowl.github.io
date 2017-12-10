@@ -30,10 +30,10 @@
         <canvas id="bar" width="400" height="10" style="border:1px solid black;"></canvas><br>
         <div id="exatk-txt"></div>
         <br><br>
-        <i>Assuming that:<br> </i>
-        <i>- armor rolls are: </i><code>finalArmor = 0.7 * armor + 0.6 * rng.nextInt(armor)</code><br>
-        <i>- damage: </i><code>dmg = floor(attack - finalArmor)</code><br>
-        <i>- overkill protection rolls are: </i><code>if(dmg >= currentHP) -> dmg = floor(0.5 * currentHP + 0.3 * rng.nextInt(currentHP))</code><br>
+        <i>Assuming that formulas are same as KC kai's </i><code>setDamageValue</code><i> in </i><code>Server_Controllers.BattleLogic\BattleLogicBase.cs</code><i>:<br> </i>
+        <i>- damage: </i><code>dmg = floor(attack - (0.7 * armor + 0.6 * rng.nextInt(armor)))</code><br>
+        <i>- scratch: </i><code>if(dmg < 1) -> dmg = floor(0.06 * currentHP + 0.08 * rng.nextInt(currentHP))</code><br>
+        <i>- overkill protection: </i><code>if(dmg >= currentHP) -> dmg = floor(0.5 * currentHP + 0.3 * rng.nextInt(currentHP))</code><br>
         <i>where </i><code>nextInt</code><i> returns uniformly, 0 inclusive up to argument exclusive</i><br>
         <br>
         <i>Based on <a href="http://kancolle-calc.net/suffering.html">KC-calc suffering</a> inspired by Pyan's Unmei system</i>
@@ -145,8 +145,7 @@
             function calculate(atk) {
                 let dmgsDealth = {};
                 for(let arm = 0; arm < armor; arm++) {
-                    let armorRoll = 0.7 * armor + arm * 0.6;
-                    let dmg = Math.floor(atk - armorRoll);
+                    let dmg = Math.floor(atk - (0.7 * armor + arm * 0.6));
 
                     if(dmg >= currhp && currhp > 0.25 * maxhp && !abyssal) { // Overkill protection
                         let possibledmg = [];
@@ -154,9 +153,13 @@
                             possibledmg.push(Math.floor(0.5 * currhp + 0.3 * hpRoll));
                         for(let posdmg of possibledmg)
                             dmgsDealth[posdmg] = (dmgsDealth[posdmg] || 0) + (1.0 / possibledmg.length);
+                    } else if(dmg < 1) { // Scratch
+                        let possibledmg = [];
+                        for(let hpRoll = 0; hpRoll < currhp; hpRoll++)
+                            possibledmg.push(Math.floor(0.06 * currhp + 0.08 * hpRoll));
+                        for(let posdmg of possibledmg)
+                            dmgsDealth[posdmg] = (dmgsDealth[posdmg] || 0) + (1.0 / possibledmg.length);
                     } else {
-                        if (dmg < 0)
-                            dmg = 0;
                         dmgsDealth[dmg] = (dmgsDealth[dmg] || 0) + 1.0;
                     }
                 }
