@@ -6,10 +6,10 @@
         <meta name=viewport content="width=device-width, initial-scale=1">
         <meta name="twitter:card" content="summary">
         <meta name="twitter:title" content="Flat is Justice - Damage suffering">
-        <meta name="twitter:description" content="Calculate suffering of damage based on armor/hp/maxhp">
+        <meta name="twitter:description" content="Calculate suffering of damage based on armor/hp/maxhp, based on http://kancolle-calc.net/suffering.html inspired by Pyan">
         <meta name="twitter:image" content="http://flatisjustice.moe/pics/dmgsuffer.png">
         <style type="text/css">
-            input {
+            input[type="number"] {
                 width:75px;
             }
             canvas {
@@ -18,6 +18,7 @@
         </style>
     </head>
     <body>
+        Abyssal: <input type="checkbox" id="abyssal" min="0" max="9999" onchange="update();" onclick="update();"><br>
         Armor: <input type="number" id="armor" min="0" max="9999" onchange="update();" onclick="update();" value=52><br>
         MaxHP: <input type="number" id="maxhp" min="0" max="9999" onchange="update();" onclick="update();" value=37><br>
         CurrHP: <input type="number" id="currhp" min="0" max="9999" onchange="update();" onclick="update();" value=37><br>
@@ -33,21 +34,25 @@
         <i>- armor rolls are: </i><code>finalArmor = 0.7 * armor + 0.6 * rng.nextInt(armor)</code><br>
         <i>- damage: </i><code>dmg = floor(attack - finalArmor)</code><br>
         <i>- overkill protection rolls are: </i><code>if(dmg >= currentHP) -> dmg = floor(0.5 * currentHP + 0.3 * rng.nextInt(currentHP))</code><br>
-        <i>where </i><code>nextInt</code><i> returns uniformly, 0 inclusive up to arg exclusive</i>
+        <i>where </i><code>nextInt</code><i> returns uniformly, 0 inclusive up to argument exclusive</i><br>
+        <br>
+        <i>Based on <a href="http://kancolle-calc.net/suffering.html">KC-calc suffering</a> inspired by Pyan's Unmei system</i>
         <script type="text/javascript">
-            var prevarmor, prevmaxhp, prevcurrhp, prevatkmin, prevatkmax, prevexatk;
-            var armor, maxhp, currhp, atkmin, atkmax, exatk;
+            var prevarmor, prevmaxhp, prevcurrhp, prevatkmin, prevatkmax, prevexatk, prevabyssal;
+            var armor, maxhp, currhp, atkmin, atkmax, exatk, abyssal;
             function update() {
                 armor = parseFloat(document.getElementById('armor').value);
                 maxhp = parseFloat(document.getElementById('maxhp').value);
                 currhp = parseFloat(document.getElementById('currhp').value);
                 atkmin = parseFloat(document.getElementById('atkmin').value);
                 atkmax = parseFloat(document.getElementById('atkmax').value) + 1;
+                abyssal = !!document.getElementById('abyssal').checked;
 
                 exatk = parseFloat(document.getElementById('exatk').value);
 
                 if(prevarmor === armor && prevmaxhp === maxhp && prevcurrhp === currhp
-                    && prevatkmin === atkmin && prevatkmax === atkmax && prevexatk === exatk)
+                    && prevatkmin === atkmin && prevatkmax === atkmax && prevexatk === exatk
+                    && abyssal === prevabyssal)
                     return;
 
                 if(prevmaxhp != maxhp || currhp > maxhp) {
@@ -63,6 +68,7 @@
                 prevatkmin = atkmin;
                 prevatkmax = atkmax;
                 prevexatk = exatk;
+                prevabyssal = abyssal;
 
                 let calculated = calculate(exatk);
                 document.getElementById('exatk-txt').innerHTML = `
@@ -70,6 +76,7 @@
                 Shouha: ${(calculated.shouha * 100).toFixed(2)}%<br>
                 Chuuha: ${(calculated.chuuha * 100).toFixed(2)}%<br>
                 Taiha: ${(calculated.taiha * 100).toFixed(2)}%<br>
+                ${calculated.sunk ? ("Sunk: " + (calculated.sunk * 100).toFixed(2) + "%") : ""}
                 `;
 
                 var bar = document.getElementById("bar");
@@ -141,7 +148,7 @@
                     let armorRoll = 0.7 * armor + arm * 0.6;
                     let dmg = Math.floor(atk - armorRoll);
 
-                    if(dmg >= currhp && currhp > 0.25 * maxhp) { // Overkill protection
+                    if(dmg >= currhp && currhp > 0.25 * maxhp && !abyssal) { // Overkill protection
                         let possibledmg = [];
                         for(let hpRoll = 0; hpRoll < currhp; hpRoll++)
                             possibledmg.push(Math.floor(0.5 * currhp + 0.3 * hpRoll));
@@ -157,6 +164,7 @@
                 for(let posdmg in dmgsDealth)
                     sum += dmgsDealth[posdmg];
                 let stages = {
+                    "sunk" : 0,
                     "taiha" : 0,
                     "chuuha" : 0,
                     "shouha" : 0,
@@ -164,7 +172,8 @@
                 };
                 for(let posdmg in dmgsDealth) {
                     let ch = dmgsDealth[posdmg], afterhp = currhp - posdmg;
-                    if(afterhp <= 0);
+                    if(afterhp <= 0)
+                        stages.sunk += ch/sum;
                     else if(afterhp <= .25 * maxhp)
                         stages.taiha += ch/sum;
                     else if(afterhp <= .50 * maxhp)
