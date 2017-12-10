@@ -48,6 +48,13 @@
                 atkmax = parseFloat(document.getElementById('atkmax').value) + 1;
                 abyssal = !!document.getElementById('abyssal').checked;
 
+                if(prevmaxhp != maxhp || currhp > maxhp) {
+                    currhp += maxhp - (prevmaxhp || maxhp);
+                    if(currhp > maxhp) currhp = maxhp;
+                    document.getElementById('currhp').value = currhp;
+                    document.getElementById('currhp').max = maxhp;
+                }
+
                 if(atkmin == 0)
                     atkmin = Math.floor(0.7 * armor) - 2;
                 if(atkmax == 1)
@@ -59,13 +66,6 @@
                     && prevatkmin === atkmin && prevatkmax === atkmax && prevexatk === exatk
                     && abyssal === prevabyssal)
                     return;
-
-                if(prevmaxhp != maxhp || currhp > maxhp) {
-                    currhp += maxhp - (prevmaxhp || maxhp);
-                    if(currhp > maxhp) currhp = maxhp;
-                    document.getElementById('currhp').value = currhp;
-                    document.getElementById('currhp').max = maxhp;
-                }
 
                 prevarmor = armor;
                 prevmaxhp = maxhp;
