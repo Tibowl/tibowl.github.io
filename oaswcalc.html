@@ -1,0 +1,216 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Flat is Justice! - oasw calc</title>
+        <meta name="theme-color" content="#082E6B"/>
+        <meta name=viewport content="width=device-width, initial-scale=1">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:title" content="Flat is Justice - OASW Calc">
+        <meta name="twitter:description" content="Calculate when a ship can OASW">
+        <style type="text/css">
+        	div {
+        		display:inline;
+        	}
+        </style>
+    </head>
+    <body>
+    	Ship: <select id="ships" autofocus name="Ship" disabled></select><br>
+        <div id="aswcntselect"></div><br><br>
+        <div id="oasw"></div>
+    	<script type="text/javascript">
+
+            var data = {};
+            var possibleAswComps = [];
+            var aswGear;
+
+    		function update() {
+possibleAswComps = [];
+                var trySlots = function(ind, slots){
+                    out: for(let asw of aswGear) {
+                        slots[ind] = asw;
+                        if(ind < 3)
+                            trySlots(ind + 1, slots);
+                        for(let slottedAsw of slots) {
+                            if(slottedAsw && slots.filter((x) => x && x.api_id == slottedAsw.api_id).length > document.getElementById('asw-cnt-' + slottedAsw.api_id).value) 
+                                continue out;
+                        }
+                        let str = slots.filter((x) => x).map((x) => x.tl).sort().join(", ");
+                        let aswtot = slots.filter((x) => x).map((x) => x.api_tais).reduce((a,b) => a+b);
+
+                        let arr = possibleAswComps[aswtot] || [[],[],[],[]];
+                        if(arr[ind].indexOf(str) < 0)
+                            arr[ind].push(str);
+                        possibleAswComps[aswtot] = arr;
+                    }
+
+                    slots[ind] = undefined;
+                };
+                kek: for(let sonar of aswGear.filter((x) => x.api_type[3] == 18)) {
+                    let slots = [sonar, undefined, undefined, undefined];
+                    let str = slots.filter((x) => x).map((x) => x.tl).sort().join(", ");
+                    let aswtot = slots.filter((x) => x).map((x) => x.api_tais).reduce((a,b) => a+b);
+                    for(let slottedAsw of slots) {
+                        if(slottedAsw && slots.filter((x) => x && x.api_id == slottedAsw.api_id).length > document.getElementById('asw-cnt-' + slottedAsw.api_id).value) 
+                            continue kek;
+                    }
+
+                    let arr = possibleAswComps[aswtot] || [[],[],[],[]];
+                    if(arr[0].indexOf(str) < 0)
+                        arr[0].push(str);
+                    possibleAswComps[aswtot] = arr;
+                    trySlots(1, slots);
+                }
+                console.log(possibleAswComps);
+
+                let e = document.getElementById("ships");
+                let id = e.options[e.selectedIndex].value;
+                let fleetdbship = data.neddb.filter((x) => x.id == id)[0];
+
+                console.log(fleetdbship,id, fleetdbship.stat.asw, fleetdbship.stat.asw_max, fleetdbship.slot.length);
+
+                let oasw = document.getElementById("oasw");
+                oasw.innerHTML = "";
+                if(fleetdbship.type == 31 || fleetdbship.type == 32)
+                    oasw.innerHTML += "Ship type not fully supported Krappa<br>";
+                let prevAsw = 0;
+                for(let i = fleetdbship.base_lvl; i <= 165; i++) {
+                    let asw = Math.floor(fleetdbship.stat.asw + (fleetdbship.stat.asw_max - fleetdbship.stat.asw) * i / 99);
+                    if(asw == prevAsw) continue;
+                    for(let j = prevAsw + 1; j <= asw; j++) {
+                        let aswTillOASW = 100 - j;
+                        if(fleetdbship.type == 31) aswTillOASW = 60 - j;
+                        let possibleAsw = possibleAswComps[aswTillOASW];
+                        if(possibleAsw) {
+                            for(let slot = 0; slot < fleetdbship.slot.length; ++slot)
+                                if(possibleAsw[slot].length)
+                                    oasw.innerHTML += "<div title='Others:\n" + possibleAsw[slot].slice(1).join("\n") + "'>Lvl: " + i + "  you'll have " + asw + " ASW -> " + (slot+1) +" slot ASW possible: -> " + possibleAsw[slot][0] + "</div><br>";
+                        }
+                        //console.log("test", i,j,asw)
+                    }
+                    prevAsw = asw;
+                }
+       		}
+
+            function get(url, name) {
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+                        if (xmlhttp.status == 200) {
+                            data[name] = xmlhttp.responseText;
+                            if(data.neddb && data.ships && data.ship_affix && data.items && data.api_start2) {
+                                data.ships = JSON.parse(data.ships);
+                                data.ship_affix = JSON.parse(data.ship_affix);
+                                data.items = JSON.parse(data.items);
+                                data.api_start2 = JSON.parse(data.api_start2);
+
+                                data.neddb = data.neddb.split("\n").map( function(x) {
+                                    try { 
+                                        let ship = JSON.parse(x); 
+                                        ship.tlName = shipName(data.api_start2.api_mst_ship.filter((x) => x.api_id === ship.id)[0].api_name); 
+                                        return ship; 
+                                    } catch (e) { return false; }
+                                }).filter( function(x) {return x && x.stat.asw_max;}).sort((a, b) => a.tlName.localeCompare(b.tlName));
+
+                                let select = document.getElementById('ships');
+                                for(let ship of data.neddb) {
+                                    let opt = document.createElement('option');
+                                    opt.value = ship.id;
+                                    opt.innerHTML = ship.tlName;
+                                    select.appendChild(opt);
+                                }
+                                aswGear = data.api_start2.api_mst_slotitem.filter((x) => (x.api_type[3] == 17 || x.api_type[3] == 18) && x.api_id < 500).sort((a,b) => a.api_tais - b.api_tais);
+                                for(let asw of aswGear) {
+                                    asw.tl = data.items[asw.api_name] || asw.api_name;
+                                    let inp = document.createElement('input');
+                                    // <input type="number" id="armor" min="1" max="9999" onchange="update();" onclick="update();" value=52><br>
+                                    inp.type = "number";
+                                    inp.min = 0;
+                                    inp.max = 4;
+                                    inp.id = "asw-cnt-" + asw.api_id;
+                                    inp.onchange = update;
+                                    inp.value = 4;
+                                    let c = document.createElement('div');
+                                    c.innerHTML = "<br>" + asw.tl + " ";
+                                    c.appendChild(inp);
+                                    document.getElementById("aswcntselect").appendChild(c);
+                                    console.log(inp);
+                                }
+                                console.log(data);
+                                select.disabled = false;
+                                select.onchange = update;
+                                update();
+                            }
+                       }
+                    }
+                };
+                xmlhttp.open("GET", url, true);
+                xmlhttp.send();
+            }
+
+            // https://github.com/KC3Kai/KC3Kai/blob/master/src/library/modules/Meta.js#L188
+            function shipName(jpName, suffixKey = "suffixes", prefixKey = "prefixes"){
+                // If full string matched, no combination needed
+                if(typeof data.ships[jpName] !== "undefined"){
+                    return data.ships[jpName];
+                }
+                var root = jpName,
+                    combinedPrefixes = [],
+                    prefixesMap = data.ship_affix[prefixKey] || {},
+                    prefixesList = Object.keys(prefixesMap),
+                    combinedSuffixes = [],
+                    suffixesMap = data.ship_affix[suffixKey] || {},
+                    suffixesList = Object.keys(suffixesMap),
+                    occurs = [],
+                    replaced = false;
+                /**********************************************
+                // To combine the translations of root name and prefix/suffix,
+                // the regular expression will read which one comes first,
+                // which mean the prefixes and suffixes in the ship name.
+                // and then, the root string will be chopped to remove the affixes,
+                // the matched one, added to the combination stack (FILO)
+                // removing from the replacement table in order to prevent infinite loop.
+                // if there's no match, it'll instantly stop and return the actual value.
+                ***********************************************/
+                if(prefixesList.length > 0){
+                    while( !!(occurs = (new RegExp("^("+prefixesList.join("|")+").+$","i")).exec(root)) ){
+                        root = root.replace(new RegExp("^"+occurs[1],"i"), "");
+                        if(prefixesMap[occurs[1]].slice(-1) === "$"){
+                            combinedSuffixes.unshift(prefixesMap[occurs[1]].slice(0, -1));
+                        } else {
+                            combinedPrefixes.unshift(prefixesMap[occurs[1]]);
+                        }
+                        prefixesList.splice(prefixesList.indexOf(occurs[1]), 1);
+                        replaced = true;
+                    }
+                }
+                if(suffixesList.length > 0){
+                    while( !!(occurs = (new RegExp(".+("+suffixesList.join("|")+")$","i")).exec(root)) ){
+                        root = root.replace(new RegExp(occurs[1]+"$","i"), "");
+                        if(suffixesMap[occurs[1]].slice(0, 1) === "^"){
+                            combinedPrefixes.unshift(suffixesMap[occurs[1]].slice(1));
+                        } else {
+                            combinedSuffixes.unshift(suffixesMap[occurs[1]]);
+                        }
+                        suffixesList.splice(suffixesList.indexOf(occurs[1]), 1);
+                        replaced = true;
+                    }
+                }
+                if(replaced){
+                    // Put combined name into cache
+                    return [
+                        (combinedPrefixes.length > 0 ? combinedPrefixes.join("") : "") ,
+                        (data.ships[root] || root) ,
+                        (combinedSuffixes.length > 0 ? combinedSuffixes.join("") : "")
+                    ].join("");
+                }
+                return root;
+            }
+            get("https://raw.githubusercontent.com/TeamFleet/WhoCallsTheFleet-DB/master/db/ships.nedb", "neddb");
+            get("https://raw.githubusercontent.com/KC3Kai/kc3-translations/master/data/en/ships.json", "ships");
+            get("https://raw.githubusercontent.com/KC3Kai/kc3-translations/master/data/en/ship_affix.json", "ship_affix");
+            get("https://raw.githubusercontent.com/KC3Kai/kc3-translations/master/data/en/items.json", "items");
+            get("http://flatisjustice.moe/api_start2", "api_start2");
+            
+    	</script>
+    </body>
+</html>
