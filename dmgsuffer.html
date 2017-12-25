@@ -87,7 +87,9 @@
                 Shouha: ${(calculated.shouha * 100).toFixed(2)}%<br>
                 Chuuha: ${(calculated.chuuha * 100).toFixed(2)}%<br>
                 Taiha: ${(calculated.taiha * 100).toFixed(2)}%<br>
-                ${calculated.sunk ? ("Sunk: " + (calculated.sunk * 100).toFixed(2) + "%") : ""}
+                ${calculated.sunk ? ("Sunk: " + (calculated.sunk * 100).toFixed(2) + "%<br>") : ""}<br>
+                HP left: ${(calculated.minhp == calculated.maxhp) ? calculated.minhp : calculated.minhp + " ~ " + calculated.maxhp} 
+                (Damage: ${(calculated.mindmg == calculated.maxdmg) ? calculated.mindmg : calculated.mindmg + " ~ " + calculated.maxdmg})
                 `;
 
                 var bar = document.getElementById("bar");
@@ -165,6 +167,10 @@
                         let stage = calculatePostCap(Math.floor(capdmg(eng[0] * atk)));
                         for(let state of ["ok", "shouha", "chuuha", "taiha", "sunk"])
                             stages[state] = (stages[state]||0) + (stage[state] * eng[1]);
+                        for(let side of ["min", "max"]) {
+                            stages[side + "hp"] = compare[side](stages[side + "hp"], stage[side + "hp"]);
+                            stages[side + "dmg"] = compare[side](stages[side + "dmg"], stage[side + "dmg"]);
+                        }
                     }
                 } else 
                     stages = calculatePostCap(atk);
@@ -203,6 +209,7 @@
                 };
                 for(let posdmg in dmgsDealth) {
                     let ch = dmgsDealth[posdmg], afterhp = currhp - posdmg;
+                    if(ch == 0) continue;
                     if(afterhp <= 0)
                         stages.sunk += ch/sum;
                     else if(afterhp <= .25 * maxhp)
@@ -213,8 +220,26 @@
                         stages.shouha += ch/sum;
                     else
                         stages.ok += ch/sum;
+                    for(let side of ["min", "max"]) {
+                        stages[side + "hp"] = compare[side](stages[side + "hp"], afterhp < 0 ? 0 : afterhp);
+                        stages[side + "dmg"] = compare[side](stages[side + "dmg"], posdmg);
+                    }
                 }
                 return stages;
+            }
+            const compare = {
+                min: function(a, b) {
+                    if(isNaN(a)) return b;
+                    if(isNaN(b)) return a;
+                    if(a == 0 || b == 0)
+                        return 0;
+                    return Math.min(a||b, b||a);
+                },
+                max: function(a, b) {
+                    if(isNaN(a)) return b;
+                    if(isNaN(b)) return a;
+                    return Math.max(a||b, b||a);
+                }
             }
             update();
         </script>
