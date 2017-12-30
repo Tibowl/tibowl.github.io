@@ -76,8 +76,8 @@
             }
 
         
-            get("http://flatisjustice.moe/get_worldinfo_update.txt", "date");
-            get("http://flatisjustice.moe/get_worldinfo.json", "get_worldinfo");
+            get("http://flatisjustice.moe/get_worldinfo_update.txt?nocache=" + new Date(), "date");
+            get("http://flatisjustice.moe/get_worldinfo.json?nocache=" + new Date(), "get_worldinfo");
 
         </script>
     </body>
