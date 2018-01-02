@@ -136,10 +136,10 @@
             },
             {
                 "api_enabled": 1,
-                "api_entry": 1,
+                "api_entry": 0,
                 "api_id": 20,
                 "api_name": "\u67f1\u5cf6\u6cca\u5730",
-                "api_rate": 99
+                "api_rate": 100
             }
         ]
     },
