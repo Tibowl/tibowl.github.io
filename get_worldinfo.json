@@ -31,10 +31,10 @@
             },
             {
                 "api_enabled": 1,
-                "api_entry": 1,
+                "api_entry": 0,
                 "api_id": 5,
                 "api_name": "\u5927\u6e4a\u8b66\u5099\u5e9c",
-                "api_rate": 99
+                "api_rate": 100
             },
             {
                 "api_enabled": 1,
