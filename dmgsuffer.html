@@ -6,7 +6,7 @@
         <meta name=viewport content="width=device-width, initial-scale=1">
         <meta name="twitter:card" content="summary">
         <meta name="twitter:title" content="Flat is Justice - Damage suffering">
-        <meta name="twitter:description" content="Calculate suffering of damage based on armor/hp/maxhp, based on http://kancolle-calc.net/suffering.html inspired by Pyan">
+        <meta name="twitter:description" content="Calculate suffering of damage based on armor/currhp/maxhp, heavily inspired by http://kancolle-calc.net/suffering.html">
         <meta name="twitter:image" content="http://flatisjustice.moe/pics/dmgsuffer.png">
         <style type="text/css">
             input[type="number"] {
@@ -21,8 +21,8 @@
         <b>Attack info</b><br>
         Cap (fill in 0 when atk = postcap): <input type="number" id="cap" min="0" max="999" onchange="update();" onclick="update();" value=0 step=10><br>
         <div id="postcapdata">
-            Note: when cap ≠ 0 => engagement is taken into account<br>
-            Saiun: <input type="checkbox" id="saiun" onchange="update();" onclick="update();"><br>
+            Take engagement into account: <input type="checkbox" id="engage" onchange="update();" onclick="update();"><br>
+            ^ Saiun: <input type="checkbox" id="saiun" onchange="update();" onclick="update();"><br>
             Post-Cap multiplier: <input type="number" id="postcapdmg" min="0" max="10" onchange="update();" onclick="update();" value=1.0 step=0.1><br>
         </div>
         Apply attack twice (like DA/TCI): <input type="checkbox" id="double" onchange="update();" onclick="update();"><br>
@@ -53,8 +53,8 @@
         <i>Some formulas come from KC kai's </i><code>setDamageValue</code><i> in </i><code>Server_Controllers.BattleLogic\BattleLogicBase.cs</code><i><br>
         <i>Based on <a href="http://kancolle-calc.net/suffering.html">KC-calc suffering</a> inspired by Pyan's Unmei system</i>
         <script type="text/javascript">
-            var armor, maxhp, currhp, atkmin, atkmax, exatk, abyssal, cap, saiun, double, postcapdmg;
-            var prevarmor, prevmaxhp, prevcurrhp, prevatkmin, prevatkmax, prevexatk, prevabyssal, prevcap, prevsaiun, prevdouble, prevpostcapdmg;
+            var armor, maxhp, currhp, atkmin, atkmax, exatk, abyssal, cap, saiun, double, postcapdmg, engage;
+            var prevarmor, prevmaxhp, prevcurrhp, prevatkmin, prevatkmax, prevexatk, prevabyssal, prevcap, prevsaiun, prevdouble, prevpostcapdmg, prevengage;
             function update() {
                 armor = parseFloat(document.getElementById('armor').value);
                 maxhp = parseFloat(document.getElementById('maxhp').value);
@@ -66,6 +66,7 @@
                 abyssal = !!document.getElementById('abyssal').checked;
                 saiun = !!document.getElementById('saiun').checked;
                 double = !!document.getElementById('double').checked;
+                engage = !!document.getElementById('engage').checked;
 
                 if(prevmaxhp != maxhp || currhp > maxhp) {
                     currhp += maxhp - (prevmaxhp || maxhp);
@@ -74,9 +75,8 @@
                     document.getElementById('currhp').max = maxhp;
                 }
 
-                document.getElementById('saiun').disabled = cap <= 0;
-                document.getElementById('postcapdmg').disabled = cap <= 0;
                 document.getElementById('postcapdata').style = cap <= 0 ? "display:none" : "display:block";
+                document.getElementById('saiun').disabled = !engage;
 
                 if(atkmin == 0)
                     atkmin = Math.floor(0.7 * armor) - 2;
@@ -87,7 +87,8 @@
 
                 if(prevarmor == armor && prevdouble == double && prevmaxhp == maxhp && prevcurrhp == currhp
                     && prevatkmin == atkmin && prevatkmax == atkmax && prevexatk == exatk
-                    && abyssal == prevabyssal && prevsaiun == saiun && prevcap == cap && prevpostcapdmg == postcapdmg)
+                    && abyssal == prevabyssal && prevsaiun == saiun && prevcap == cap && prevengage == engage
+                    && prevpostcapdmg == postcapdmg)
                     return;
 
                 prevarmor = armor;
@@ -101,6 +102,7 @@
                 prevsaiun = saiun;
                 prevdouble = double;
                 prevpostcapdmg = postcapdmg;
+                prevengage = engage;
 
                 let calculated = calculate(exatk);
                 document.getElementById('exatk-txt').innerHTML = `
@@ -183,6 +185,8 @@
                     let engagements = [[1.2, .15], [1, .45], [.8, .3], [.6, .1]];
                     if(saiun) 
                         engagements = [[1.2, .15], [1, .45], [.8, .4]];
+                    if(!engage)
+                        engagements = [[1, 1]];
                     let capdmg = (uncapped) => Math.floor(uncapped > cap ? cap + Math.sqrt(uncapped - cap) : uncapped);
                     for(let eng of engagements) {
                         let stage = calculateFromPostCapATK(Math.floor(capdmg(eng[0] * atk) * postcapdmg));
