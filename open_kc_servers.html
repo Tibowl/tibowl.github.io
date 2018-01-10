@@ -33,6 +33,7 @@
     <body>
         <script type="text/javascript">
         var en_names=["Yokosuka Naval District", "Kure Naval District", "Sasebo Naval District", "Maizuru Naval District", "Ominato Guard District", "Truk Anchorage", "Lingga Anchorage", "Rabaul Naval Base", "Shortland Anchorage", "Buin Naval Base", "Tawi-Tawi Anchorage", "Palau Anchorage", "Brunei Anchorage", "Hitokappu Bay Anchorage", "Paramushir Anchorage", "Sukumo Bay Anchorage", "Kanoya Airfield", "Iwagawa Airfield", "Saiki Bay Anchorage", "Hashirajima Anchorage"];
+        var github_url = "https://github.com/Tibo442/tibo442.github.io/blame/master/get_worldinfo.json";
         var data = {};
         function onLoad() {
           let tableA = document.createElement("table"), tableB = document.createElement("table");
@@ -47,6 +48,7 @@
               var entry = document.createElement("tr");
               entry.innerHTML = '<td>' + server.api_id + "</td><td>" + server.api_name +"</td><td>" + en_names[i] + "</td><td>" + server.api_rate+ "</td>";
               entry.setAttribute("style", 'background-color: #' + bg);
+              entry.setAttribute("onClick", "window.open('" + github_url + "#L" + ((server.api_id * 7) - 3) + "-L" + ((server.api_id * 7) + 3) + "');");
               if (i % 2 == 0)
                 tableA.append(entry);
               else
@@ -54,7 +56,7 @@
               }
           document.body.append(tableA);
           document.body.append(tableB);
-          document.write('<div id="lastupdate">Last updated: ' + data.date + '</div>');
+          document.write('<div id="lastupdate">Last updated: ' + data.date + '<br><a href=' + github_url + '>Past \u00bb</a></div>');
         }
         var self = this;
         
