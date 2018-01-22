@@ -94,10 +94,10 @@
             },
             {
                 "api_enabled": 1,
-                "api_entry": 1,
+                "api_entry": 0,
                 "api_id": 14,
                 "api_name": "\u5358\u51a0\u6e7e\u6cca\u5730",
-                "api_rate": 99
+                "api_rate": 100
             },
             {
                 "api_enabled": 1,
