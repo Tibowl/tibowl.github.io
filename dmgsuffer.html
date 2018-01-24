@@ -51,10 +51,11 @@
         <i>where </i><code>nextInt</code><i> returns uniformly, 0 inclusive up to argument exclusive</i><br>
         <br>
         <i>Some formulas come from KC kai's </i><code>setDamageValue</code><i> in </i><code>Server_Controllers.BattleLogic\BattleLogicBase.cs</code><i><br>
-        <i>Based on <a href="http://kancolle-calc.net/suffering.html">KC-calc suffering</a> inspired by Pyan's Unmei system</i>
+        <i>Based on and inspired by <a href="http://kancolle-calc.net/suffering.html">KC-calc suffering</a></i>
         <script type="text/javascript">
             var armor, maxhp, currhp, atkmin, atkmax, exatk, abyssal, cap, saiun, double, postcapdmg, engage;
             var prevarmor, prevmaxhp, prevcurrhp, prevatkmin, prevatkmax, prevexatk, prevabyssal, prevcap, prevsaiun, prevdouble, prevpostcapdmg, prevengage;
+            var context, canvas = document.getElementById("graph"), canvas2 = document.createElement("canvas");
             function update() {
                 armor = parseFloat(document.getElementById('armor').value);
                 maxhp = parseFloat(document.getElementById('maxhp').value);
@@ -91,19 +92,6 @@
                     && prevpostcapdmg == postcapdmg)
                     return;
 
-                prevarmor = armor;
-                prevmaxhp = maxhp;
-                prevcurrhp = currhp;
-                prevatkmin = atkmin;
-                prevatkmax = atkmax;
-                prevexatk = exatk;
-                prevabyssal = abyssal;
-                prevcap = cap;
-                prevsaiun = saiun;
-                prevdouble = double;
-                prevpostcapdmg = postcapdmg;
-                prevengage = engage;
-
                 let calculated = calculate(exatk);
                 document.getElementById('exatk-txt').innerHTML = `
                 Green: ${(calculated.ok * 100).toFixed(2)}%<br>
@@ -131,11 +119,31 @@
                 ctx.fillStyle = "#e51616";
                 ctx.fillRect(prev, 0, calculated.taiha * bar.width, bar.height);
 
-                var canvas = document.getElementById("graph");
+                prevexatk = exatk;
+                if(prevarmor == armor && prevdouble == double && prevmaxhp == maxhp && prevcurrhp == currhp
+                    && prevatkmin == atkmin && prevatkmax == atkmax 
+                    && abyssal == prevabyssal && prevsaiun == saiun && prevcap == cap && prevengage == engage
+                    && prevpostcapdmg == postcapdmg) {
+                    drawArrow();
+                    return;
+                }
+
+                prevarmor = armor;
+                prevmaxhp = maxhp;
+                prevcurrhp = currhp;
+                prevatkmin = atkmin;
+                prevatkmax = atkmax;
+                prevabyssal = abyssal;
+                prevcap = cap;
+                prevsaiun = saiun;
+                prevdouble = double;
+                prevpostcapdmg = postcapdmg;
+                prevengage = engage;
+
                 canvas.width = canvas.width;
                 var width = canvas.width - 30;
                 var height = canvas.height - 25;
-                var context = canvas.getContext("2d");
+                context = canvas.getContext("2d");
 
                 // var status = [];
                 for(let atk = atkmin; atk < atkmax; atk++) {
@@ -165,10 +173,6 @@
                         context.restore();
                     }
                     context.fillRect(width / (atkmax - atkmin) * (atk - atkmin), 0, 1, height);
-                    if(atk === exatk) {
-                        context.fillStyle = "#ff0000";
-                        context.fillText("\u2191", width / (atkmax - atkmin) * (atk - atkmin) + (width / (atkmax - atkmin)) / 2 -2, height + 10);
-                    }
                 }
                 context.fillStyle = "#000000";
                 context.fillRect(width, 0, 1, height+1);
@@ -176,8 +180,21 @@
                     context.fillRect(0, percentage * height, width, 1);
                     context.fillText(percentage * 100 + "%", width + 3, (1-percentage) * height);
                 }
+                canvas2.width = canvas.width;
+                canvas2.height = canvas.height;
+                canvas2.getContext("2d").drawImage(canvas, 0, 0)
 
+                drawArrow();
                 //console.debug(status);
+            }
+            function drawArrow() {
+                canvas.width = canvas.width;
+                context.drawImage(canvas2, 0, 0);
+
+                if(exatk >= atkmin && exatk < atkmax) {
+                    context.fillStyle = "#ff0000";
+                    context.fillText("\u2191", (canvas.width - 30) / (atkmax - atkmin) * (exatk - atkmin) + ((canvas.width - 30) / (atkmax - atkmin)) / 2 -2, canvas.height - 15);
+                }
             }
             function calculate(atk) {
                 let stages = {};
