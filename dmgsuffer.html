@@ -241,7 +241,9 @@
                 }
             }
             function calculate(atk) {
-                let stages = {};
+                let stages = {
+                    "hps": []
+                };
                 if(cap) {
                     let engagements = [[1.2, .15], [1, .45], [.8, .3], [.6, .1]];
                     if(saiun) 
