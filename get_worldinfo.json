@@ -41,28 +41,28 @@
                 "api_entry": 1,
                 "api_id": 6,
                 "api_name": "\u30c8\u30e9\u30c3\u30af\u6cca\u5730",
+                "api_rate": 98
+            },
+            {
+                "api_enabled": 1,
+                "api_entry": 1,
+                "api_id": 7,
+                "api_name": "\u30ea\u30f3\u30ac\u6cca\u5730",
+                "api_rate": 97
+            },
+            {
+                "api_enabled": 1,
+                "api_entry": 1,
+                "api_id": 8,
+                "api_name": "\u30e9\u30d0\u30a6\u30eb\u57fa\u5730",
                 "api_rate": 99
             },
             {
                 "api_enabled": 1,
-                "api_entry": 0,
-                "api_id": 7,
-                "api_name": "\u30ea\u30f3\u30ac\u6cca\u5730",
-                "api_rate": 100
-            },
-            {
-                "api_enabled": 1,
-                "api_entry": 0,
-                "api_id": 8,
-                "api_name": "\u30e9\u30d0\u30a6\u30eb\u57fa\u5730",
-                "api_rate": 100
-            },
-            {
-                "api_enabled": 1,
-                "api_entry": 0,
+                "api_entry": 1,
                 "api_id": 9,
                 "api_name": "\u30b7\u30e7\u30fc\u30c8\u30e9\u30f3\u30c9\u6cca\u5730",
-                "api_rate": 100
+                "api_rate": 99
             },
             {
                 "api_enabled": 1,
@@ -80,10 +80,10 @@
             },
             {
                 "api_enabled": 1,
-                "api_entry": 0,
+                "api_entry": 1,
                 "api_id": 12,
                 "api_name": "\u30d1\u30e9\u30aa\u6cca\u5730",
-                "api_rate": 100
+                "api_rate": 98
             },
             {
                 "api_enabled": 1,
@@ -108,10 +108,10 @@
             },
             {
                 "api_enabled": 1,
-                "api_entry": 0,
+                "api_entry": 1,
                 "api_id": 16,
                 "api_name": "\u5bbf\u6bdb\u6e7e\u6cca\u5730",
-                "api_rate": 100
+                "api_rate": 99
             },
             {
                 "api_enabled": 1,
