@@ -87,6 +87,21 @@
         <b>Edges map (e = edges to this node, r = LBAS range)</b><br>
         <canvas id="swfgraphrange" width="786" height="435" style="border:1px solid black;"></canvas><br>
         <br><br>
+        <b>How to extract information for this:</b><br>
+        SWF XML: <br>
+        1. Download <a href="https://www.free-decompiler.com/flash/" target="_blank">ffdec</a><br>
+        2. Open map swf <i>/kcs/resources/swf/map/ww_mm.swf</i><br>
+        3. Export SWF xml<br>
+        4. Paste in full file (will load bg from file in edges map, keeps url in range map) OR only lineXX part (to keep url in both)<br>
+        5.0 For events with hidden nodes: repeat process with SallyMain.swf but instead of pasting full xml:<br>
+        5.1 Look for lineXX scene part (control+f 'wwm_', where WW = 38/39/40/etc and m = 1/2/3/4/etc: example result: <i>&lt;item&gt;scene.sally.mc:MCCellSP401_13&lt;/item&gt;</i> this means the <b>above</b> items)<br>
+        5.2 Control+f the routeXX/whiteXX/lineXX/labelXX/enemyXX for the part corresponding with said route unlock (can be multiple route19's for example, look for correct map route19)<br>
+        5.3 Paste ONLY this part (enclosed with subTags, only routeXX part is required) into SWF xml textbox<br>
+        Example: <a href="http://kancolle.wikia.com/wiki/Fall_2017_Event/E-4">Fall 2017/E-4</a>: <a href="https://pastebin.com/ygFsJjuq">swf xml</a> (pastebin) + <a href="https://i.imgur.com/3DndZ6E.png">map bg url</a> = <a href="https://i.imgur.com/R8G3UzI.png">edges map output</a><br><br>
+        start API (ingame): <br>
+        1. Make sure you are saving/logging network requests and responses<br>
+        2. Start to sortie to a map with LBAS<br>
+        3. Open log, look for /start api call, copy FULL response into text box (including svdata=...)<br>
         <script type="text/javascript">
             var canvas = document.getElementById("urlgraphrange"), canvasswf = document.getElementById("swfgraphrange");
             var parser = new DOMParser();
@@ -164,7 +179,7 @@
                         highestEdge = Math.max(parseInt(split[j].split("line")[1].split("\"")[0], 10));
 
                 let alledges = [];
-                for(let id = 0; id < highestEdge; id++) {
+                for(let id = 0; id <= highestEdge; id++) {
                     if(alledges.includes(id)) continue;
                     let edges = [];
                     let x = getCoord(id)[0], y = getCoord(id)[1];
