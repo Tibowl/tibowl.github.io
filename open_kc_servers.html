@@ -29,38 +29,40 @@
             font-weight: bold;
         }
         </style>
-    </head>
-    <body>
         <script type="text/javascript">
-        var en_names=["Yokosuka Naval District", "Kure Naval District", "Sasebo Naval District", "Maizuru Naval District", "Ominato Guard District", "Truk Anchorage", "Lingga Anchorage", "Rabaul Naval Base", "Shortland Anchorage", "Buin Naval Base", "Tawi-Tawi Anchorage", "Palau Anchorage", "Brunei Anchorage", "Hitokappu Bay Anchorage", "Paramushir Anchorage", "Sukumo Bay Anchorage", "Kanoya Airfield", "Iwagawa Airfield", "Saiki Bay Anchorage", "Hashirajima Anchorage"];
-        var github_url = "https://github.com/Tibo442/tibo442.github.io/blame/master/get_worldinfo.json";
-        var data = {};
-        function onLoad() {
-          let tableA = document.createElement("table"), tableB = document.createElement("table");
-          var topRow = document.createElement("tr");
-          topRow.innerHTML = "<th>ID</th><th>Server name (JP)</th><th>Server name (EN)</th><th>% Full</th>";
-          tableA.append(topRow);
-          tableB.append(topRow.cloneNode(true));
-          for(var i = 0; i < data.get_worldinfo.api_data.api_world_info.length; i++) {
-              var server = data.get_worldinfo.api_data.api_world_info[i];
-              console.log(server);
-              var bg = server.api_entry ? "92d177" : "d17b77";
-              var entry = document.createElement("tr");
-              entry.innerHTML = '<td>' + server.api_id + "</td><td>" + server.api_name +"</td><td>" + en_names[i] + "</td><td>" + server.api_rate+ "</td>";
-              entry.setAttribute("style", 'background-color: #' + bg);
-              entry.setAttribute("onClick", "window.open('" + github_url + "#L" + ((server.api_id * 7) - 3) + "-L" + ((server.api_id * 7) + 3) + "');");
-              if (i % 2 == 0)
-                tableA.append(entry);
-              else
-                tableB.append(entry);
-              }
-          document.body.append(tableA);
-          document.body.append(tableB);
-          document.write('<div id="lastupdate">Last updated: ' + data.date + '<br><a href=' + github_url + '>Past \u00bb</a></div>');
-        }
-        var self = this;
-        
-        function get(url, name) {
+          var en_names=["Yokosuka Naval District", "Kure Naval District", "Sasebo Naval District", "Maizuru Naval District", "Ominato Guard District", "Truk Anchorage", "Lingga Anchorage", "Rabaul Naval Base", "Shortland Anchorage", "Buin Naval Base", "Tawi-Tawi Anchorage", "Palau Anchorage", "Brunei Anchorage", "Hitokappu Bay Anchorage", "Paramushir Anchorage", "Sukumo Bay Anchorage", "Kanoya Airfield", "Iwagawa Airfield", "Saiki Bay Anchorage", "Hashirajima Anchorage"];
+          var github_url = "https://github.com/Tibo442/tibo442.github.io/blame/master/get_worldinfo.json";
+          var data = {};
+          function onLoad() {
+            var lastUpdate = document.createElement("div");
+            lastUpdate.innerHTML = 'Last updated: ' + data.date + '<br><a href=' + github_url + '>Past \u00bb</a>';
+            lastUpdate.id = "lastupdate";
+            
+            let tableA = document.createElement("table"), tableB = document.createElement("table");
+            var topRow = document.createElement("tr");
+            topRow.innerHTML = "<th>ID</th><th>Server name (JP)</th><th>Server name (EN)</th><th>% Full</th>";
+            tableA.append(topRow);
+            tableB.append(topRow.cloneNode(true));
+            for(var i = 0; i < data.get_worldinfo.api_data.api_world_info.length; i++) {
+                var server = data.get_worldinfo.api_data.api_world_info[i];
+                console.log(server);
+                var bg = server.api_entry ? "92d177" : "d17b77";
+                var entry = document.createElement("tr");
+                entry.innerHTML = '<td>' + server.api_id + "</td><td>" + server.api_name +"</td><td>" + en_names[i] + "</td><td>" + server.api_rate+ "</td>";
+                entry.setAttribute("style", 'background-color: #' + bg);
+                entry.setAttribute("onClick", "window.open('" + github_url + "#L" + ((server.api_id * 7) - 3) + "-L" + ((server.api_id * 7) + 3) + "');");
+                if (i % 2 == 0)
+                  tableA.append(entry);
+                else
+                  tableB.append(entry);
+                }
+            document.body.append(lastUpdate);
+            document.body.append(tableA);
+            document.body.append(tableB);
+          }
+          var self = this;
+          
+          function get(url, name) {
                 var xmlhttp = new XMLHttpRequest();
                 xmlhttp.onreadystatechange = function() {
                     if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
@@ -82,5 +84,7 @@
             get("http://flatisjustice.moe/get_worldinfo.json?nocache=" + new Date(), "get_worldinfo");
 
         </script>
+    </head>
+    <body>
     </body>
 </html>
