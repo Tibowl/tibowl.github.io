@@ -80,6 +80,8 @@
         </item>
 </textarea><br>
         start API (ingame): <br><textarea id="start">svdata={"api_result":1,"api_result_msg":"\u6210\u529f","api_data":{"api_cell_data":[{"api_id":434,"api_no":0,"api_color_no":4,"api_passed":0},{"api_id":435,"api_no":1,"api_color_no":4,"api_passed":1,"api_distance":1},{"api_id":436,"api_no":2,"api_color_no":4,"api_passed":0,"api_distance":1},{"api_id":437,"api_no":3,"api_color_no":4,"api_passed":1,"api_distance":2},{"api_id":438,"api_no":4,"api_color_no":4,"api_passed":1,"api_distance":3},{"api_id":439,"api_no":5,"api_color_no":4,"api_passed":0,"api_distance":3},{"api_id":440,"api_no":6,"api_color_no":4,"api_passed":0,"api_distance":2},{"api_id":441,"api_no":7,"api_color_no":10,"api_passed":1,"api_distance":4},{"api_id":442,"api_no":8,"api_color_no":10,"api_passed":0,"api_distance":4},{"api_id":443,"api_no":9,"api_color_no":4,"api_passed":0,"api_distance":3},{"api_id":444,"api_no":10,"api_color_no":4,"api_passed":0,"api_distance":4},{"api_id":445,"api_no":11,"api_color_no":4,"api_passed":0,"api_distance":5},{"api_id":446,"api_no":12,"api_color_no":4,"api_passed":0,"api_distance":5},{"api_id":447,"api_no":13,"api_color_no":5,"api_passed":1,"api_distance":5},{"api_id":448,"api_no":14,"api_color_no":4,"api_passed":1,"api_distance":2},{"api_id":449,"api_no":15,"api_color_no":10,"api_passed":1,"api_distance":4},{"api_id":450,"api_no":16,"api_color_no":10,"api_passed":0,"api_distance":4},{"api_id":451,"api_no":17,"api_color_no":4,"api_passed":0,"api_distance":3},{"api_id":452,"api_no":18,"api_color_no":5,"api_passed":1,"api_distance":5},{"api_id":456,"api_no":19,"api_color_no":0,"api_passed":0}],"api_rashin_flg":0,"api_rashin_id":0,"api_maparea_id":6,"api_mapinfo_no":5,"api_no":1,"api_color_no":4,"api_event_id":4,"api_event_kind":1,"api_next":1,"api_bosscell_no":18,"api_bosscomp":0,"api_airsearch":{"api_plane_type":0,"api_result":0},"api_from_no":0}}</textarea><br>
+        Get from TsunDB: <input type="text" id="mapid" value = "40-4"> 
+        <button name="tsunCollect" onclick="tsunDB(document.getElementById('mapid').value)">Get from TsunDB</button><br><br>
         Map bg URL: <input type="text" id="url" value = "https://i.imgur.com/ax5Tk5a.png"><br><br>
         <button name="Update" onclick="update()">Update</button><br><br>
         <b>LBAS Range</b><br>
@@ -99,9 +101,13 @@
         5.3 Paste ONLY this part (enclosed with subTags, only routeXX part is required) into SWF xml textbox<br>
         Example: <a href="http://kancolle.wikia.com/wiki/Fall_2017_Event/E-4">Fall 2017/E-4</a>: <a href="https://pastebin.com/ygFsJjuq">swf xml</a> (pastebin) + <a href="https://i.imgur.com/3DndZ6E.png">map bg url</a> = <a href="https://i.imgur.com/R8G3UzI.png">edges map output</a><br><br>
         start API (ingame): <br>
+        Method 1: Manual gathering<br>
         1. Make sure you are saving/logging network requests and responses<br>
         2. Start to sortie to a map with LBAS<br>
         3. Open log, look for /start api call, copy FULL response into text box (including svdata=...)<br>
+        Method 2: Getting from <a href="http://kckai.cybersnets.com/">TsunDB</a><br>
+        1. Fill in map name in the format of ww-n (example: 40-4)<br>
+        2. Click on <i>Get from TsunDB</i><br>
         <script type="text/javascript">
             var canvas = document.getElementById("urlgraphrange"), canvasswf = document.getElementById("swfgraphrange");
             var parser = new DOMParser();
@@ -265,6 +271,26 @@
               }
               return binary_to_base64(binary);
             } 
+
+            function getJSON(url, callback) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', url, true);
+                xhr.responseType = 'json';
+                xhr.onload = function() {
+                    var status = xhr.status;
+                    if (status === 200) {
+                        callback(xhr.response);
+                    } else {
+                        alert("Error with request " + url + ": " + status);
+                    }
+                };
+                xhr.send();
+            };
+            function tsunDB(map) {
+                getJSON(`http://kckai.cybersnets.com/api/routes/data/${map}?offset=0&limit=1&next_route=0`, function(data){
+                    document.getElementById("start").value = "svdata = " + JSON.stringify({api_data: { api_cell_data: data[0].mapNodes } });
+                });
+            }
             update();
         </script>
     </body>
