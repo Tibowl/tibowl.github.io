@@ -95,7 +95,7 @@
         4. Paste in full file (will load bg from file in edges map, keeps url in range map) OR only lineXX part (to keep url in both)<br>
         5.0 For events with hidden nodes: repeat process with <i>/kcs/scenes/SallyMain.swf</i> but instead of pasting full xml:<br>
         5.1 Look for lineXX scene part (control+f 'wwm_', where WW = 38/39/40/etc and m = 1/2/3/4/etc: example result: <i>&lt;item&gt;scene.sally.mc:MCCellSP401_13&lt;/item&gt;</i> this means the <b>above</b> items are from this map)<br>
-        5.2 Control+f the routeXX/whiteXX/lineXX/labelXX/enemyXX for the part corresponding with said route unlock (there can be multiple route19's for example, look for correct map route19)<br>
+        5.2 Control+f the routeXX/whiteXX/lineXX/labelXX/enemyXX for the part corresponding with said route unlock (there can be multiple route19's for example, look for correct map route19, compare with min/max of routes in both sections of file)<br>
         5.3 Paste ONLY this part (enclosed with subTags, only routeXX part is required) into SWF xml textbox<br>
         Example: <a href="http://kancolle.wikia.com/wiki/Fall_2017_Event/E-4">Fall 2017/E-4</a>: <a href="https://pastebin.com/ygFsJjuq">swf xml</a> (pastebin) + <a href="https://i.imgur.com/3DndZ6E.png">map bg url</a> = <a href="https://i.imgur.com/R8G3UzI.png">edges map output</a><br><br>
         start API (ingame): <br>
@@ -107,6 +107,7 @@
             var parser = new DOMParser();
             var swfData, split;
             function update() {
+                eval((document.getElementById("start").value || "") == "" ? "svdata={}" : document.getElementById("start").value);
                 swfData = document.getElementById("swf").value;
                 split = swfData.split("\n");
 
@@ -116,7 +117,6 @@
                     canvas.height = img.height;
                     canvas.width = img.width;
                     context.drawImage(img, 0, 0);
-                    eval((document.getElementById("start").value || "") == "" ? "svdata={}" : document.getElementById("start").value);
                     context.fillStyle = "rgba(128, 255, 0, 1)";
                     context.font = "30px Georgia";
                     context.textAlign = "center";
