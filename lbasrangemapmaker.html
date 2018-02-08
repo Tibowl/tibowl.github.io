@@ -82,11 +82,12 @@
         start API (ingame): <br><textarea id="start">svdata={"api_result":1,"api_result_msg":"\u6210\u529f","api_data":{"api_cell_data":[{"api_id":434,"api_no":0,"api_color_no":4,"api_passed":0},{"api_id":435,"api_no":1,"api_color_no":4,"api_passed":1,"api_distance":1},{"api_id":436,"api_no":2,"api_color_no":4,"api_passed":0,"api_distance":1},{"api_id":437,"api_no":3,"api_color_no":4,"api_passed":1,"api_distance":2},{"api_id":438,"api_no":4,"api_color_no":4,"api_passed":1,"api_distance":3},{"api_id":439,"api_no":5,"api_color_no":4,"api_passed":0,"api_distance":3},{"api_id":440,"api_no":6,"api_color_no":4,"api_passed":0,"api_distance":2},{"api_id":441,"api_no":7,"api_color_no":10,"api_passed":1,"api_distance":4},{"api_id":442,"api_no":8,"api_color_no":10,"api_passed":0,"api_distance":4},{"api_id":443,"api_no":9,"api_color_no":4,"api_passed":0,"api_distance":3},{"api_id":444,"api_no":10,"api_color_no":4,"api_passed":0,"api_distance":4},{"api_id":445,"api_no":11,"api_color_no":4,"api_passed":0,"api_distance":5},{"api_id":446,"api_no":12,"api_color_no":4,"api_passed":0,"api_distance":5},{"api_id":447,"api_no":13,"api_color_no":5,"api_passed":1,"api_distance":5},{"api_id":448,"api_no":14,"api_color_no":4,"api_passed":1,"api_distance":2},{"api_id":449,"api_no":15,"api_color_no":10,"api_passed":1,"api_distance":4},{"api_id":450,"api_no":16,"api_color_no":10,"api_passed":0,"api_distance":4},{"api_id":451,"api_no":17,"api_color_no":4,"api_passed":0,"api_distance":3},{"api_id":452,"api_no":18,"api_color_no":5,"api_passed":1,"api_distance":5},{"api_id":456,"api_no":19,"api_color_no":0,"api_passed":0}],"api_rashin_flg":0,"api_rashin_id":0,"api_maparea_id":6,"api_mapinfo_no":5,"api_no":1,"api_color_no":4,"api_event_id":4,"api_event_kind":1,"api_next":1,"api_bosscell_no":18,"api_bosscomp":0,"api_airsearch":{"api_plane_type":0,"api_result":0},"api_from_no":0}}</textarea><br>
         Get from TsunDB: <input type="text" id="mapid" value = "40-4"> 
         <button name="tsunCollect" onclick="tsunDB(document.getElementById('mapid').value)">Get from TsunDB</button><br><br>
-        Map bg URL: <input type="text" id="url" value = "https://i.imgur.com/ax5Tk5a.png"><br><br>
+        Map bg URL: <input type="text" id="url" value = "https://i.imgur.com/ax5Tk5a.png"><br>
+        Show event id/kind on nodes <input type="checkbox" id="showevents"><br><br>
         <button name="Update" onclick="update()">Update</button><br><br>
         <b>LBAS Range</b><br>
         <canvas id="urlgraphrange" width="786" height="435" style="border:1px solid black;"></canvas><br>
-        <b>Edges map (e = edges to this node, r = LBAS range)</b><br>
+        <b>Edges map (e = edges to this node, r = LBAS range (i = event id, k = event kind))</b><br>
         <canvas id="swfgraphrange" width="786" height="435" style="border:1px solid black;"></canvas><br>
         <br><br>
         <b>How to extract information for this:</b><br>
@@ -111,9 +112,10 @@
         <script type="text/javascript">
             var canvas = document.getElementById("urlgraphrange"), canvasswf = document.getElementById("swfgraphrange");
             var parser = new DOMParser();
-            var swfData, split;
+            var swfData, split, show_events;
             function update() {
                 eval((document.getElementById("start").value || "") == "" ? "svdata={}" : document.getElementById("start").value);
+                show_events = !!document.getElementById("showevents").checked;
                 swfData = document.getElementById("swf").value;
                 split = swfData.split("\n");
 
@@ -191,22 +193,67 @@
                     let x = getCoord(id)[0], y = getCoord(id)[1];
                     for(let j = 0; j <= highestEdge; j++) {
                         let xj = getCoord(j)[0], yj = getCoord(j)[1];
-                        if((x-xj)*(x-xj)+(y-yj)*(y-yj) < 500) {
+                        if((x-xj)*(x-xj)+(y-yj)*(y-yj) < 1000) {
                             edges.push(j);
                             alledges.push(j);
                         }
                     }
                     let node = ((((svdata||{}).api_data||{}).api_cell_data||[])[id]||{});
-                    let dist = node.api_distance || "/";
-                    let color = node.api_color_no || "/";
+                    let dist = node.api_distance == 0 ? 0 : node.api_distance || "/";
+                    let color = node.api_color_no == 0 ? 0 : node.api_color_no || "/";
+                    let eventid = node.api_event_id == 0 ? 0 : node.api_event_id || "/";
+                    let eventkind = node.api_event_kind == 0 ? 0 : node.api_event_kind || "/";
 
-                    context.fillStyle = "rgba(128, 255, 0, .7)";
+                    context.fillStyle = "rgba(124, 124, 124, .7)";
                     if(color == 4)
                         context.fillStyle = "rgba(255, 0, 0, .7)";
+                    else if(color == 5)
+                        context.fillStyle = "rgba(200, 0, 0, .7)";
                     else if(color == 10)
                         context.fillStyle = "rgba(128, 64, 64, .7)";
                     else if(color == 11)
-                        context.fillStyle = "rgba(128, 64, 100, .7)";
+                        context.fillStyle = "rgba(176, 118, 240, .7)";
+
+                    if(eventid == 0) // Map Start Point
+                        context.fillStyle = "rgba(197, 186, 126, .7)";
+                    else if(eventid == 6 && eventkind == 2) // Route Selection Node
+                        context.fillStyle = "rgba(255, 255, 255, .7)"; 
+                    else if(eventid == 6) // Battle avoided
+                        context.fillStyle = "rgba(50, 250, 225, .7)";
+                    else if(eventid == 2) // rsc
+                        context.fillStyle = "rgba(128, 255, 0, .7)";
+                    else if(eventid == 3) // maelstorm
+                        context.fillStyle = "rgba(128, 150, 170, .7)";
+                    else if(eventid == 7) // aerial recon (6-3 rsc)
+                        context.fillStyle = "rgba(143, 151, 19, .7)";
+                    else if(eventid == 8) // bounty (1-6)
+                        context.fillStyle = "rgba(150, 150, 150, .7)";
+                    else if(eventid == 9) // tp (events)
+                        context.fillStyle = "rgba(250, 250, 0, .7)";
+                    else if (eventid == 4 || eventid == 5 || eventid == 7 || eventid == 10) {
+                        if(eventkind == 2) // start at night
+                            context.fillStyle = "rgba(176, 118, 240, .7)";
+                        else if(eventkind == 3 || eventkind == 7) { // night -> day
+                            var my_gradient = context.createLinearGradient(x - 5, y - 5, x + 5, y + 5);
+                            my_gradient.addColorStop(0, "rgba(176, 118, 240, .7)");
+                            my_gradient.addColorStop(1, "white");
+                            context.fillStyle = my_gradient;
+                        }
+                        else if(eventkind == 5) { // double
+                            var my_gradient = context.createLinearGradient(x - 5, y - 5, x + 5, y + 5);
+                            my_gradient.addColorStop(0, "rgba(255, 0, 0, .7)");
+                            my_gradient.addColorStop(.5, "rgba(255, 0, 0, .0)");
+                            my_gradient.addColorStop(1, "rgba(255, 0, 0, .7)");
+                            context.fillStyle = my_gradient;
+                        }
+                        else if(eventid == 4) // normal
+                            context.fillStyle = "rgba(255, 0, 0, .7)";
+                        else if(eventid == 5) // boss
+                            context.fillStyle = "rgba(200, 0, 0, .7)";
+                        else if(eventid == 7 || eventid == 10) // air def
+                            context.fillStyle = "rgba(128, 64, 64, .7)";
+                    }
+
                     context.beginPath();
                     context.arc(x, y, 5, 0, 2 * Math.PI, false);
                     context.fill();
@@ -215,9 +262,13 @@
                     context.miterLimit = 2;
                     context.lineJoin = 'circle';
                     context.lineWidth = 7;
-                    context.strokeText("e " + edges + "; c " + color + "; r " + dist, x, y - 15);
+                    context.strokeText("e " + edges + "; r " + dist, x, y - 10);
+                    if((eventid !== "/" || eventkind !== "/") && show_events)
+                        context.strokeText("id " + eventid + "; k " + eventkind, x, y + 15);
                     context.lineWidth = 1;
-                    context.fillText("e " + edges + "; c " + color + "; r " + dist, x, y - 15);
+                    context.fillText("e " + edges + "; r " + dist, x, y - 10);
+                    if((eventid !== "/" || eventkind !== "/") && show_events)
+                        context.fillText("i " + eventid + "; k " + eventkind, x, y + 15);
                 }
             }
 
