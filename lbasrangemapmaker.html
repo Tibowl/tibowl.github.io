@@ -113,6 +113,8 @@
             var canvas = document.getElementById("urlgraphrange"), canvasswf = document.getElementById("swfgraphrange");
             var parser = new DOMParser();
             var swfData, split, show_events;
+            var radius = 8, transparancy = .8;
+
             function update() {
                 eval((document.getElementById("start").value || "") == "" ? "svdata={}" : document.getElementById("start").value);
                 show_events = !!document.getElementById("showevents").checked;
@@ -204,58 +206,58 @@
                     let eventid = node.api_event_id == 0 ? 0 : node.api_event_id || "/";
                     let eventkind = node.api_event_kind == 0 ? 0 : node.api_event_kind || "/";
 
-                    context.fillStyle = "rgba(124, 124, 124, .7)";
+                    context.fillStyle = `rgba(124, 124, 124, ${transparancy})`;
                     if(color == 4)
-                        context.fillStyle = "rgba(255, 0, 0, .7)";
+                        context.fillStyle = `rgba(255, 0, 0, ${transparancy})`;
                     else if(color == 5)
-                        context.fillStyle = "rgba(200, 0, 0, .7)";
+                        context.fillStyle = `rgba(200, 0, 0, ${transparancy})`;
                     else if(color == 10)
-                        context.fillStyle = "rgba(128, 64, 64, .7)";
+                        context.fillStyle = `rgba(128, 64, 64, ${transparancy})`;
                     else if(color == 11)
-                        context.fillStyle = "rgba(176, 118, 240, .7)";
+                        context.fillStyle = `rgba(176, 118, 240, ${transparancy})`;
 
                     if(eventid == 0) // Map Start Point
-                        context.fillStyle = "rgba(197, 186, 126, .7)";
+                        context.fillStyle = `rgba(197, 186, 126, ${transparancy})`;
                     else if(eventid == 6 && eventkind == 2) // Route Selection Node
-                        context.fillStyle = "rgba(255, 255, 255, .7)"; 
+                        context.fillStyle = `rgba(255, 255, 255, ${transparancy})`; 
                     else if(eventid == 6) // Battle avoided
-                        context.fillStyle = "rgba(50, 250, 225, .7)";
+                        context.fillStyle = `rgba(50, 250, 225, ${transparancy})`;
                     else if(eventid == 2) // rsc
-                        context.fillStyle = "rgba(128, 255, 0, .7)";
+                        context.fillStyle = `rgba(128, 255, 0, ${transparancy})`;
                     else if(eventid == 3) // maelstorm
-                        context.fillStyle = "rgba(128, 150, 170, .7)";
+                        context.fillStyle = `rgba(128, 150, 170, ${transparancy})`;
                     else if(eventid == 7) // aerial recon (6-3 rsc)
-                        context.fillStyle = "rgba(143, 151, 19, .7)";
+                        context.fillStyle = `rgba(143, 151, 19, ${transparancy})`;
                     else if(eventid == 8) // bounty (1-6)
-                        context.fillStyle = "rgba(150, 150, 150, .7)";
+                        context.fillStyle = `rgba(150, 150, 150, ${transparancy})`;
                     else if(eventid == 9) // tp (events)
-                        context.fillStyle = "rgba(250, 250, 0, .7)";
+                        context.fillStyle = `rgba(250, 250, 0, ${transparancy})`;
                     else if (eventid == 4 || eventid == 5 || eventid == 7 || eventid == 10) {
                         if(eventkind == 2) // start at night
-                            context.fillStyle = "rgba(176, 118, 240, .7)";
+                            context.fillStyle = `rgba(176, 118, 240, ${transparancy})`;
                         else if(eventkind == 3 || eventkind == 7) { // night -> day
-                            var my_gradient = context.createLinearGradient(x - 5, y - 5, x + 5, y + 5);
-                            my_gradient.addColorStop(0, "rgba(176, 118, 240, .7)");
-                            my_gradient.addColorStop(1, "white");
+                            var my_gradient = context.createLinearGradient(x - radius, y - radius, x + radius, y + radius);
+                            my_gradient.addColorStop(0, `rgba(176, 118, 240, ${transparancy})`);
+                            my_gradient.addColorStop(1, "rgba(255, 255, 255, ${transparancy})");
                             context.fillStyle = my_gradient;
                         }
                         else if(eventkind == 5) { // double
-                            var my_gradient = context.createLinearGradient(x - 5, y - 5, x + 5, y + 5);
-                            my_gradient.addColorStop(0, "rgba(255, 0, 0, .7)");
+                            var my_gradient = context.createLinearGradient(x - radius, y - radius, x + radius, y + radius);
+                            my_gradient.addColorStop(0, `rgba(255, 0, 0, ${transparancy})`);
                             my_gradient.addColorStop(.5, "rgba(255, 0, 0, .0)");
-                            my_gradient.addColorStop(1, "rgba(255, 0, 0, .7)");
+                            my_gradient.addColorStop(1, `rgba(255, 0, 0, ${transparancy})`);
                             context.fillStyle = my_gradient;
                         }
                         else if(eventid == 4) // normal
-                            context.fillStyle = "rgba(255, 0, 0, .7)";
+                            context.fillStyle = `rgba(255, 0, 0, ${transparancy})`;
                         else if(eventid == 5) // boss
-                            context.fillStyle = "rgba(200, 0, 0, .7)";
+                            context.fillStyle = `rgba(200, 0, 0, ${transparancy})`;
                         else if(eventid == 7 || eventid == 10) // air def
-                            context.fillStyle = "rgba(128, 64, 64, .7)";
+                            context.fillStyle = `rgba(128, 64, 64, ${transparancy})`;
                     }
 
                     context.beginPath();
-                    context.arc(x, y, 5, 0, 2 * Math.PI, false);
+                    context.arc(x, y, radius, 0, 2 * Math.PI, false);
                     context.fill();
                     context.fillStyle = "rgba(128, 255, 0, 1)";
                     context.strokeStyle = 'rgba(32, 64, 0, .4)';
