@@ -189,16 +189,24 @@
                     if(alledges.includes(id)) continue;
                     let edges = [];
                     let x = getCoord(id)[0], y = getCoord(id)[1];
-                    for(let j = 0; j < highestEdge; j++) {
+                    for(let j = 0; j <= highestEdge; j++) {
                         let xj = getCoord(j)[0], yj = getCoord(j)[1];
                         if((x-xj)*(x-xj)+(y-yj)*(y-yj) < 500) {
                             edges.push(j);
                             alledges.push(j);
                         }
                     }
-                    let dist = (((((svdata||{}).api_data||{}).api_cell_data||[])[id]||{}).api_distance || "/");
+                    let node = ((((svdata||{}).api_data||{}).api_cell_data||[])[id]||{});
+                    let dist = node.api_distance || "/";
+                    let color = node.api_color_no || "/";
 
                     context.fillStyle = "rgba(128, 255, 0, .7)";
+                    if(color == 4)
+                        context.fillStyle = "rgba(255, 0, 0, .7)";
+                    else if(color == 10)
+                        context.fillStyle = "rgba(128, 64, 64, .7)";
+                    else if(color == 11)
+                        context.fillStyle = "rgba(128, 64, 100, .7)";
                     context.beginPath();
                     context.arc(x, y, 5, 0, 2 * Math.PI, false);
                     context.fill();
@@ -207,9 +215,9 @@
                     context.miterLimit = 2;
                     context.lineJoin = 'circle';
                     context.lineWidth = 7;
-                    context.strokeText("e " + edges + "; r " + dist, x, y - 15);
+                    context.strokeText("e " + edges + "; c " + color + "; r " + dist, x, y - 15);
                     context.lineWidth = 1;
-                    context.fillText("e " + edges + "; r " + dist, x, y - 15);
+                    context.fillText("e " + edges + "; c " + color + "; r " + dist, x, y - 15);
                 }
             }
 
