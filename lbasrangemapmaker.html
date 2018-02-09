@@ -89,6 +89,8 @@
         <canvas id="urlgraphrange" width="786" height="435" style="border:1px solid black;"></canvas><br>
         <b>Edges map (e = edges to this node, r = LBAS range (i = event id, k = event kind))</b><br>
         <canvas id="swfgraphrange" width="786" height="435" style="border:1px solid black;"></canvas><br>
+        <button name="Colorsu" onclick="colorCodes()">Load color code explenation map</button><br><br>
+
         <br><br>
         <b>How to extract information for this:</b><br>
         SWF XML: <br>
@@ -113,7 +115,7 @@
             var canvas = document.getElementById("urlgraphrange"), canvasswf = document.getElementById("swfgraphrange");
             var parser = new DOMParser();
             var swfData, split, show_events;
-            var radius = 8, transparancy = .8;
+            var radius = 7, transparancy = .7;
 
             function update() {
                 eval((document.getElementById("start").value || "") == "" ? "svdata={}" : document.getElementById("start").value);
@@ -225,11 +227,11 @@
                     else if(eventid == 2) // rsc
                         context.fillStyle = `rgba(128, 255, 0, ${transparancy})`;
                     else if(eventid == 3) // maelstorm
-                        context.fillStyle = `rgba(128, 150, 170, ${transparancy})`;
+                        context.fillStyle = `rgba(128, 5, 128, ${transparancy})`;
                     else if(eventid == 7) // aerial recon (6-3 rsc)
                         context.fillStyle = `rgba(143, 151, 19, ${transparancy})`;
                     else if(eventid == 8) // bounty (1-6)
-                        context.fillStyle = `rgba(150, 150, 150, ${transparancy})`;
+                        context.fillStyle = `rgba(20, 0, 250, ${transparancy})`;
                     else if(eventid == 9) // tp (events)
                         context.fillStyle = `rgba(250, 250, 0, ${transparancy})`;
                     else if (eventid == 4 || eventid == 5 || eventid == 7 || eventid == 10) {
@@ -237,23 +239,29 @@
                             context.fillStyle = `rgba(176, 118, 240, ${transparancy})`;
                         else if(eventkind == 3 || eventkind == 7) { // night -> day
                             var my_gradient = context.createLinearGradient(x - radius, y - radius, x + radius, y + radius);
-                            my_gradient.addColorStop(0, `rgba(176, 118, 240, ${transparancy})`);
-                            my_gradient.addColorStop(1, "rgba(255, 255, 255, ${transparancy})");
+                            my_gradient.addColorStop(.3, `rgba(176, 118, 240, ${transparancy})`);
+                            my_gradient.addColorStop(1, `rgba(255, 0, 0, ${transparancy})`);
+                            context.fillStyle = my_gradient;
+                        }
+                        else if(eventkind == 4) { // aerial defense (1-6)
+                            var my_gradient = context.createLinearGradient(x - radius, y - radius, x + radius, y + radius);
+                            my_gradient.addColorStop(.3, `rgba(20, 0, 250, ${transparancy})`);
+                            my_gradient.addColorStop(.6, `rgba(230, 66, 77, ${transparancy})`);
                             context.fillStyle = my_gradient;
                         }
                         else if(eventkind == 5) { // double
                             var my_gradient = context.createLinearGradient(x - radius, y - radius, x + radius, y + radius);
-                            my_gradient.addColorStop(0, `rgba(255, 0, 0, ${transparancy})`);
-                            my_gradient.addColorStop(.5, "rgba(255, 0, 0, .0)");
-                            my_gradient.addColorStop(1, `rgba(255, 0, 0, ${transparancy})`);
+                            my_gradient.addColorStop(.1, `rgba(255, 0, 0, ${transparancy})`);
+                            my_gradient.addColorStop(.5, `rgba(255, 0, 0, .0)`);
+                            my_gradient.addColorStop(.9, `rgba(255, 0, 0, ${transparancy})`);
                             context.fillStyle = my_gradient;
                         }
+                        else if(eventid == 7 || eventid == 10 || eventkind == 6) // air def
+                            context.fillStyle = `rgba(128, 64, 64, ${transparancy})`;
                         else if(eventid == 4) // normal
                             context.fillStyle = `rgba(255, 0, 0, ${transparancy})`;
                         else if(eventid == 5) // boss
                             context.fillStyle = `rgba(200, 0, 0, ${transparancy})`;
-                        else if(eventid == 7 || eventid == 10) // air def
-                            context.fillStyle = `rgba(128, 64, 64, ${transparancy})`;
                     }
 
                     context.beginPath();
@@ -349,8 +357,45 @@
             };
             function tsunDB(map) {
                 getJSON(`http://kckai.cybersnets.com/api/routes/data/${map}?offset=0&limit=1&next_route=0`, function(data){
-                    document.getElementById("start").value = "svdata = " + JSON.stringify({api_data: { api_cell_data: data[0].mapNodes } });
+                    document.getElementById("start").value = "svdata=" + JSON.stringify({api_data: { api_cell_data: data[0].mapNodes } });
                 });
+            }
+
+            function colorCodes() {
+                document.getElementById("start").value = 'svdata={"api_result":1,"api_result_msg":"成功","api_data":{"api_cell_data":[{"api_no":0,"api_event_id":0,"api_event_kind":0},{"api_no":1,"api_event_id":6,"api_event_kind":2,"api_distance":1},{"api_no":2,"api_event_id":6,"api_event_kind":0,"api_distance":1},{"api_no":3,"api_event_id":2,"api_event_kind":0,"api_distance":2},{"api_no":4,"api_event_id":3,"api_event_kind":0,"api_distance":3},{"api_no":5,"api_event_id":7,"api_event_kind":0,"api_distance":3},{"api_no":6,"api_event_id":8,"api_event_kind":0,"api_distance":2},{"api_no":7,"api_event_id":9,"api_event_kind":0,"api_distance":4},{"api_no":8,"api_event_id":4,"api_event_kind":2,"api_distance":4},{"api_no":9,"api_event_id":4,"api_event_kind":7,"api_distance":3},{"api_no":10,"api_event_id":4,"api_event_kind":4,"api_distance":4},{"api_no":11,"api_event_id":4,"api_event_kind":5,"api_distance":5},{"api_no":12,"api_event_id":4,"api_event_kind":6,"api_distance":5},{"api_no":13,"api_event_id":4,"api_event_kind":1,"api_distance":5},{"api_no":14,"api_event_id":5,"api_event_kind":1,"api_distance":2}]}}';
+                document.getElementById("swf").value = `
+                <name="line0">
+                <matrix translateX="4060" translateY="960"/>
+                <name="line1">
+                <matrix translateX="11880" translateY="940"/>
+                <name="line2">
+                <matrix translateX="4040" translateY="2980"/>
+                <name="line3">
+                <matrix translateX="11760" translateY="3120"/>
+                <name="line4">
+                <matrix translateX="3880" translateY="4960"/>
+                <name="line5">
+                <matrix translateX="11660" translateY="5200"/>
+                <name="line6">
+                <matrix translateX="3920" translateY="7080"/>
+                <name="line7">
+                <matrix translateX="11640" translateY="7420"/>
+                <name="line8">
+                <matrix translateX="11780" translateY="10500"/>
+                <name="line9">
+                <matrix translateX="3980" translateY="10580"/>
+                <name="line10">
+                <matrix translateX="11800" translateY="14320"/>
+                <name="line11">
+                <matrix translateX="3940" translateY="12820"/>
+                <name="line12">
+                <matrix translateX="3780" translateY="14020"/>
+                <name="line13">
+                <matrix translateX="3960" translateY="12080"/>
+                <name="line14">
+                <matrix translateX="11800" translateY="12540"/>`
+                document.getElementById("url").value = "https://i.imgur.com/dKIrqI1.png";
+                update();
             }
             update();
         </script>
