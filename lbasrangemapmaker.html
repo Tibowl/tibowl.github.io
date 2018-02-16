@@ -194,9 +194,11 @@
                 for(let id = 0; id <= highestEdge; id++) {
                     if(alledges.includes(id)) continue;
                     let edges = [];
-                    let x = getCoord(id)[0], y = getCoord(id)[1];
+                    let coid = getCoord(id) || [0,0];
+                    let x = coid[0], y = coid[1];
                     for(let j = 0; j <= highestEdge; j++) {
-                        let xj = getCoord(j)[0], yj = getCoord(j)[1];
+                        let coj = getCoord(j) || [0,0];
+                        let xj = coj[0], yj = coj[1];
                         if((x-xj)*(x-xj)+(y-yj)*(y-yj) < 1000) {
                             edges.push(j);
                             alledges.push(j);
