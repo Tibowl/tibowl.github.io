@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Flat is Justice! - map hp gatherer</title>
+        <meta name="theme-color" content="#082E6B"/>
+        <meta name=viewport content="width=device-width, initial-scale=1">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:title" content="Flat is Justice - map hp gatherer">
+        <meta name="twitter:description" content="Get map hps">
+        <style type="text/css">
+            input[type="number"] {
+                width:75px;
+            }
+            canvas {
+                margin: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        Get from TsunDB: <input type="text" id="mapid" value = "41-1"> 
+        <button name="tsunCollect" onclick="tsunDB(document.getElementById('mapid').value)">Update</button><br><br>
+        <b>Diffs:</b>
+        <div id="hps"></div>
+
+        <script type="text/javascript">
+            var requested = {};
+            function getJSON(map, callback) {
+                requested[map] = [];
+                load(map, 0, 5000, callback);
+            };
+            function load(map, offset, max, callback) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', `http://kckai.cybersnets.com/api/routes/data/${map}?offset=${offset}&limit=50&next_route=0`, true);
+                xhr.responseType = 'json';
+                xhr.onload = function() {
+                    var status = xhr.status;
+                    if (status === 200) {
+                        requested[map].push(xhr.response);
+                        if(offset == max || xhr.response.length < 50)
+                            callback(requested[map]);
+                        else
+                            load(map, offset + 50, max, callback);
+                    } else {
+                        callback(requested[map]);
+                        alert("Error with request " + map + ", " + i + ": " + status);
+                    }
+                };
+                xhr.send();
+            }
+            function print(map, hps) {
+                let diffs = ["Casual", "Easy", "Medium", "Hard"];
+                    document.getElementById('hps').innerHTML += '<br><b>Map: ' + map + '</b><br>';
+                for(ind in diffs) {
+                    let difName = diffs[ind];
+                    let hp = hps[ind];
+
+                    document.getElementById('hps').innerHTML += '<b>'+difName+'</b><br>';
+                    for(healthpoint in hp) {
+                        document.getElementById('hps').innerHTML += `${hp[healthpoint].minHQ} ~ ${hp[healthpoint].maxHQ}: ${healthpoint}<br>`;
+                    }
+                }
+            }
+            function tsunDB(map) {
+                getJSON(map, function(req){
+                    let hps = [{}, {}, {}, {}];
+                    for(data of req) {
+                        for(run of data.filter((r) => /*r.hqLvl == 120 &&*/ r.difficulty > 0)) {
+                            console.log(run);
+                            let diff = hps[run.difficulty - 1];
+                            if(!((diff[run.maxMapHP]||{}).minHQ||0))
+                                diff[run.maxMapHP] = {"minHQ":120,"maxHQ":1};
+                            console.log(diff);
+                            diff[run.maxMapHP].minHQ = Math.min(run.hqLvl, diff[run.maxMapHP].minHQ);
+                            diff[run.maxMapHP].maxHQ = Math.max(run.hqLvl, diff[run.maxMapHP].maxHQ);
+                            }
+                        }
+                    console.log(hps);
+                    print(map, hps);
+                });
+            }
+
+        </script>
+    </body>
+</html>
