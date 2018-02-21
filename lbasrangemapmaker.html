@@ -188,8 +188,8 @@
 
                 for(let j = 0; j < split.length; j++)
                     if(split[j].includes("name=\"line"))
-                        highestEdge = Math.max(parseInt(split[j].split("line")[1].split("\"")[0], 10));
-
+                        highestEdge = Math.max(parseInt(split[j].split("line")[1].split("\"")[0], 10), highestEdge);
+                console.log(highestEdge);
                 let alledges = [];
                 for(let id = 0; id <= highestEdge; id++) {
                     if(alledges.includes(id)) continue;

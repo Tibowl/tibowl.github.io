@@ -63,18 +63,30 @@
             function tsunDB(map) {
                 getJSON(map, function(req){
                     let hps = [{}, {}, {}, {}];
+                    let maxFailed = [0, 0, 0, 0];
+                    let minSucc = [9999, 9999, 9999, 9999];
                     for(data of req) {
                         for(run of data.filter((r) => /*r.hqLvl == 120 &&*/ r.difficulty > 0)) {
+                            //if(run.fleet1[0].equip[0] == -1) continue;
                             console.log(run);
                             let diff = hps[run.difficulty - 1];
-                            if(!((diff[run.maxMapHP]||{}).minHQ||0))
-                                diff[run.maxMapHP] = {"minHQ":120,"maxHQ":1};
-                            console.log(diff);
-                            diff[run.maxMapHP].minHQ = Math.min(run.hqLvl, diff[run.maxMapHP].minHQ);
-                            diff[run.maxMapHP].maxHQ = Math.max(run.hqLvl, diff[run.maxMapHP].maxHQ);
-                            }
+                            let maphpbaridhp = "gT: " +  run.gaugeType + " HP: "+run.maxMapHP;
+                            if(!((diff[maphpbaridhp]||{}).minHQ||0))
+                                diff[maphpbaridhp] = {"minHQ":120,"maxHQ":1};
+                            diff[maphpbaridhp].minHQ = Math.min(run.hqLvl, diff[maphpbaridhp].minHQ);
+                            diff[maphpbaridhp].maxHQ = Math.max(run.hqLvl, diff[maphpbaridhp].maxHQ);
+                            /*if(run.difficulty == 4)
+                            if(run.edgeID[run.edgeID.length - 1] == 12) {
+                                for(let index = 0; index < run.los.length; index++)
+                                    maxFailed[index] = Math.max(run.los[index], maxFailed[index]);
+                            } else if(run.edgeID[run.edgeID.length - 1] == 18) {
+                                for(let index = 0; index < run.los.length; index++)
+                                    minSucc[index] = Math.min(run.los[index], minSucc[index]);
+                            }*/
+
                         }
-                    console.log(hps);
+                    }
+                    console.log(hps, minSucc, maxFailed);
                     print(map, hps);
                 });
             }
