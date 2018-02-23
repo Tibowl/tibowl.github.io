@@ -32834,7 +32834,7 @@
             "api_fuel_max": 90,
             "api_getmes": "<br>",
             "api_houg": [
-                38,
+                0,
                 58
             ],
             "api_id": 397,
@@ -41687,7 +41687,7 @@
             "api_fuel_max": 75,
             "api_getmes": "Hi\uff01 Essex class\u822a\u7a7a\u6bcd\u8266\u3001\uff15\u756a\u8266\u3002Intrepid\u3088\uff01<br>\u8cb4\u65b9\u304cAdmiral\u306a\u306e\u306d\uff1f\u3000\u7d20\u6575\u306d\u3002\u3055\u30a1\u3001\u4e00\u7dd2\u306b\u3044\u304d\u307e\u3057\u3087\u3046\uff1f<br>\u3044\u3044\u304b\u30ca\uff1f",
             "api_houg": [
-                36,
+                0,
                 55
             ],
             "api_id": 549,
@@ -71682,7 +71682,7 @@
             "api_version": [
                 "1",
                 "1",
-                "216"
+                "217"
             ],
             "api_weda": [
                 84,
@@ -72240,7 +72240,7 @@
             ],
             "api_sortno": 1477,
             "api_version": [
-                "1",
+                "2",
                 "1",
                 "216"
             ],
@@ -77702,7 +77702,7 @@
             "api_version": [
                 "1",
                 "1",
-                "216"
+                "217"
             ],
             "api_weda": [
                 84,
