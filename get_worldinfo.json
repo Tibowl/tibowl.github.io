@@ -87,10 +87,10 @@
             },
             {
                 "api_enabled": 1,
-                "api_entry": 1,
+                "api_entry": 0,
                 "api_id": 13,
                 "api_name": "\u30d6\u30eb\u30cd\u30a4\u6cca\u5730",
-                "api_rate": 99
+                "api_rate": 100
             },
             {
                 "api_enabled": 1,
