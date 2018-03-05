@@ -55,8 +55,12 @@
                     let hp = hps[ind];
 
                     document.getElementById('hps').innerHTML += '<b>'+difName+'</b><br>';
-                    for(healthpoint in hp) {
-                        document.getElementById('hps').innerHTML += `${hp[healthpoint].minHQ} ~ ${hp[healthpoint].maxHQ}: ${healthpoint}<br>`;
+                    let lines = {};
+                    for(healthpoint of Object.keys(hp).sort()) {
+                        lines[`${hp[healthpoint].minHQ} ~ ${hp[healthpoint].maxHQ}: ${healthpoint}<br>`]=true;
+                    }
+                    for(line of Object.keys(lines).sort()) {
+                        document.getElementById('hps').innerHTML += line;
                     }
                 }
             }
