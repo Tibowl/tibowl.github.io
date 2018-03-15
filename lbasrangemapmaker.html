@@ -8,6 +8,9 @@
         <meta name="twitter:title" content="Flat is Justice - lbas range map maker">
         <meta name="twitter:description" content="Make LBAS range maps">
         <meta name="twitter:image" content="http://flatisjustice.moe/pics/lbasrangemapmaker.png">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.1/pixi.min.js"></script>
+        <script src="https://unpkg.com/blob-util/dist/blob-util.min.js"></script>
+
         <style type="text/css">
             input[type="number"] {
                 width:75px;
@@ -18,332 +21,688 @@
         </style>
     </head>
     <body>
-        SWF XML: (example only has lineX part, feel free to put full file) <br><textarea id="swf">        <item characterId="3" clipDepth="0" depth="2" name="line0" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagMove="false" ratio="0" type="PlaceObject2Tag">
-          <matrix hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="13" rotateSkew0="0" rotateSkew1="0" scaleX="0" scaleY="0" translateX="2400" translateY="1840" type="MATRIX"/>
-        </item>
-        <item characterId="6" clipDepth="0" depth="4" name="line1" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagMove="false" ratio="0" type="PlaceObject2Tag">
-          <matrix hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="14" rotateSkew0="0" rotateSkew1="0" scaleX="0" scaleY="0" translateX="4420" translateY="2880" type="MATRIX"/>
-        </item>
-        <item characterId="9" clipDepth="0" depth="6" name="line2" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagMove="false" ratio="0" type="PlaceObject2Tag">
-          <matrix hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="14" rotateSkew0="0" rotateSkew1="0" scaleX="0" scaleY="0" translateX="5680" translateY="5660" type="MATRIX"/>
-        </item>
-        <item characterId="12" clipDepth="0" depth="8" name="line3" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagMove="false" ratio="0" type="PlaceObject2Tag">
-          <matrix hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="14" rotateSkew0="0" rotateSkew1="0" scaleX="0" scaleY="0" translateX="6260" translateY="3940" type="MATRIX"/>
-        </item>
-        <item characterId="15" clipDepth="0" depth="10" name="line4" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagMove="false" ratio="0" type="PlaceObject2Tag">
-          <matrix hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="14" rotateSkew0="0" rotateSkew1="0" scaleX="0" scaleY="0" translateX="7660" translateY="2860" type="MATRIX"/>
-        </item>
-        <item characterId="18" clipDepth="0" depth="12" name="line5" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagMove="false" ratio="0" type="PlaceObject2Tag">
-          <matrix hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="14" rotateSkew0="0" rotateSkew1="0" scaleX="0" scaleY="0" translateX="8100" translateY="4960" type="MATRIX"/>
-        </item>
-        <item characterId="21" clipDepth="0" depth="14" name="line6" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagMove="false" ratio="0" type="PlaceObject2Tag">
-          <matrix hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="14" rotateSkew0="0" rotateSkew1="0" scaleX="0" scaleY="0" translateX="8160" translateY="6120" type="MATRIX"/>
-        </item>
-        <item characterId="24" clipDepth="0" depth="16" name="line7" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagMove="false" ratio="0" type="PlaceObject2Tag">
-          <matrix hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="15" rotateSkew0="0" rotateSkew1="0" scaleX="0" scaleY="0" translateX="9800" translateY="3020" type="MATRIX"/>
-        </item>
-        <item characterId="27" clipDepth="0" depth="18" name="line8" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagMove="false" ratio="0" type="PlaceObject2Tag">
-          <matrix hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="15" rotateSkew0="0" rotateSkew1="0" scaleX="0" scaleY="0" translateX="10180" translateY="4800" type="MATRIX"/>
-        </item>
-        <item characterId="30" clipDepth="0" depth="20" name="line9" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagMove="false" ratio="0" type="PlaceObject2Tag">
-          <matrix hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="15" rotateSkew0="0" rotateSkew1="0" scaleX="0" scaleY="0" translateX="10520" translateY="6480" type="MATRIX"/>
-        </item>
-        <item characterId="33" clipDepth="0" depth="22" name="line10" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagMove="false" ratio="0" type="PlaceObject2Tag">
-          <matrix hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="15" rotateSkew0="0" rotateSkew1="0" scaleX="0" scaleY="0" translateX="11640" translateY="4700" type="MATRIX"/>
-        </item>
-        <item characterId="36" clipDepth="0" depth="24" name="line11" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagMove="false" ratio="0" type="PlaceObject2Tag">
-          <matrix hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="15" rotateSkew0="0" rotateSkew1="0" scaleX="0" scaleY="0" translateX="10680" translateY="1500" type="MATRIX"/>
-        </item>
-        <item characterId="39" clipDepth="0" depth="26" name="line12" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagMove="false" ratio="0" type="PlaceObject2Tag">
-          <matrix hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="15" rotateSkew0="0" rotateSkew1="0" scaleX="0" scaleY="0" translateX="13260" translateY="4880" type="MATRIX"/>
-        </item>
-        <item characterId="42" clipDepth="0" depth="28" name="line13" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagMove="false" ratio="0" type="PlaceObject2Tag">
-          <matrix hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="15" rotateSkew0="0" rotateSkew1="0" scaleX="0" scaleY="0" translateX="12640" translateY="2420" type="MATRIX"/>
-        </item>
-        <item characterId="45" clipDepth="0" depth="30" name="line14" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagMove="false" ratio="0" type="PlaceObject2Tag">
-          <matrix hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="14" rotateSkew0="0" rotateSkew1="0" scaleX="0" scaleY="0" translateX="6260" translateY="3940" type="MATRIX"/>
-        </item>
-        <item characterId="48" clipDepth="0" depth="32" name="line15" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagMove="false" ratio="0" type="PlaceObject2Tag">
-          <matrix hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="15" rotateSkew0="0" rotateSkew1="0" scaleX="0" scaleY="0" translateX="9800" translateY="3020" type="MATRIX"/>
-        </item>
-        <item characterId="51" clipDepth="0" depth="34" name="line16" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagMove="false" ratio="0" type="PlaceObject2Tag">
-          <matrix hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="15" rotateSkew0="0" rotateSkew1="0" scaleX="0" scaleY="0" translateX="10180" translateY="4800" type="MATRIX"/>
-        </item>
-        <item characterId="54" clipDepth="0" depth="36" name="line17" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagMove="false" ratio="0" type="PlaceObject2Tag">
-          <matrix hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="15" rotateSkew0="0" rotateSkew1="0" scaleX="0" scaleY="0" translateX="10520" translateY="6480" type="MATRIX"/>
-        </item>
-        <item characterId="57" clipDepth="0" depth="38" name="line18" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagMove="false" ratio="0" type="PlaceObject2Tag">
-          <matrix hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="15" rotateSkew0="0" rotateSkew1="0" scaleX="0" scaleY="0" translateX="12640" translateY="2420" type="MATRIX"/>
-        </item>
-        <item characterId="3" clipDepth="0" depth="40" name="line19" placeFlagHasCharacter="true" placeFlagHasClipActions="false" placeFlagHasClipDepth="false" placeFlagHasColorTransform="false" placeFlagHasMatrix="true" placeFlagHasName="true" placeFlagHasRatio="false" placeFlagMove="false" ratio="0" type="PlaceObject2Tag">
-          <matrix hasRotate="false" hasScale="false" nRotateBits="0" nScaleBits="0" nTranslateBits="14" rotateSkew0="0" rotateSkew1="0" scaleX="0" scaleY="0" translateX="2960" translateY="5200" type="MATRIX"/>
-        </item>
-</textarea><br>
-        start API (ingame): <br><textarea id="start">svdata={"api_result":1,"api_result_msg":"\u6210\u529f","api_data":{"api_cell_data":[{"api_id":434,"api_no":0,"api_color_no":4,"api_passed":0},{"api_id":435,"api_no":1,"api_color_no":4,"api_passed":1,"api_distance":1},{"api_id":436,"api_no":2,"api_color_no":4,"api_passed":0,"api_distance":1},{"api_id":437,"api_no":3,"api_color_no":4,"api_passed":1,"api_distance":2},{"api_id":438,"api_no":4,"api_color_no":4,"api_passed":1,"api_distance":3},{"api_id":439,"api_no":5,"api_color_no":4,"api_passed":0,"api_distance":3},{"api_id":440,"api_no":6,"api_color_no":4,"api_passed":0,"api_distance":2},{"api_id":441,"api_no":7,"api_color_no":10,"api_passed":1,"api_distance":4},{"api_id":442,"api_no":8,"api_color_no":10,"api_passed":0,"api_distance":4},{"api_id":443,"api_no":9,"api_color_no":4,"api_passed":0,"api_distance":3},{"api_id":444,"api_no":10,"api_color_no":4,"api_passed":0,"api_distance":4},{"api_id":445,"api_no":11,"api_color_no":4,"api_passed":0,"api_distance":5},{"api_id":446,"api_no":12,"api_color_no":4,"api_passed":0,"api_distance":5},{"api_id":447,"api_no":13,"api_color_no":5,"api_passed":1,"api_distance":5},{"api_id":448,"api_no":14,"api_color_no":4,"api_passed":1,"api_distance":2},{"api_id":449,"api_no":15,"api_color_no":10,"api_passed":1,"api_distance":4},{"api_id":450,"api_no":16,"api_color_no":10,"api_passed":0,"api_distance":4},{"api_id":451,"api_no":17,"api_color_no":4,"api_passed":0,"api_distance":3},{"api_id":452,"api_no":18,"api_color_no":5,"api_passed":1,"api_distance":5},{"api_id":456,"api_no":19,"api_color_no":0,"api_passed":0}],"api_rashin_flg":0,"api_rashin_id":0,"api_maparea_id":6,"api_mapinfo_no":5,"api_no":1,"api_color_no":4,"api_event_id":4,"api_event_kind":1,"api_next":1,"api_bosscell_no":18,"api_bosscomp":0,"api_airsearch":{"api_plane_type":0,"api_result":0},"api_from_no":0}}</textarea><br>
-        Get from TsunDB: <input type="text" id="mapid" value = "40-4"> 
-        <button name="tsunCollect" onclick="tsunDB(document.getElementById('mapid').value)">Get from TsunDB</button><br><br>
-        Map bg URL: <input type="text" id="url" value = "https://i.imgur.com/ax5Tk5a.png"><br>
-        Show event id/kind on nodes <input type="checkbox" id="showevents"><br><br>
-        <button name="Update" onclick="update()">Update</button><br><br>
-        <b>LBAS Range</b><br>
-        <canvas id="urlgraphrange" width="786" height="435" style="border:1px solid black;"></canvas><br>
-        <b>Edges map (e = edges to this node, r = LBAS range (i = event id, k = event kind))</b><br>
-        <canvas id="swfgraphrange" width="786" height="435" style="border:1px solid black;"></canvas><br>
-        <button name="Colorsu" onclick="colorCodes()">Load color code explenation map</button><br><br>
-
-        <br><br>
-        <b>How to extract information for this:</b><br>
-        SWF XML: <br>
-        1. Download <a href="https://www.free-decompiler.com/flash/" target="_blank">ffdec</a><br>
-        2. Open map swf <i>/kcs/resources/swf/map/ww_mm.swf</i><br>
-        3. Export SWF xml<br>
-        4. Paste in full file (will load bg from file in edges map, keeps url in range map) OR only lineXX part (to keep url in both)<br>
-        5.0 For events with hidden nodes: repeat process with <i>/kcs/scenes/SallyMain.swf</i> but instead of pasting full xml:<br>
-        5.1 Look for lineXX scene part (control+f 'wwm_', where WW = 38/39/40/etc and m = 1/2/3/4/etc: example result: <i>&lt;item&gt;scene.sally.mc:MCCellSP401_13&lt;/item&gt;</i> this means the <b>above</b> items are from this map)<br>
-        5.2 Control+f the routeXX/whiteXX/lineXX/labelXX/enemyXX for the part corresponding with said route unlock (there can be multiple route19's for example, look for correct map route19, compare with min/max of routes in both sections of file)<br>
-        5.3 Paste ONLY this part (enclosed with subTags, only routeXX part is required) into SWF xml textbox<br>
-        Example: <a href="http://kancolle.wikia.com/wiki/Fall_2017_Event/E-4">Fall 2017/E-4</a>: <a href="https://pastebin.com/ygFsJjuq">swf xml</a> (pastebin) + <a href="https://i.imgur.com/3DndZ6E.png">map bg url</a> = <a href="https://i.imgur.com/R8G3UzI.png">edges map output</a><br><br>
-        start API (ingame): <br>
-        Method 1: Manual gathering<br>
-        1. Make sure you are saving/logging network requests and responses<br>
-        2. Start to sortie to a map with LBAS<br>
-        3. Open log, look for /start api call, copy FULL response into text box (including svdata=...)<br>
-        Method 2: Getting from <a href="http://kckai.cybersnets.com/">TsunDB</a><br>
-        1. Fill in map name in the format of ww-n (example: 40-4)<br>
-        2. Click on <i>Get from TsunDB</i><br>
+        <a href="."><b>Flat is Justice - Home</b></a><br>
+        <br>
+        /start API (ingame): <br><textarea id="start">svdata={"api_result":1,"api_result_msg":"\u6210\u529f","api_data":{"api_cell_data":[{"api_id":3012,"api_no":0,"api_color_no":0,"api_passed":0},{"api_id":3013,"api_no":1,"api_color_no":4,"api_passed":0},{"api_id":3014,"api_no":2,"api_color_no":4,"api_passed":0},{"api_id":3015,"api_no":3,"api_color_no":4,"api_passed":0},{"api_id":3016,"api_no":4,"api_color_no":2,"api_passed":0},{"api_id":3017,"api_no":5,"api_color_no":4,"api_passed":0},{"api_id":3018,"api_no":6,"api_color_no":4,"api_passed":0},{"api_id":3019,"api_no":7,"api_color_no":2,"api_passed":0},{"api_id":3020,"api_no":8,"api_color_no":3,"api_passed":0},{"api_id":3021,"api_no":9,"api_color_no":4,"api_passed":0},{"api_id":3022,"api_no":10,"api_color_no":5,"api_passed":0},{"api_id":3023,"api_no":11,"api_color_no":4,"api_passed":0},{"api_id":3024,"api_no":12,"api_color_no":4,"api_passed":0},{"api_id":3025,"api_no":13,"api_color_no":5,"api_passed":0}],"api_rashin_flg":1,"api_rashin_id":4,"api_maparea_id":1,"api_mapinfo_no":3,"api_no":3,"api_color_no":4,"api_event_id":4,"api_event_kind":1,"api_next":1,"api_bosscell_no":10,"api_bosscomp":0,"api_airsearch":{"api_plane_type":0,"api_result":0},"api_from_no":0}}
+        </textarea><br>
+        <div id="startinfo"><b>API info for <span id='maptitle'>another map</span>!</b><br>
+                    Bypass? <input onchange="update()" type="checkbox" id="bypass"><br></div>
+        Map: <input type="text" id="mapid" value="5-2" onchange="update()">
+        <!--<button name="tsunCollect" onclick="tsunDB(document.getElementById('mapid').value)">Get from TsunDB</button>--><br><br>
+        <div id='options' style='column-width:300px'>
+            Show background <input onchange="update()" type="checkbox" id="background" checked><br>
+            Show routing edges <input onchange="update()" type="checkbox" id="routeedges"><br>
+            Show to edge ids <input onchange="update()" type="checkbox" id="toEdges"><br>
+            Show cleared path <input onchange="update()" type="checkbox" id="cleared" checked><br>
+            Show debug <input onchange="update()" type="checkbox" id="debuglines"><input onchange="update()" type="checkbox" id="debuglinessnap"><input onchange="update()" type="checkbox" id="airraidlines"><input onchange="update()" type="checkbox" id="apiinfo"><br>
+            Guess letters <input onchange="update()" type="checkbox" id="guessLetters"><br>
+            Show LBAS range <input onchange="update()" type="checkbox" id="distance" checked><br>
+            Show colors (of api when entered) <input onchange="update()" type="checkbox" id="colors" checked><br>
+            Show color of offset tag <input onchange="update()" type="checkbox" id="offsetColored" checked><br>
+            Show enemies <input onchange="update()" type="checkbox" id="enemies" checked><br>
+            Show routes? <input onchange="update()" type="checkbox" id="routes" checked><br>
+            Show airraids <input onchange="update()" type="checkbox" id="airraids" checked><br>
+            Show variation map <input onchange="update()" type="checkbox" id="variation" checked><br>
+            Minimalistic mode <input onchange="update()" type="checkbox" id="minimalistic"><br>
+        </div>
+        Forced color <input type="number" id="forcedcolor" min="-1" max="999" onchange="update();" value="-1"><br>
+        Show gauge <input type="number" id="gauge" min="0" max="20" onchange="update();" value="0">
+        <div id="gaugeinfo"></div>
+        Show hidden routes <input type="number" id="hiddenRoutes" min="0" max="20" onchange="update();" value="0">
+        <div id="hiddenrouteinfo"></div>
+        <br>
+        <button name="Update" onclick="update()">Force update</button><br><br>
+        <a id="download">Download</a><br>
+        <b>Edges map</b><br>
         <script type="text/javascript">
-            var canvas = document.getElementById("urlgraphrange"), canvasswf = document.getElementById("swfgraphrange");
-            var parser = new DOMParser();
-            var swfData, split, show_events;
-            var radius = 7, transparancy = .7;
+            var show = {}, locData, mapKey, svdata, bypass, wrongmap, canvas, bgLayer, loader, map, gaugeData;
+            let SERVER = "203.104.209.71";
+            let GAUGE_ROOT = `http://${SERVER}/kcs2/resources/gauge/`;
 
-            function update() {
-                eval((document.getElementById("start").value || "") == "" ? "svdata={}" : document.getElementById("start").value);
-                show_events = !!document.getElementById("showevents").checked;
-                swfData = document.getElementById("swf").value;
-                split = swfData.split("\n");
+            window.PIXI.utils.skipHello();
+            let app = new PIXI.Application({width: 1200, height: 720, transparent: true, forceCanvas: true, preserveDrawingBuffer:true});
+            document.body.appendChild(canvas = app.view);
+            function update(selectedmap = document.getElementById("mapid").value) {
+                document.getElementById("mapid").value = selectedmap;
 
-                var context = canvas.getContext("2d");
-                var img = new Image();
-                img.onload = function() {
-                    canvas.height = img.height;
-                    canvas.width = img.width;
-                    context.drawImage(img, 0, 0);
-                    context.fillStyle = "rgba(128, 255, 0, 1)";
-                    context.font = "30px Georgia";
-                    context.textAlign = "center";
+                let nonl = document.getElementById("start").value.replace(/\n/g,'').replace(/\r/g,'');
+                eval((nonl || "") == "" ? "svdata={}" : nonl);
+                show.background = document.getElementById("background").checked;
+                show.routeedges = document.getElementById("routeedges").checked;
+                show.toEdges = document.getElementById("toEdges").checked;
+                show.cleared = document.getElementById("cleared").checked;
+                show.debuglines = document.getElementById("debuglines").checked;
+                show.debuglinessnap = document.getElementById("debuglinessnap").checked;
+                show.airraidlines = document.getElementById("airraidlines").checked;
+                show.apiinfo = document.getElementById("apiinfo").checked;
+                show.guessLetters = document.getElementById("guessLetters").checked;
+                show.distance = document.getElementById("distance").checked;
+                show.colors = document.getElementById("colors").checked;
+                show.offsetColored = document.getElementById("offsetColored").checked;
+                show.enemies = document.getElementById("enemies").checked;
+                show.routes = document.getElementById("routes").checked;
+                show.airraids = document.getElementById("airraids").checked;
+                show.variation = document.getElementById("variation").checked;
+                show.minimalistic = document.getElementById("minimalistic").checked;
 
-                    if(svdata && svdata.api_data && svdata.api_data.api_cell_data)
-                        for(let a of svdata.api_data.api_cell_data) {
-                            let x = getCoord(a.api_no)[0], y = getCoord(a.api_no)[1];
-                            context.fillStyle = "rgba(128, 255, 0, .7)";
-                            context.beginPath();
-                            context.arc(x, y, 5, 0, 2 * Math.PI, false);
-                            context.fill();
-                            context.fillStyle = "rgba(128, 255, 0, 1)";
-                            context.strokeStyle = 'rgba(0, 0, 0, 1)';
-                            context.miterLimit = 2;
-                            context.lineJoin = 'circle';
-                            context.lineWidth = 7;
-                            context.strokeText(a.api_distance || "/", x, y - 10);
-                            context.lineWidth = 1;
-                            context.fillText(a.api_distance || "/", x, y - 10);
-                        }
+                show.forcedcolor = parseInt(document.getElementById("forcedcolor").value);
+                show.gauge = parseInt(document.getElementById("gauge").value);
+                show.hiddenRoutes = parseInt(document.getElementById("hiddenRoutes").value);
+                show.labels = true;
+
+                if(show.minimalistic) {
+                    show.enemies = false;
+                    show.routes = false;
+                    show.cleared = false;
+                    show.colors = false;
+                    show.labels = false;
                 }
-                img.src = document.getElementById("url").value;
 
-                for(let i = 0; i < split.length; i++) 
-                    if(split[i].includes("characterID=\"1\"")) {
-                        drawEdges("data:image/jpeg;base64," + Convert(split[i].split("imageData=\"")[1].split("\"")[0]));
-                        return;
-                    }
-                drawEdges(document.getElementById("url").value); 
-            }
-            function getCoord(id) {
-                for(let i = 0; i < split.length; i++) {
-                    if(split[i].includes("\"line" + id + "\"")) {
-                        let x = split[i+1].split("translateX=\"")[1].split("\"")[0];
-                        let y = split[i+1].split("translateY=\"")[1].split("\"")[0];
-                        return [x/20,y/20];
-                    }
-                }                
-            }
+                gaugeData = undefined;
+                map = selectedmap.split("-").map((a) => parseInt(a));
 
-            function drawEdges(url) {
-                var context2 = canvasswf.getContext("2d");
-                var img2 = new Image();
-                img2.onload = function() {
-                    canvasswf.height = img2.height;
-                    canvasswf.width = img2.width;
-                    context2.drawImage(img2, 0, 0);
-                    drawEdgesOnGraph(context2);
+                if(svdata && !(correctmap = (svdata.api_data.api_maparea_id == map[0] && svdata.api_data.api_mapinfo_no == map[1]))) {
+                    document.getElementById("startinfo").style = "";
+                    document.getElementById("maptitle").innerHTML = svdata.api_data.api_maparea_id + "-" + svdata.api_data.api_mapinfo_no
+                    bypass = document.getElementById("bypass").checked;
+                } else
+                    document.getElementById("startinfo").style = "display:none;";
+
+                document.getElementById("apiinfo").disabled = !(correctmap || bypass);
+                document.getElementById("distance").disabled = !(correctmap || bypass);
+
+                let mapname = `${pad(map[0], 3)}${pad(map[1], 2)}`;
+                mapKey = `map${mapname}_`
+                //console.log(imageUrl)
+
+                loader = new PIXI.loaders.Loader;
+
+                loader.add(getPath('image.json')).add(`http://${SERVER}/kcs2/img/map/map_common.json`).load(function() {
+                    getJSON(getPath('info.json'), function (info) {
+                        locData = info;
+                        let callback = function() {
+                            if(show.gauge != 0)
+                                getJSON(GAUGE_ROOT + mapname + (show.gauge!=1?("_"+show.gauge):"") + ".json", function (info) {
+                                    gaugeData = info;
+                                    if(gaugeData && gaugeData.vertical && gaugeData.vertical.img) {
+                                        if(!gaugeData.vertical.img_l)
+                                            gaugeData.vertical.img_l = gaugeData.vertical.img + "_light"
+                                        loader.add(gaugeData.vertical.img, GAUGE_ROOT + gaugeData.vertical.img + ".png")
+                                              .add(gaugeData.vertical.img_l, GAUGE_ROOT + gaugeData.vertical.img_l + ".png").load(function() {
+                                            if(locData)
+                                                showMap();
+                                        })
+                                    }
+                                }, function (err) {
+                                    document.getElementById("gaugeinfo").innerHTML = `No gauge with id ${show.gauge} found!`
+                                });
+                        }
+                        if(show.hiddenRoutes) {
+                            getAddingInfo(1, callback);
+                            showMap();
+                        } else
+                            showMap(callback);
+                    });
+                })
+
+                document.getElementById("hiddenrouteinfo").innerHTML = "";
+                document.getElementById("gaugeinfo").innerHTML = "";
+            }
+            function getPath(url) {
+                return `http://${SERVER}/kcs2/resources/map/${pad(map[0], 3)}/${pad(map[1], 2)}_${url}`
+            }
+            function getAddingInfo(depth, callback) {
+                document.getElementById("hiddenrouteinfo").innerHTML = `Searching ${depth} deep...`;
+                getJSON(getPath(`info${locData.spots.length}.json`), function (info) {
+                    document.getElementById("hiddenrouteinfo").innerHTML = `Found ${depth-1} hidden node unlocks, loading spritesheet...`;
+                    loader.add(getPath(`image${locData.spots.length}.json`)).load(function() {
+                        document.getElementById("hiddenrouteinfo").innerHTML = `Found ${depth-1} hidden node unlocks, rendering`;
+                        console.log("Merging")
+                        if(locData.bg && info.bg)
+                            for(let background of info.bg)
+                                locData.bg.push(background);
+                        else if(info.bg) locData.bg = info.bg;
+
+                        if(locData.spots && info.spots)
+                            for(let spot of info.spots)
+                                locData.spots.push(spot);
+                        else if(info.spots) locData.spots = info.spots;
+
+                        if(locData.enemies && info.enemies)
+                            for(let enemy of info.enemies)
+                                locData.enemies.push(enemy);
+                        else if(info.enemies) locData.enemies = info.enemies;
+
+                        if(locData.labels && info.labels)
+                            for(let label of info.labels)
+                                locData.labels.push(label);
+                        else if(info.labels) locData.labels = info.labels;
+
+                        if(locData.airraids && info.airraids)
+                            for(let airraid of info.airraids)
+                                locData.airraids.push(airraid);
+                        else if(info.airraids) locData.airraids = info.airraids;
+
+                        if(info.airbase)
+                            locData.airbase = info.airbase;
+
+                        console.log("Merged, rendering")
+                        showMap();
+                        depth++;
+                        if(depth > show.hiddenRoutes) {
+                            document.getElementById("hiddenrouteinfo").innerHTML = `Found ${depth-1} hidden node unlocks, reached max depth ${show.hiddenRoutes}`;
+                            if(callback) callback();
+                        } else
+                            getAddingInfo(depth, callback);
+                    })
+                }, function (err) {
+                    console.log("No more hidden routes");
+                    document.getElementById("hiddenrouteinfo").innerHTML = `Found ${depth-1} hidden node unlocks, no more on servers`;
+                })
+            }
+            function showMap(callback) {
+                for (var i = app.stage.children.length - 1; i >= 0; i--) {  app.stage.removeChild(app.stage.children[i]); };
+                bgLayer = new PIXI.Container;
+                let ind = 0;
+                for (let bg in locData.bg) {
+                    if(show.minimalistic && ind++ > 0) continue;
+                    console.log(locData.bg[bg], typeof locData.bg[bg])
+                    let frame;
+                    if(locData.bg[bg] == undefined || typeof locData.bg[bg] == 'string')
+                        frame = PIXI.Texture.fromFrame(mapKey + locData.bg[bg]);
+                    else if (show.variation)
+                        frame = PIXI.Texture.fromFrame(mapKey+locData.bg[bg].img);
+                    let sprite = new PIXI.Sprite(frame);
+                    bgLayer.addChild(sprite);
                 }
-                img2.src = url;
+                if(show.background)
+                    app.stage.addChild(bgLayer);
+
+                if(locData.airbase && !show.minimalistic) {
+                    let frame = PIXI.Texture.fromFrame("map_common_82");
+                    let sprite = new PIXI.Sprite(frame);
+                    sprite.anchor.set(.5,.5);
+                    sprite.position.set(locData.airbase.x, locData.airbase.y);
+                    bgLayer.addChild(sprite);
+                }
+                drawEdgesOnGraph(callback);
             }
+            function getNodeInfo(id) {
+                return locData.spots[id]; //.find((n) => n.no == id)
+            }
+            function colorToTexture(colorid) {
+                // .prototype._getTexture
+                // MAP_COMMON.getTexture
+                if(show.forcedcolor > 0)
+                    return 'map_common_' + show.forcedcolor;
+                switch(colorid) {
+                    case -1:
+                        return 'map_common_149';
+                    case 1:
+                        return 'map_common_142';
+                    case 2:
+                    case 6:
+                        return 'map_common_145';
+                    case 3:
+                        return 'map_common_147';
+                    case 4:
+                        return 'map_common_148';
+                    case 5:
+                        return 'map_common_136';
+                    case 7:
+                        return 'map_common_101';
+                    case 8:
+                        return 'map_common_135';
+                    case 9:
+                        return 'map_common_146';
+                    case 10:
+                        return 'map_common_96';
+                    case 11:
+                        return 'map_common_150';
+                    case 12:
+                        return 'map_common_151';
+                    case 13:
+                        return 'map_common_81';
+                    case -2:
+                        return 'map_common_144';
+                    case -3:
+                        return 'map_common_141';
 
-            function drawEdgesOnGraph(context) {
-                context.font = "15px Georgia";
-                context.textAlign = "center";
-                let highestEdge = 0;
-
-                for(let j = 0; j < split.length; j++)
-                    if(split[j].includes("name=\"line"))
-                        highestEdge = Math.max(parseInt(split[j].split("line")[1].split("\"")[0], 10), highestEdge);
-                console.log(highestEdge);
-                let alledges = [];
-                for(let id = 0; id <= highestEdge; id++) {
-                    if(alledges.includes(id)) continue;
-                    let edges = [];
-                    let coid = getCoord(id) || [0,0];
-                    let x = coid[0], y = coid[1];
-                    for(let j = 0; j <= highestEdge; j++) {
-                        let coj = getCoord(j) || [0,0];
-                        let xj = coj[0], yj = coj[1];
-                        if((x-xj)*(x-xj)+(y-yj)*(y-yj) < 1000) {
-                            edges.push(j);
-                            alledges.push(j);
-                        }
-                    }
-                    let node = ((((svdata||{}).api_data||{}).api_cell_data||[])[id]||{});
-                    let dist = node.api_distance == 0 ? 0 : node.api_distance || "/";
-                    let color = node.api_color_no == 0 ? 0 : node.api_color_no || "/";
-                    let eventid = node.api_event_id == 0 ? 0 : node.api_event_id || "/";
-                    let eventkind = node.api_event_kind == 0 ? 0 : node.api_event_kind || "/";
-
-                    context.fillStyle = `rgba(124, 124, 124, ${transparancy})`;
-                    if(color == 4)
-                        context.fillStyle = `rgba(255, 0, 0, ${transparancy})`;
-                    else if(color == 5)
-                        context.fillStyle = `rgba(200, 0, 0, ${transparancy})`;
-                    else if(color == 10)
-                        context.fillStyle = `rgba(128, 64, 64, ${transparancy})`;
-                    else if(color == 11)
-                        context.fillStyle = `rgba(176, 118, 240, ${transparancy})`;
-
-                    if(eventid == 0) // Map Start Point
-                        context.fillStyle = `rgba(197, 186, 126, ${transparancy})`;
-                    else if(eventid == 6 && eventkind == 2) // Route Selection Node
-                        context.fillStyle = `rgba(255, 255, 255, ${transparancy})`; 
-                    else if(eventid == 6) // Battle avoided
-                        context.fillStyle = `rgba(50, 250, 225, ${transparancy})`;
-                    else if(eventid == 2) // rsc
-                        context.fillStyle = `rgba(128, 255, 0, ${transparancy})`;
-                    else if(eventid == 3) // maelstorm
-                        context.fillStyle = `rgba(128, 5, 128, ${transparancy})`;
-                    else if(eventid == 7) // aerial recon (6-3 rsc)
-                        context.fillStyle = `rgba(143, 151, 19, ${transparancy})`;
-                    else if(eventid == 8) // bounty (1-6)
-                        context.fillStyle = `rgba(20, 0, 250, ${transparancy})`;
-                    else if(eventid == 9) // tp (events)
-                        context.fillStyle = `rgba(250, 250, 0, ${transparancy})`;
-                    else if (eventid == 4 || eventid == 5 || eventid == 7 || eventid == 10) {
-                        if(eventkind == 2) // start at night
-                            context.fillStyle = `rgba(176, 118, 240, ${transparancy})`;
-                        else if(eventkind == 3 || eventkind == 7) { // night -> day
-                            var my_gradient = context.createLinearGradient(x - radius, y - radius, x + radius, y + radius);
-                            my_gradient.addColorStop(.3, `rgba(176, 118, 240, ${transparancy})`);
-                            my_gradient.addColorStop(1, `rgba(255, 0, 0, ${transparancy})`);
-                            context.fillStyle = my_gradient;
-                        }
-                        else if(eventkind == 4) { // aerial defense (1-6)
-                            var my_gradient = context.createLinearGradient(x - radius, y - radius, x + radius, y + radius);
-                            my_gradient.addColorStop(.3, `rgba(20, 0, 250, ${transparancy})`);
-                            my_gradient.addColorStop(.6, `rgba(230, 66, 77, ${transparancy})`);
-                            context.fillStyle = my_gradient;
-                        }
-                        else if(eventkind == 5) { // double
-                            var my_gradient = context.createLinearGradient(x - radius, y - radius, x + radius, y + radius);
-                            my_gradient.addColorStop(.1, `rgba(255, 0, 0, ${transparancy})`);
-                            my_gradient.addColorStop(.5, `rgba(255, 0, 0, .0)`);
-                            my_gradient.addColorStop(.9, `rgba(255, 0, 0, ${transparancy})`);
-                            context.fillStyle = my_gradient;
-                        }
-                        else if(eventid == 7 || eventid == 10 || eventkind == 6) // air def
-                            context.fillStyle = `rgba(128, 64, 64, ${transparancy})`;
-                        else if(eventid == 4) // normal
-                            context.fillStyle = `rgba(255, 0, 0, ${transparancy})`;
-                        else if(eventid == 5) // boss
-                            context.fillStyle = `rgba(200, 0, 0, ${transparancy})`;
-                    }
-
-                    context.beginPath();
-                    context.arc(x, y, radius, 0, 2 * Math.PI, false);
-                    context.fill();
-                    context.fillStyle = "rgba(128, 255, 0, 1)";
-                    context.strokeStyle = 'rgba(0, 0, 0, 1)';
-                    context.miterLimit = 2;
-                    context.lineJoin = 'circle';
-                    context.lineWidth = 7;
-                    context.strokeText("e " + edges + "; r " + dist, x, y - 10);
-                    if((eventid !== "/" || eventkind !== "/") && show_events)
-                        context.strokeText("id " + eventid + "; k " + eventkind, x, y + 15);
-                    context.lineWidth = 1;
-                    context.fillText("e " + edges + "; r " + dist, x, y - 10);
-                    if((eventid !== "/" || eventkind !== "/") && show_events)
-                        context.fillText("i " + eventid + "; k " + eventkind, x, y + 15);
+                    case -99:
+                        return 'map_common_17';
+                    default:
+                        return colorToTexture(-1);
                 }
             }
+            function drawEnds(edgeData) {
+                let highestEdge = Math.max(...locData.spots.map((n) => n.no));
 
-            var base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-            function binary_to_base64(input) {
-                var ret = new Array();
-                var i = 0;
-                var j = 0;
-                var char_array_3 = new Array(3);
-                var char_array_4 = new Array(4);
-                var in_len = input.length;
-                var pos = 0;
-            
-                while (in_len--)
-                {
-                    char_array_3[i++] = input[pos++];
-                    if (i == 3)
-                    {
-                        char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
-                        char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
-                        char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
-                        char_array_4[3] = char_array_3[2] & 0x3f;
-            
-                        for (i = 0; (i <4) ; i++)
-                            ret += base64_chars.charAt(char_array_4[i]);
-                        i = 0;
+                //console.log(highestEdge);
+                let wikiaCoordinates = ``, doneWikiaLetters = {};
+                for(let id in locData.spots) {
+                    let nodeInfo = getNodeInfo(id);
+                    let {x,y} = nodeInfo;
+
+                    if (!edgeData[id]) continue;
+
+                    let msg = edgeData[id][1];
+                    console.log(id, x, y,msg)
+                    let text = new PIXI.Text(msg, bigStyle)
+                    text.anchor.set(.5,.5)
+                    app.stage.addChild(text);
+                    text.position.set(x + 30, y - 30);
+
+                    if(doneWikiaLetters[msg]) continue;
+                    doneWikiaLetters[msg] = {x, y};
+                    wikiaCoordinates += `{{Map/ImageNode|${msg}|x=${Math.round(x*700/1200)}|y=${Math.round(y*700/1200)}}}\n`
+                }
+                console.log(JSON.stringify(doneWikiaLetters))
+                console.log(wikiaCoordinates)
+            }
+            kc3Edges = {};
+
+            let smallStyle = new PIXI.TextStyle({
+              fontFamily: "Arial",
+              fontSize: 16,
+              fill: "white",
+              stroke: '#ff3300',
+              strokeThickness: 3
+            });
+            let medStyle = new PIXI.TextStyle({
+              fontFamily: "Arial",
+              fontSize: 18,
+              fill: "white",
+              stroke: '#ff3300',
+              strokeThickness: 4,
+              dropShadow: true,
+              dropShadowColor: "#000000",
+              dropShadowBlur: 4,
+              dropShadowAngle: Math.PI / 6,
+              dropShadowDistance: 6,
+            });
+            let bigStyle = new PIXI.TextStyle({
+              fontFamily: "Arial",
+              fontSize: 36,
+              fill: "white",
+              stroke: '#003300',
+              strokeThickness: 4,
+              dropShadow: true,
+              dropShadowColor: "#000000",
+              dropShadowBlur: 4,
+              dropShadowAngle: Math.PI / 6,
+              dropShadowDistance: 6,
+            });
+            let lbasStyle = new PIXI.TextStyle({
+              fontFamily: "Arial",
+              fontSize: 36,
+              fill: "#6f3",
+              stroke: '#003300',
+              strokeThickness: 3,
+              dropShadow: true,
+              dropShadowColor: "#001100",
+              dropShadowBlur: 4,
+              dropShadowAngle: Math.PI / 6,
+              dropShadowDistance: 4,
+            });
+            let secretstyle = new PIXI.TextStyle({
+              fontFamily: "Arial",
+              fontSize: 20,
+              fill: "#080",
+            });
+            function drawEdgesOnGraph(callback) {
+                let edges = {};
+                for (let edge of locData.spots)
+                    if(edges[edge.x + ";" + edge.y])
+                        edges[edge.x + ";" + edge.y].push(edge);
+                    else
+                        edges[edge.x + ";" + edge.y] = [edge];
+                kc3Edges = {};
+                if(show.colors)
+                    for (let edge of Object.values(edges)) {
+                        let nodeInfo = edge[0];
+                        if(correctmap||bypass) {
+                            let nodecell = svdata.api_data.api_cell_data[nodeInfo.no];
+                            for(let i = 0; i < edge.length; i++) {
+                                if(nodecell && nodecell.tsundb_color != undefined) break;
+                                nodeInfo = edge[i];
+                                nodecell = svdata.api_data.api_cell_data[nodeInfo.no];
+                            }
+                            if((correctmap || bypass) && nodecell && nodecell.api_color_no != 0)
+                                nodeInfo.color = nodecell.tsundb_color == undefined ? nodecell.api_color_no : nodecell.tsundb_color;
+                        }
+                        if(show.airraids && locData.airraids) {
+                            let airraid;
+                            for(let i = 0; i < edge.length; i++)
+                                if(airraid = locData.airraids.find((ar) => ar.no == edge[i].no)) {
+                                    nodeInfo.color = 10;
+
+                                    if(show.airraidlines) {
+                                        let line = new PIXI.Graphics();
+                                        line.lineStyle(1.5, 0xffff00, .75);
+                                        line.moveTo(airraid.from.x, airraid.from.y);
+                                        line.lineTo(airraid.to.x, airraid.to.y);
+                                        app.stage.addChild(line);
+                                    }
+                                }
+                        }
+                        if(nodeInfo.color) {
+                            if(show.offsetColored && nodeInfo.offsets)
+                                nodeInfo.color = parseInt(Object.keys(nodeInfo.offsets)[0]);
+                            console.log(nodeInfo, nodeInfo.no, nodeInfo.color);
+                            let offsetX = 0, offsetY = 0;
+                            if(nodeInfo.color == 5)
+                                offsetY = -5;
+                            if(nodeInfo.offsets && nodeInfo.offsets[nodeInfo.color]) {
+                                offsetX = nodeInfo.offsets[nodeInfo.color].x;
+                                offsetY = nodeInfo.offsets[nodeInfo.color].y;
+                            }
+
+                            if(nodeInfo.color == -99) {
+                                let frame = PIXI.Texture.fromFrame(colorToTexture(-99));
+                                let sprite = new PIXI.Sprite(frame);
+                                sprite.anchor.set(.5,.5)
+                                sprite.position.set(nodeInfo.x + offsetX, nodeInfo.y + offsetY);
+                                app.stage.addChild(sprite);
+                                nodeInfo.color = nodeInfo.color==-99?1:-1;
+                            }
+                            console.log(nodeInfo.color, colorToTexture(nodeInfo.color))
+                            let frame = PIXI.Texture.fromFrame(colorToTexture(nodeInfo.color));
+                            let sprite = new PIXI.Sprite(frame);
+                            sprite.anchor.set(.5,.5)
+                            sprite.position.set(nodeInfo.x + offsetX, nodeInfo.y + offsetY);
+                            app.stage.addChild(sprite);
+                        }
+                    }
+
+                if(locData.labels && show.labels) {
+                    for(let label of locData.labels) {
+                        let frame = PIXI.Texture.fromFrame(mapKey + label.img);
+                        let sprite = new PIXI.Sprite(frame);
+                        sprite.position.set(label.x, label.y);
+                        app.stage.addChild(sprite);
                     }
                 }
-            
-                if (i)
-                {
-                    for (j = i; j < 3; j++)
-                        char_array_3[j] = 0;
-            
-                    char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
-                    char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
-                    char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
-                    char_array_4[3] = char_array_3[2] & 0x3f;
-            
-                    for (j = 0; (j < i + 1); j++)
-                        ret += base64_chars.charAt(char_array_4[j]);
-            
-                    while ((i++ < 3))
-                        ret += '=';
-          
-              }
-          
-              return ret;
-            }
-        
-            function Convert(inpimg) {
-              if (inpimg.length % 2) 
-                return;
-              
-              var binary = new Array();
-              for (var i=0; i<inpimg.length/2; i++) {
-                var h = inpimg.substr(i*2, 2);
-                binary[i] = parseInt(h,16);        
-              }
-              return binary_to_base64(binary);
-            } 
 
-            function getJSON(url, callback) {
+                if (show.minimalistic) {
+                    let circle = new PIXI.Graphics();
+                    circle.beginFill(0x222222, .2);
+                    circle.arc(0, 0, 9999, 0, 2*Math.PI);
+                    app.stage.addChild(circle);
+                }
+
+                for(let nodeInfo of locData.spots) {
+                    let id = nodeInfo.no;
+
+                    if(nodeInfo.route && show.routes) {
+                        console.log(nodeInfo.route)
+                        let frame = PIXI.Texture.fromFrame(mapKey + nodeInfo.route.img);
+                        let sprite = new PIXI.Sprite(frame);
+                        sprite.rotation = (nodeInfo.route.r||0) / 180 * Math.PI
+                        sprite.position.set(nodeInfo.x + (nodeInfo.line.x||0), nodeInfo.y + (nodeInfo.line.y||0));
+                        app.stage.addChild(sprite);
+                    }
+                    if(!nodeInfo.line) continue;
+
+                    let frame = PIXI.Texture.fromFrame(mapKey + (nodeInfo.line.img || ("route_" + id)))
+                    let sprite = new PIXI.Sprite(frame);
+                    sprite.rotation = (nodeInfo.line.r||0) / 180 * Math.PI
+                    sprite.position.set(nodeInfo.x + nodeInfo.line.x, nodeInfo.y + nodeInfo.line.y);
+                    if(show.cleared)
+                        app.stage.addChild(sprite);
+
+                    let bounds = sprite.getBounds();
+                    //console.log(id, nodeInfo, bounds)
+                    let middlex = bounds.x + bounds.width/2;
+                    let middley = bounds.y + bounds.height/2;
+                    let x = bounds.x + bounds.width;
+                    let y = bounds.y + bounds.height;
+                    if(nodeInfo.line.x < 0)
+                        x += nodeInfo.line.x;
+                    if(nodeInfo.line.y < 0)
+                        y += nodeInfo.line.y;
+
+                    let closestFrom = undefined;
+                    for (let node of locData.spots)
+                        if(node.x != nodeInfo.x || node.y != nodeInfo.y)
+                            if (closestFrom == undefined || (node.x-x)**2 + (node.y-y)**2 < (closestFrom.x-x)**2 + (closestFrom.y-y)**2)
+                                closestFrom = node;
+
+                    if(show.debuglines) {
+                        let line = new PIXI.Graphics();
+                        line.lineStyle(1, 0x00ff00, .75);
+                        line.moveTo(bounds.x, bounds.y);
+                        line.lineTo(bounds.x + bounds.width, bounds.y);
+                        line.lineTo(bounds.x + bounds.width, bounds.y + bounds.height);
+                        line.lineTo(bounds.x, bounds.y + bounds.height);
+                        line.lineTo(bounds.x, bounds.y);
+                        app.stage.addChild(line);
+
+                        line = new PIXI.Graphics();
+                        line.moveTo(nodeInfo.x, nodeInfo.y);
+                        line.lineStyle(1.5, 0xff0000, 1);
+                        let endCoords = {x,y};
+                        if(show.debuglinessnap)
+                            endCoords = closestFrom;
+                        line.lineTo(endCoords.x, endCoords.y);
+                        app.stage.addChild(line);
+
+
+                        line = new PIXI.Graphics();
+                        let angle = Math.atan2(nodeInfo.y - endCoords.y, nodeInfo.x - endCoords.x);
+                        line.setTransform(nodeInfo.x+(endCoords.x-nodeInfo.x)/2, nodeInfo.y+(endCoords.y-nodeInfo.y)/2, 1, 1, angle);
+                        line.lineStyle(5, 0xff0000, 1);
+                        line.moveTo(0, 0);
+                        line.lineTo(-10, -10);
+                        line.moveTo(0, 0);
+                        line.lineTo(-10, +10);
+                        app.stage.addChild(line);
+
+                        let circle = new PIXI.Graphics();
+                        circle.beginFill(0x0000ff);
+                        circle.arc(nodeInfo.x, nodeInfo.y, 5, 0, 2*Math.PI);
+                        app.stage.addChild(circle);
+                        /*
+                        line = new PIXI.Graphics();
+                        line.lineStyle(1, 0x0000ff, 1);
+                        line.moveTo(nodeInfo.x, nodeInfo.y);
+                        line.lineTo(nodeInfo.x+5, nodeInfo.y+5);
+                        line.lineTo(nodeInfo.x-5, nodeInfo.y-5);
+                        line.moveTo(nodeInfo.x, nodeInfo.y);
+                        line.lineTo(nodeInfo.x-5, nodeInfo.y+5);
+                        line.lineTo(nodeInfo.x+5, nodeInfo.y-5);
+                        app.stage.addChild(line);*/
+                    }
+
+
+                    if(show.minimalistic) {
+                        let line = new PIXI.Graphics();
+                        line.moveTo(nodeInfo.x, nodeInfo.y);
+                        line.lineStyle(10, 0xcccccc, .6);
+                        let endCoords = closestFrom;
+                        line.lineTo(endCoords.x, endCoords.y);
+                        app.stage.addChild(line);
+
+                        let circle = new PIXI.Graphics();
+                        circle.beginFill(0xcccccc);
+                        circle.arc(nodeInfo.x, nodeInfo.y, 5, 0, 2*Math.PI);
+                        app.stage.addChild(circle);
+                    }
+
+                    if(show.routeedges) {
+                        let text = new PIXI.Text(id, medStyle)
+                        text.anchor.set(.5,.5)
+                        app.stage.addChild(text);
+                        text.position.set(middlex, middley);
+                    }
+
+                    let fromId = "Node" + edges[closestFrom.x + ";" + closestFrom.y].map((e) => e.no).join("_");
+                    let toId = "Node" + edges[nodeInfo.x + ";" + nodeInfo.y].map((e) => e.no).join("_");
+
+                    kc3Edges[id] = [fromId, toId];
+                }
+
+                if(show.gauge != 0 && gaugeData) {
+                    if(gaugeData.vertical.bar) {
+                        let colorbox = new PIXI.Graphics;
+                        colorbox.beginFill(gaugeData.vertical.bar.color || 16711680);
+                        let barH = gaugeData.vertical.bar.h || 253;
+                        let barW = gaugeData.vertical.bar.w || 18;
+
+                        colorbox.drawRect(gaugeData.vertical.x + gaugeData.vertical.bar.x, gaugeData.vertical.y + gaugeData.vertical.bar.y, barW, barH);
+                        colorbox.endFill()
+                        app.stage.addChild(colorbox);
+                    }
+                    let frame = PIXI.Texture.fromFrame(gaugeData.vertical.img)
+                    let sprite = new PIXI.Sprite(frame);
+                    sprite.position.set(gaugeData.vertical.x, gaugeData.vertical.y);
+                    app.stage.addChild(sprite);
+
+                    frame = PIXI.Texture.fromFrame(gaugeData.vertical.img_l)
+                    sprite = new PIXI.Sprite(frame);
+                    let lightoffset = gaugeData.vertical.light ? gaugeData.vertical.light : {x:0,y:0}
+                    sprite.position.set(gaugeData.vertical.x + lightoffset.x, gaugeData.vertical.y + lightoffset.y);
+                    app.stage.addChild(sprite);
+                }
+
+                if(show.enemies && locData.enemies) {
+                    for(let enemy of locData.enemies) {
+                        let frame = PIXI.Texture.fromFrame(mapKey + enemy.img)
+                        let sprite = new PIXI.Sprite(frame);
+                        sprite.alpha = .8;
+                        sprite.position.set(enemy.x, enemy.y);
+                        app.stage.addChild(sprite);
+
+                        if(show.airraidlines) {
+                            let nodeInfo = locData.spots.find((n) => n.no == enemy.no);
+                            if(nodeInfo) {
+                                let line = new PIXI.Graphics();
+                                line.lineStyle(2, 0xff00ff, 1);
+                                line.moveTo(enemy.x + sprite.getBounds().width / 2, enemy.y + sprite.getBounds().height / 2);
+                                line.lineTo(nodeInfo.x, nodeInfo.y);
+                                app.stage.addChild(line);
+                            }
+                        }
+                    }
+                }
+
+                if(show.toEdges)
+                    for (let edge of Object.values(edges)) {
+                        let ids = edge.map((e) => e.no).join(", ");
+
+                        let {x, y} = edge[0]
+                        let text = new PIXI.Text(ids, smallStyle);
+                        text.anchor.set(.5,.5);
+                        app.stage.addChild(text);
+                        text.position.set(x,y)
+                    }
+                if(show.apiinfo && (correctmap || bypass))
+                    for (let edge of Object.values(edges)) {
+                        let info = edge.map(function (e) {
+                            let d = svdata.api_data.api_cell_data.find((m) => m && m.api_no == e.no);
+                            if(d)
+                            return `${e.no}:${d.api_color_no==undefined?'':' c: '+d.api_color_no}${d.tsundb_color==undefined?'':' t: '+d.tsundb_color} ${d.api_distance==undefined?'':' r: '+d.api_distance}`
+                        }).join(", ");
+
+                        let {x, y} = edge[0]
+                        let text = new PIXI.Text(info, smallStyle);
+                        text.anchor.set(.5,.5);
+                        app.stage.addChild(text);
+                        text.position.set(x, y + 30)
+                    }
+
+                if(show.distance && svdata && svdata.api_data && svdata.api_data.api_cell_data && (correctmap || bypass))
+                    for (let edge of Object.values(edges)) {
+                        let distance = unique(edge.map((e) => {
+                            let n = svdata.api_data.api_cell_data.find((m) => m && m.api_no == e.no);
+                            return n?n.api_distance:-99
+                        }).filter((d) => d>=0)).join("/");
+                        let {x, y} = edge[0];
+                        if(distance.length > 0) {
+                            let text = new PIXI.Text(distance, lbasStyle);
+                            text.anchor.set(.5,.5);
+                            app.stage.addChild(text);
+                            text.position.set(x, y - 30)
+                        }
+                    }
+
+                if(show.guessLetters) {
+                    let nodeCount = 0;
+                    let startCount = 0;
+                    let nodeNames = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
+                    let replaceLetter = (toReplace, nodeLetter) => {
+                        for(let edge of Object.values(kc3Edges)) {
+                            if (edge[0] == toReplace)
+                                edge[0] = nodeLetter;
+                            if (edge[1] == toReplace)
+                                edge[1] = nodeLetter;
+                        }
+                    }
+
+                    for(let nodeInfo of locData.spots) {
+                        let id = nodeInfo.no;
+                        if(!nodeInfo.line) {
+                            // Replace starting points
+                            replaceLetter(`Node${id}`, (startCount++) ? `Start ${startCount}` : "Start");
+                            continue;
+                        }
+
+                        if(kc3Edges[id][1].indexOf("Node") == 0 && nodeCount < nodeNames.length) {
+                            let toReplace = kc3Edges[id][1];
+
+                            // Guess from ordering
+                            let nodeLetter = nodeNames[nodeCount++];
+
+                            // Extract from labels
+                            if(locData.labels) {
+                                let closest = 35 * 35;
+                                for(let label of locData.labels) {
+                                    let dist = (label.x - nodeInfo.x) ** 2 + (label.y - 20 - nodeInfo.y) ** 2;
+                                    if (label.img.indexOf("text_") > 0 && dist < closest) {
+                                        nodeLetter = label.img.split("text_")[1];
+                                        // console.log(dist, nodeLetter, label.y - nodeInfo.y, label.x - nodeInfo.x)
+                                        closest = dist;
+                                    }
+                                }
+                            }
+
+                            // Replace the shit
+                            replaceLetter(toReplace, nodeLetter);
+                        }
+                    }
+                    drawEnds(kc3Edges);
+                }
+
+                for(let dir of [[1,0,.5,0], [0,-1,1,.5]]) {
+                    let text = new PIXI.Text("@FlatIsNice", secretstyle);
+                    text.setTransform(app.stage.width*dir[2], app.stage.height*dir[3], 1, 1, Math.atan2(-dir[1], dir[0]));
+                    text.anchor.set(.5,0);
+                    if((show.apiinfo || show.distance) && (correctmap || bypass))
+                        text.alpha = 1/128;
+                    else
+                        text.alpha = 1/255;
+                    app.stage.addChild(text);
+                }
+
+                app.render();
+                console.log(`"World ${document.getElementById("mapid").value}" : {\n${Object.keys(kc3Edges).map((k) => `      "${k}" : ["${kc3Edges[k][0]}", "${kc3Edges[k][1]}"]`).join(",\n")}\n    },`)
+                delete document.getElementById("download").href
+                blobUtil.canvasToBlob(canvas, 'image/png').then(function (blob) {
+                    console.log(blob.size)
+                    document.getElementById("download").href = blobUtil.createObjectURL(blob);
+                })
+                document.getElementById("download").addEventListener('click', function() {
+                    let d = new Date();
+                    this.download = `Map ${document.getElementById("mapid").value}.png`;
+                }, false);
+
+                if(callback) callback();
+            }
+
+            function pad(n, width = 3, z = '0') {
+                n = n + '';
+                return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+            }
+            function getJSON(url, callback, errorcallback) {
                 var xhr = new XMLHttpRequest();
                 xhr.open('GET', url, true);
                 xhr.responseType = 'json';
@@ -352,52 +711,28 @@
                     if (status === 200) {
                         callback(xhr.response);
                     } else {
-                        alert("Error with request " + url + ": " + status);
+                        if(!errorcallback)
+                            alert("Error with request " + url + ": " + status);
+                        else
+                            errorcallback(status)
                     }
                 };
                 xhr.send();
             };
             function tsunDB(map) {
-                getJSON(`http://kckai.cybersnets.com/api/routes/data/${map}?offset=0&limit=1&next_route=0`, function(data){
+                getJSON(`http://tsundb.kc3.moe/api/routes/data/${map}?offset=0&limit=1&next_route=0`, function(data){
                     document.getElementById("start").value = "svdata=" + JSON.stringify({api_data: { api_cell_data: data[0].mapNodes } });
                 });
             }
 
-            function colorCodes() {
-                document.getElementById("start").value = 'svdata={"api_result":1,"api_result_msg":"成功","api_data":{"api_cell_data":[{"api_no":0,"api_event_id":0,"api_event_kind":0},{"api_no":1,"api_event_id":6,"api_event_kind":2,"api_distance":1},{"api_no":2,"api_event_id":6,"api_event_kind":0,"api_distance":1},{"api_no":3,"api_event_id":2,"api_event_kind":0,"api_distance":2},{"api_no":4,"api_event_id":3,"api_event_kind":0,"api_distance":3},{"api_no":5,"api_event_id":7,"api_event_kind":0,"api_distance":3},{"api_no":6,"api_event_id":8,"api_event_kind":0,"api_distance":2},{"api_no":7,"api_event_id":9,"api_event_kind":0,"api_distance":4},{"api_no":8,"api_event_id":4,"api_event_kind":2,"api_distance":4},{"api_no":9,"api_event_id":4,"api_event_kind":7,"api_distance":3},{"api_no":10,"api_event_id":4,"api_event_kind":4,"api_distance":4},{"api_no":11,"api_event_id":4,"api_event_kind":5,"api_distance":5},{"api_no":12,"api_event_id":4,"api_event_kind":6,"api_distance":5},{"api_no":13,"api_event_id":4,"api_event_kind":1,"api_distance":5},{"api_no":14,"api_event_id":5,"api_event_kind":1,"api_distance":2}]}}';
-                document.getElementById("swf").value = `
-                <name="line0">
-                <matrix translateX="4060" translateY="960"/>
-                <name="line1">
-                <matrix translateX="11880" translateY="940"/>
-                <name="line2">
-                <matrix translateX="4040" translateY="2980"/>
-                <name="line3">
-                <matrix translateX="11760" translateY="3120"/>
-                <name="line4">
-                <matrix translateX="3880" translateY="4960"/>
-                <name="line5">
-                <matrix translateX="11660" translateY="5200"/>
-                <name="line6">
-                <matrix translateX="3920" translateY="7080"/>
-                <name="line7">
-                <matrix translateX="11640" translateY="7420"/>
-                <name="line8">
-                <matrix translateX="11780" translateY="10500"/>
-                <name="line9">
-                <matrix translateX="3980" translateY="10580"/>
-                <name="line10">
-                <matrix translateX="11800" translateY="14320"/>
-                <name="line11">
-                <matrix translateX="3940" translateY="12820"/>
-                <name="line12">
-                <matrix translateX="3780" translateY="14020"/>
-                <name="line13">
-                <matrix translateX="3960" translateY="12080"/>
-                <name="line14">
-                <matrix translateX="11800" translateY="12540"/>`
-                document.getElementById("url").value = "https://i.imgur.com/dKIrqI1.png";
-                update();
+            function unique(arr) {
+                if(!arr) return [];
+                return arr.reduce(function(accum, current) {
+                    if (accum.indexOf(current) < 0) {
+                        accum.push(current);
+                    }
+                    return accum;
+                }, []);
             }
             update();
         </script>

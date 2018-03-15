@@ -1,0 +1,212 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Flat is Justice! - Akashi poi generator</title>
+        <meta name="theme-color" content="#082E6B"/>
+        <meta name=viewport content="width=device-width, initial-scale=1">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:title" content="Flat is Justice - Akashi poi generator">
+        <meta name="twitter:description" content="Show poi's akashi data">
+        <meta name="description" content="Show poi's akashi data">
+        <style type="text/css">
+        	div {
+        		display:inline;
+        	}
+            textarea {
+                width: 700px;
+                height: 200px;
+            }
+            table > tr > th, table > tr > td, table > * > tr > th, table > * > tr > td {
+                border: 1px #aaa solid;
+                padding: 0.2em
+            }
+            table {
+                max-width: 100%;
+            }
+        </style>
+    </head>
+    <body> 
+        <a href="."><b>Flat is Justice - Home</b></a><br>
+        Lang: 
+        <input type="radio" name="lang" value="en" id="en" onchange="changeLang(this);" checked><b>English</b>
+        <input type="radio" name="lang" value="jp" id="jp" onchange="changeLang(this);"><b>日本語</b><br>
+        Data: poi-statistics, secretary based on <code>api_voice_ship_id</code>. <a href="https://github.com/poooi/plugin-report/blob/master/reporters/remodel-recipe.es">More info</a><br>
+        <br>
+        Output: <br>
+        <table><tbody id="table"></tbody></table><br>
+    	<script type="text/javascript">
+
+            var data = {};
+            var settings = {
+                lang: "en"
+            }
+
+    		function update() {
+                let shiplist = data.api_start2.api_mst_ship;
+                let equiplist = data.api_start2.api_mst_slotitem;
+
+                let itemremodels = {};
+                for(let s of data.known_recipes.recipes) {
+                    //let recipeId = parseInt(s.split("-")[0].substr(1));
+                    let itemId = parseInt(s.split("-")[1].substr(1));
+                    let stage = parseInt(s.split("-")[2].substr(1));
+                    let day = parseInt(s.split("-")[3].substr(1));
+                    let secretary = parseInt(s.split("-")[4].substr(1));
+
+                    if(!itemremodels[itemId])
+                        itemremodels[itemId] = {};
+                    if(!itemremodels[itemId][stage])
+                        itemremodels[itemId][stage] = {};
+                    if(!itemremodels[itemId][stage][secretary])
+                        itemremodels[itemId][stage][secretary] = [false, false, false, false, false, false, false] ;
+                    itemremodels[itemId][stage][secretary][day] = true;
+                }
+                console.log(itemremodels);
+                let html = ``;
+                for(let item in itemremodels) {
+                    let itemtl = equiplist.filter((a) => a.api_id == item)[0].api_name;
+                    if(settings.lang == "en")
+                        itemtl = data.items[itemtl]||itemtl;
+                    console.log(itemtl);
+
+                    html += `<tr></th><th colspan=8><h4 style="margin:0;text-align:left">${itemtl} (ID ${item})</h4></tr>
+                        <tr>
+                            <th>★</th>
+                            <th>Day 0 - S</th>
+                            <th>Day 1 - M</th>
+                            <th>Day 2 - T</th>
+                            <th>Day 3 - W</th>
+                            <th>Day 4 - T</th>
+                            <th>Day 5 - F</th>
+                            <th>Day 6 - S</th>
+                        </tr>`
+                
+                    for(let stage in itemremodels[item]) {
+                        if(isNaN(stage)) continue;
+                        let stageContext = itemremodels[item][stage];
+
+                        html += `<tr><th>${stage == 0 ? "0~5" : stage == 1 ? "6~9" : "MAX"}</th>`;
+                            
+                        let days = ["", "", "", "", "", "", ""];
+                        for(let secretary in stageContext) {
+                            let shipname = "*";
+                            //console.log(secretary);
+                            if(!isNaN(secretary)) {
+                                let result = shiplist.filter((a) => a.api_id == secretary)[0];
+                                if(result == undefined)
+                                    shipname = "ID " + secretary;
+                                else
+                                    shipname = result.api_name;
+                            } 
+                            if(settings.lang == "en")
+                                shipname = shipName(shipname);// + ` (${secretary})`;
+
+                            for(let day in days) 
+                                if(stageContext[secretary][day])
+                                    days[day] += shipname + `<br>\n`;
+                        }
+                        for(let dayinfo of days) {
+                            dayinfo = dayinfo.split("\n").sort().join("");
+                            html += `<td>${dayinfo.substr(0, dayinfo.length - 4)}</td>`
+                        }
+                        html += `</tr>`
+                    }
+                    html += `<br>`
+                }
+                
+                document.getElementById("table").innerHTML = html;
+       		}
+
+            function changeLang(clicked) {
+                settings.lang = clicked.value;
+                update();
+            }
+
+            function get(url, name) {
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+                        if (xmlhttp.status == 200) {
+                            data[name] = xmlhttp.responseText;
+                            if(data.ships && data.ship_affix && data.items && data.api_start2 && data.known_recipes) {
+                                data.ships = JSON.parse(data.ships);
+                                data.ship_affix = JSON.parse(data.ship_affix);
+                                data.items = JSON.parse(data.items);
+                                data.api_start2 = JSON.parse(data.api_start2);
+                                data.known_recipes = JSON.parse(data.known_recipes);
+
+                                update();
+                            }
+                       }
+                    }
+                };
+                xmlhttp.open("GET", url, true);
+                xmlhttp.send();
+            }
+
+            // https://github.com/KC3Kai/KC3Kai/blob/master/src/library/modules/Meta.js#L188
+            function shipName(jpName, suffixKey = "suffixes", prefixKey = "prefixes"){
+                // If full string matched, no combination needed
+                if(typeof data.ships[jpName] !== "undefined"){
+                    return data.ships[jpName];
+                }
+                var root = jpName,
+                    combinedPrefixes = [],
+                    prefixesMap = data.ship_affix[prefixKey] || {},
+                    prefixesList = Object.keys(prefixesMap),
+                    combinedSuffixes = [],
+                    suffixesMap = data.ship_affix[suffixKey] || {},
+                    suffixesList = Object.keys(suffixesMap),
+                    occurs = [],
+                    replaced = false;
+                /**********************************************
+                // To combine the translations of root name and prefix/suffix,
+                // the regular expression will read which one comes first,
+                // which mean the prefixes and suffixes in the ship name.
+                // and then, the root string will be chopped to remove the affixes,
+                // the matched one, added to the combination stack (FILO)
+                // removing from the replacement table in order to prevent infinite loop.
+                // if there's no match, it'll instantly stop and return the actual value.
+                ***********************************************/
+                if(prefixesList.length > 0){
+                    while( !!(occurs = (new RegExp("^("+prefixesList.join("|")+").+$","i")).exec(root)) ){
+                        root = root.replace(new RegExp("^"+occurs[1],"i"), "");
+                        if(prefixesMap[occurs[1]].slice(-1) === "$"){
+                            combinedSuffixes.unshift(prefixesMap[occurs[1]].slice(0, -1));
+                        } else {
+                            combinedPrefixes.unshift(prefixesMap[occurs[1]]);
+                        }
+                        prefixesList.splice(prefixesList.indexOf(occurs[1]), 1);
+                        replaced = true;
+                    }
+                }
+                if(suffixesList.length > 0){
+                    while( !!(occurs = (new RegExp(".+("+suffixesList.join("|")+")$","i")).exec(root)) ){
+                        root = root.replace(new RegExp(occurs[1]+"$","i"), "");
+                        if(suffixesMap[occurs[1]].slice(0, 1) === "^"){
+                            combinedPrefixes.unshift(suffixesMap[occurs[1]].slice(1));
+                        } else {
+                            combinedSuffixes.unshift(suffixesMap[occurs[1]]);
+                        }
+                        suffixesList.splice(suffixesList.indexOf(occurs[1]), 1);
+                        replaced = true;
+                    }
+                }
+                if(replaced){
+                    // Put combined name into cache
+                    return [
+                        (combinedPrefixes.length > 0 ? combinedPrefixes.join("") : "") ,
+                        (data.ships[root] || root) ,
+                        (combinedSuffixes.length > 0 ? combinedSuffixes.join("") : "")
+                    ].join("");
+                }
+                return root;
+            }
+            get("https://raw.githubusercontent.com/KC3Kai/kc3-translations/master/data/en/ships.json", "ships");
+            get("https://raw.githubusercontent.com/KC3Kai/kc3-translations/master/data/en/ship_affix.json", "ship_affix");
+            get("https://raw.githubusercontent.com/KC3Kai/kc3-translations/master/data/en/items.json", "items");
+            get("https://raw.githubusercontent.com/Tibo442/api_start2/master/start2.json", "api_start2");
+            get("https://poi.0u0.moe/api/report/v2/known_recipes", "known_recipes");
+    	</script>
+    </body>
+</html>

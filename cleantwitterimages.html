@@ -1,0 +1,199 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Flat is Justice! - Clean Twitter kc avatars</title>
+        <meta name="theme-color" content="#082E6B"/>
+        <meta name=viewport content="width=device-width, initial-scale=1">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:title" content="Flat is Justice - Clean Twitter kc avatars">
+        <meta name="twitter:description" content="Removes gradient backgrounds">
+        <style type="text/css">
+            body {
+                background-color: #ccc;
+            }
+        </style>
+    </head>
+    <body>
+        <a href="."><b>Flat is Justice - Home</b></a><br>
+        Click on canvas to remove an area, rightclick to save, click on update button to restart, increase/decrease this value if shit happens<br>
+        <input type="range" min="0.001" max="0.5" value="0.09" step = "0.001" id="slider"><span id="sliderVal">0.09</span><br>
+
+        Twitter BG URL: <input type="text" id="url" onchange="update()" value="https://i.imgur.com/bxDl0aE.png"><br>
+        <button name="Update" onclick="update()">Update</button><br><br>
+
+        Output<br>
+        <canvas id="graphRounded" width="786" height="435" style="border:1px solid black;image-rendering: pixelated;"></canvas><br><br>
+        No semi-transparancy:<br>
+        <canvas id="graph" width="786" height="435" style="border:1px solid black;image-rendering: pixelated;"></canvas><br>
+
+        <br><br>
+        <script type="text/javascript">
+            const canvas = document.getElementById("graph"), canvasRound = document.getElementById("graphRounded");
+            const slider = document.getElementById("slider"), sliderVal = document.getElementById("sliderVal");
+            const context = canvas.getContext("2d"), contextRound = canvasRound.getContext("2d");
+
+            function update() {
+                var img = new Image();
+                img.onload = function() {
+                    canvas.height = img.height;
+                    canvas.width = img.width;
+                    canvasRound.height = img.height;
+                    canvasRound.width = img.width;
+                    context.drawImage(img, 0, 0);
+                    contextRound.drawImage(img, 0, 0);
+                }
+                img.crossOrigin = "Anonymous";
+                img.src = document.getElementById("url").value;
+
+            }
+
+            let coordsLeft = [];
+            canvas.onmousedown = function (e) {
+                if(e.which != 1) return;
+                startRecursiveClear(canvas.relMouseCoords(e));
+            }
+            canvasRound.onmousedown = function (e) {
+                if(e.which != 1) return;
+                startRecursiveClear(canvasRound.relMouseCoords(e));
+            }
+
+            function startRecursiveClear(pos) {
+                let p = slider.value;
+                let minp = 1-p, maxp = 1+p;
+
+                let imgdata = context.getImageData(0,0,canvas.width,canvas.height);
+                let colors = imgdata.data;
+
+                coordsLeft = [pos];
+                let color = getColorAt(colors, pos.x, pos.y);
+                pos.r = color[0];
+                pos.g = color[1];
+                pos.b = color[2];
+                
+                setColorAt(colors, pos.x, pos.y, 0, 0, 0, 0);
+                
+                let coordsDone = new Array(canvas.width);
+                for(let i = 0; i < canvas.width; i++) coordsDone[i] = new Array(canvas.height).fill(false);
+                coordsDone[pos.x][pos.y] = true;
+                console.log(pos);
+
+                for(let i = 0; i < coordsLeft.length; i++) {
+                    let {x,y,r,g,b} = coordsLeft[i];
+
+                    offsetloop: for(let offset of [[1,0],[0,1],[-1,0],[0,-1]]) {
+                        let nx = x + offset[0], ny = y + offset[1];
+                        if(nx >= canvas.width || nx < 0
+                            || ny >= canvas.height || ny < 0)
+                            continue offsetloop;
+
+                        if(coordsDone[nx][ny])
+                            continue offsetloop;
+                        let newcolor = getColorAt(colors, nx, ny);
+                        let [nr,ng,nb] = newcolor;
+                        if(nr > minp*r && nr < maxp*r
+                        && ng > minp*g && ng < maxp*g
+                        && nb > minp*b && nb < maxp*b) {
+                            coordsDone[nx][ny] = true;
+                            setColorAt(colors, nx, ny, 0, 0, 0, 0);
+                            coordsLeft.push({x: nx, y: ny, r: nr, g: ng, b: nb});
+                        }
+                    }
+                    //console.log(coordsLeft.length, x,y, r,g,b);
+                }
+                console.log(coordsLeft.length);
+                /*let minX = Math.min(...coordsLeft.map((coord) => coord.x)),
+                    minY = Math.min(...coordsLeft.map((coord) => coord.y)),
+                    maxX = Math.max(...coordsLeft.map((coord) => coord.x)),
+                    maxY = Math.max(...coordsLeft.map((coord) => coord.y));
+                console.log(minX, minY, maxX, maxY);*/
+
+                imgdata.data = colors;
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                context.putImageData(imgdata,0,0);
+
+                contextRound.clearRect(0, 0, canvas.width, canvas.height);
+                contextRound.drawImage(canvas, 0, 0);
+                imgdata = contextRound.getImageData(0,0,canvas.width,canvas.height);
+                colors = imgdata.data;
+
+                for(let x = 0; x < canvas.width + 3; x++)
+                    for(let y = 0; y < canvas.height; y++) {
+                        if(x >= canvas.width || x < 0
+                            || y >= canvas.height || y < 0)
+                            continue;
+
+                        let transparantNeig = 0;
+                        for(let offX = -2; offX <= 2; offX++)
+                            for(let offY = -2; offY <= 2; offY++) {
+                                let nx = x + offX, ny = y + offY;
+                                if(nx >= canvas.width || nx < 0
+                                    || ny >= canvas.height || ny < 0)
+                                    continue;
+
+                                if(getColorAt(colors, nx, ny)[0]==0&&getColorAt(colors, nx, ny)[1]==0
+                                && getColorAt(colors, nx, ny)[2]==0&&getColorAt(colors, nx, ny)[3]==0)
+                                    transparantNeig++;
+                            }
+                        let currentcolors = getColorAt(colors, x, y);
+                        if(transparantNeig >= 17 && currentcolors[3])
+                            currentcolors[3] = 1;
+                        else {
+                            currentcolors[0] *= (1-(transparantNeig/23));
+                            currentcolors[1] *= (1-(transparantNeig/23));
+                            currentcolors[2] *= (1-(transparantNeig/23));
+                            currentcolors[3] *= (1-(transparantNeig/23));
+                        }
+
+                        setColorAt(colors, x, y, ...currentcolors)
+                        //console.log(x,y,transparantNeig);
+                    }
+                
+                imgdata.data = colors;
+                contextRound.clearRect(0, 0, canvas.width, canvas.height);
+                contextRound.putImageData(imgdata,0,0);
+            }
+            function getColorAt(colors, x, y) {
+                let offset = x + y * canvas.width;
+                return [colors[offset*4+0],colors[offset*4+1],colors[offset*4+2],colors[offset*4+3]]
+            }
+            function setColorAt(colors, x, y, r, g, b, a) {
+                let offset = x + y * canvas.width;
+                colors[offset*4+0] = r;
+                colors[offset*4+1] = g;
+                colors[offset*4+2] = b;
+                colors[offset*4+3] = a;
+            }
+            slider.oninput = function() {
+                sliderVal.innerHTML = this.value;
+            }
+            function shuffle(a) {
+                for (let i = a.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [a[i], a[j]] = [a[j], a[i]];
+                }
+                return a;
+            }
+            function relMouseCoords(event){
+                var totalOffsetX = 0;
+                var totalOffsetY = 0;
+                var canvasX = 0;
+                var canvasY = 0;
+                var currentElement = this;
+
+                do{
+                    totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
+                    totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
+                }
+                while(currentElement = currentElement.offsetParent)
+
+                canvasX = event.pageX - totalOffsetX;
+                canvasY = event.pageY - totalOffsetY;
+
+                return {x:canvasX, y:canvasY}
+            }
+            HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords;
+
+            update();
+        </script>
+    </body>
+</html>

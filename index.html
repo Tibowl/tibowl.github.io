@@ -1,26 +1,39 @@
 <!doctype html>
-<html>
+<html lang="en">
     <head>
         <title>Flat is Justice!</title>
         <meta name="theme-color" content="#082E6B"/>
         <meta name=viewport content="width=device-width, initial-scale=1">
         <meta name="twitter:card" content="summary">
         <meta name="twitter:title" content="Flat is Justice">
-        <meta name="twitter:description" content="KC Tools: open servers, damage suffering, exp prog">
-        <meta name="twitter:image" content="http://flatisjustice.moe/grills/0.png">
-        <meta name="keywords" content="flat,chest,small,anime,justice,kancolle,tools,calc">
+        <meta name="twitter:description" content="KC Tools: open servers, damage suffering calc, exp prog, wedding generator and more">
+        <meta name="description" content="KanColle Tools: open servers, damage suffering calc, exp prog, wedding generator and more">
+        <meta name="keywords" content="calc,kancolle,tools,flat,chest,small,anime,justice">
         <meta name="author" content="Tibi">
         <meta name="google-site-verification" content="1LKLCucyeDTQcM854X-oWD4yXndozpVgXdFI5q5FyE4" />
         <style>
         @import url(https://fonts.googleapis.com/css?family=Advent+Pro:100);
         @import url(https://fonts.googleapis.com/css?family=Advent+Pro:100&effect=shadow-multiple);
+
+        @media screen and (min-width: 800px) {
+            #maintext {
+                position: fixed;
+                right: 0;
+            }
+            #links {
+                position: fixed;
+                top: 0;
+            }
+            html,body{
+                overflow:hidden;
+            }
+        }
         #maintext {
             font-family: 'Advent Pro', sans-serif;
             font-size: 6em;
             margin: .15em .4em;
             color: #f44;
-            position: fixed;
-            right: 0;
+            text-shadow: 3px 3px 10px;
         }
         #contact {
             font-family: 'Advent Pro', sans-serif;
@@ -30,6 +43,7 @@
             color: #f44;
             position: fixed;
             bottom: 0;
+            text-shadow: 1px 1px 3px #222;
         }
         #links {
             font-family: 'Advent Pro', sans-serif;
@@ -37,62 +51,50 @@
             font-weight: bolder;
             margin: .15em .4em;
             color: #f44;
-            position: fixed;
-            top: 0;
+            text-shadow: 1px 1px 3px #222;
         }
         a {
             color: #2f2;
         }
         html {
             background: linear-gradient(
-              rgba(220, 220, 220, 0.3), 
-              rgba(190, 190, 190, 0.35)
-            ), url(/bg.jpg);
+              rgba(0, 0, 0, 0.2), 
+              rgba(0, 0, 0, 0.15)
+            ), url(/bg.png);
             background-size: cover;
+            background-position: center center;
         }
+        h2, h1 {
+            display: inline;
+            font-weight: bolder;
+        }
+        h1 {
+            font-size: 1em;
+        }
+
         html,body{
             margin:0;
             height:100%;
-            overflow:hidden;
-        }
-        #gril {
-            height: auto; width: auto;
-            max-width: 30%;
-            max-height: 300%;
-            position: absolute;
-            right:0px;
-            bottom: 0px;
-            margin:auto;
-            pointer-events: none;
         }
         </style>
     </head>
     <body>
-        <div id="links">
-            KanColle Tools: <br>
-            <a href="/open_kc_servers" target="">Open servers</a><br>
-            <a href="/dmgsuffer" target="">Damage suffering</a><br>
-            <a href="/xpcalc" target="">Experience progress calc</a><br><br>
-            Not so wow tools:<br>
-            <a href="/oaswcalc" target="">OASW lvl calc</a><br>
-            <a href="/lbasrangemapmaker" target="">LBAS map range maker</a><br>
-        </div>
-        <div id="maintext">Flat is Justice</div>
-        <img id="gril" alt="gril" src="grills/0.png">
-        <div id="contact">If you have suggestions/bugs/good pics/questsions/etc, you can contact me on <a href="https://twitter.com/FlatIsNice">Twitter @FlatIsNice</a>, on Discord @Tibi#2251 or via e-mail <a href="mailto:tibo@flatisjustice.moe" target="">tibo@flatisjustice.moe</a></div>
-        <script type="text/javascript">
-            var amountOfImages = 20;
-            var imageId = Math.floor(Math.random() * amountOfImages);
-            document.getElementById('gril').src="grills/" + imageId + ".png"
-            setInterval(function() {
-                var newId = Math.floor(Math.random() * amountOfImages);
-                while(newId === imageId)
-                    newId = Math.floor(Math.random() * amountOfImages);
-                newId = (imageId + 1) % amountOfImages;
-                console.log(imageId + " -> " + newId)
-                imageId = newId;
-                document.getElementById('gril').src="grills/" + imageId + ".png"
-            }, 5000);
-        </script>
+        <main><div id="links">
+            <h2>KanColle Tools:</h2><br>
+            Calc: <a href="/dmgsuffer" target="">Damage suffering</a><br>
+            Calc: <a href="/xpcalc" target="">Experience progress calc</a><br>
+            Fun: <a href="/eventlist" target="">Export kanmusu list to event ship level picture</a><br>
+            Fun: <a href="/senkachart" target="">senka.com.ru visualiser</a><br>
+            Info: <a href="/open_kc_servers" target="">Open servers</a><br>
+            Tech: <a href="/makebgm" target="">BGM table maker</a><br>
+            Tech: <a href="/id_tl" target="">IDs -> name translator</a><br>
+            Tech: <a href="https://github.com/Tibo442/api_start2" target="">api_start2 history</a><br>
+            <br>
+            <h2>Harder to use tools/outdated:</h2><br>
+            Calc: <a href="/oaswcalc" target="">OASW lvl calc</a><br>
+            Info: <a href="/akashi_gen" target="">Akashi - poi-DB</a><br>
+            Tech: <a href="/lbasrangemapmaker" target="">LBAS map range maker</a><br>
+        </div></main>
+        <div id="maintext"><h1>Flat is Justice</h1></div>
     </body>
 </html>

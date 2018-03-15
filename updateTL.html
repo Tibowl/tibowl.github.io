@@ -1,0 +1,157 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Flat is Justice! - Update TL</title>
+        <meta name="theme-color" content="#082E6B"/>
+        <meta name=viewport content="width=device-width, initial-scale=1">
+        <style type="text/css">
+        	div {
+        		display: inline-block;
+        	}
+            textarea {
+                width: 600px;
+                height: 200px;
+            }
+        </style>
+    </head>
+    <body>
+        <a href="."><b>Flat is Justice - Home</b></a><br>
+        <div>
+            Wikia ?action=raw&amp;section=1<br>
+            <textarea id="wikia" onchange="update()"></textarea>
+        </div>
+        <div>
+            Enkcwiki &amp;action=raw: <br>
+            <textarea id="enkcwiki" onchange="update()"></textarea>
+        </div>
+        <br>
+        <br>
+        Output: <br>
+        <textarea id="output"></textarea>
+
+    	<script type="text/javascript">
+    		function update() {
+                let splitW = document.getElementById("wikia").value.split("\n");
+                let splitE = document.getElementById("enkcwiki").value.split("\n");
+                let shipName = "";
+
+                let tlData = {};
+
+                let status = {};
+                for(let line of splitE) {
+                    if(line.indexOf("{{ShipquoteHeader") == 0) status.isInsideQuotes = true;
+                    else if(line.indexOf("<references/>") >= 0) status.isInsideQuotes = false;
+                    else if(line.indexOf("{{ShipquoteKai") == 0) {
+                        delete status.currentLine;
+                        status.data = {};
+                    } else if(status.isInsideQuotes) {
+                        if(line.indexOf("}}") == 0) {
+                            let scenario = status.data.scenario;
+                            scenario = scenario.replace(/\(Kai .+\)/, "").trim();
+                            delete status.data.scenario;
+                            tlData[scenario + status.data.audio.replace(shipName, "").split("-")[0].replace(/ /g, "").replace("Ni", "2")] = status.data;
+                            continue;
+                        } 
+                        console.log(line);
+                        if(line.indexOf("|") == 0) {
+                            status.currentLine = line.substring(1).split(" =")[0].trim();
+                            line = line.split(" =")[1].trim();
+                            console.log("CL", status.currentLine);
+                        } else if(status.currentLine) {
+                            status.data[status.currentLine] += "<br>";
+                        }
+                        if(line.indexOf("<ref>") >= 0)
+                            line = line.substring(0, line.indexOf("<ref>"));
+                        status.data[status.currentLine] = (status.data[status.currentLine]||"") + line;
+                        if(status.currentLine == "audio" && status.data.scenario == "Introduction") {
+                            let shipNameGuess = status.data.audio.split("-Intro")[0];
+                            if(shipName.length > shipNameGuess.length || shipName == "")
+                                shipName = shipNameGuess;
+                        }
+                        console.log(status.data);
+                    }
+                }
+
+                console.log("tldata", tlData);
+                console.log("name", shipName);
+
+                let reconstruction = "";
+                status = {};
+
+                for(let line of splitW) {
+                    if(line.indexOf("}}") >= 0) status.isInsideQuotes = false;
+                    if(line.indexOf("}}") >= 0) status.isInsideHourlies = false;
+                    if(status.isInsideQuotes) {
+                        if(line.indexOf("|") == 0) {
+                            let currentLine = line.substring(1).split(" = ")[0];
+                            let args = currentLine.split("/");
+                            let scenario = args[0];
+                            args = args.slice(1);
+
+                            for(let changes of [["Idle", "Secretary Idle"], 
+                                ["Secretary Married", "Secretary (Married)"],
+                                ["Looking At Scores", "Player's Score"],
+                                ["Joining A Fleet", "Joining the Fleet"],
+                                ["Docking Minor", "Docking (Minor Damage)"],
+                                ["Docking Major", "Docking (Major Damage)"],
+                                ["Docking Complete", "Docking Complete???"],
+                                ["Returning From Sortie", "Returning from Sortie"],
+                                ["Starting A Sortie", "Starting a Sortie"],
+                                ["Battle Start", "Starting a Battle"],
+                                ["Night Attack", "Night Battle Attack"]
+                                ]) // wikia - enkcwiki
+                                if(scenario == changes[0]) scenario = changes[1];
+
+                            line = handleArgs(line, currentLine, scenario, args, tlData);
+                        }
+                    }
+                    if(status.isInsideHourlies) {
+                        line = line.replace("| ", "|")
+                        if(line.indexOf("|") == 0) {
+                            let currentLine = line.substring(1).split(" = ")[0];
+                            let scenario = currentLine.substring(0, 2) + ":00";
+                            if(tlData[scenario] == undefined)
+                                if(tlData[scenario + "Kai"] != undefined)
+                                    scenario = scenario + "Kai";
+                                else if(tlData[scenario + "Kai2"] != undefined)
+                                    scenario = scenario + "Kai2";
+
+                            line = handleArgs(line, " " + currentLine, scenario, [currentLine.substring(2)], tlData);
+                        }
+                    }
+                    reconstruction += line + "\n";
+                    if(line.indexOf("{{ShipQuotes") == 0 || line.indexOf("{{Ship/Quotes") == 0) status.isInsideQuotes = true;
+                    if(line.indexOf("{{Shiphourly") == 0 || line.indexOf("{{Ship/Hourly") == 0) status.isInsideHourlies = true;
+                }
+
+                document.getElementById("output").value = reconstruction;
+                console.log("unused", tlData);
+    		}
+
+            function handleArgs(oriline, currentLine, scenario, args, tlData) {
+                let data = tlData[scenario.trim()];
+
+                if(args.length == 0 || args[0] == "JP") {
+                    if(data == undefined) {
+                        console.error(scenario, " is undefined");
+                        return oriline;
+                    }
+                    return "|" + currentLine + " = " + data.origin
+                };
+                if(args[0] == "Note")
+                    return oriline;
+                if(args[0] == "En" || args[0] == "EN") {
+                    if(data == undefined) {
+                        console.error(scenario, " is undefined");
+                        return oriline;
+                    }
+                    delete tlData[scenario];
+                    return "|" + currentLine + " = " + data.translation;
+                };
+
+                return handleArgs(oriline, currentLine, scenario + args[0].replace(/ /g, "").replace("Ni", "2"), args.slice(1), tlData);
+            }
+
+    	</script>
+    </body>
+</html>

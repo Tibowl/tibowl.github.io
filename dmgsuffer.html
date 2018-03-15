@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
     <head>
         <title>Flat is Justice! - dmg suffer</title>
         <meta name="theme-color" content="#082E6B"/>
@@ -7,6 +7,7 @@
         <meta name="twitter:card" content="summary">
         <meta name="twitter:title" content="Flat is Justice - Damage suffering">
         <meta name="twitter:description" content="Calculate suffering of damage based on armor/currhp/maxhp">
+        <meta name="description" content="Calculate suffering of damage based on armor/currhp/maxhp">
         <meta name="twitter:image" content="http://flatisjustice.moe/pics/dmgsuffer.png">
         <style type="text/css">
             input[type="number"] {
@@ -15,104 +16,172 @@
             canvas {
                 margin: 5px;
             }
+            a, a.clicked {
+                color: blue;
+            }
         </style>
     </head>
     <body>
-        <b>Attack info</b><br>
-        Cap (fill in 0 when atk = postcap): <input type="number" id="cap" min="0" max="999" onchange="update();" onclick="update();" value=0 step=10><br>
-        <div id="postcapdata">
-            Take engagement into account: <input type="checkbox" id="engage" onchange="update();" onclick="update();"><br>
-            ^ Saiun: <input type="checkbox" id="saiun" onchange="update();" onclick="update();"><br>
-            Post-Cap multiplier: <input type="number" id="postcapdmg" min="0" max="10" onchange="update();" onclick="update();" value=1.0 step=0.1><br>
-        </div>
-        Apply attack twice (like DA/TCI): <input type="checkbox" id="double" onchange="update();" onclick="update();"><br>
-        <br>
-        <b>Target info</b><br>
-        Abyssal: <input type="checkbox" id="abyssal" onchange="update();" onclick="update();"><br>
-        Armor: <input type="number" id="armor" min="1" max="9999" onchange="update();" onclick="update();" value=52><br>
-        MaxHP: <input type="number" id="maxhp" min="1" max="9999" onchange="update();" onclick="update();" value=38><br>
-        CurrHP: <input type="number" id="currhp" min="1" max="9999" onchange="update();" onclick="update();" value=38><br>
-        <br>
-        <b>Graph</b><br>
-        Min attack: <input type="number" id="atkmin" min="0" max="9999" onchange="update();" onclick="update();" value=0 step=5><br>
-        Max attack: <input type="number" id="atkmax" min="0" max="9999" onchange="update();" onclick="update();" value=0 step=5><br>
-        Color per HP: <input type="checkbox" id="perhp" onchange="update();" onclick="update();"><br>
-        <canvas id="graph" width="830" height="425" style="border:1px solid black;"></canvas><br>
-        <b>Exact attack bar</b><br>
-        Attack: <input type="number" id="exatk" min="0" max="9999" onchange="update();" onclick="update();" value=70><br>
-        <canvas id="bar" width="400" height="20" style="border:1px solid black;"></canvas><br>
-        <div id="exatk-txt"></div>
-        <br><br>
+        <a href="."><b>Flat is Justice - Home</b></a><br>
+
+        <main>
+            <div id="grapherb" style="float:right"></div>
+            <div id="settings">
+                <b>Attack info</b><br>
+                <label>Attack power: <input type="number" id="atk" min="0" max="9999" onchange="update();" onclick="update();"><br></label>
+                <label>Softcap (fill in 0 when atk = postcap) <a target="_blank" rel="noopener" href="http://kancolle.wikia.com/wiki/Combat/Damage_Calculation#Attack_Power_Cap" title="Eg: 180 for day/300 for night/150 other">[?]</a>: <input type="number" id="cap" min="0" max="999" onchange="update();" onclick="update();" step=10><br></label>
+                <div id="postcapdata">
+                    <label>Take random engagement into account: <input type="checkbox" id="engage" onchange="update();"><br></label>
+                    <label>^ Saiun (exclude Red-T): <input type="checkbox" id="saiun" onchange="update();"><br></label>
+                    <label>Pre-Cap multiplier <a target="_blank" rel="noopener" href="http://kancolle.wikia.com/wiki/Combat/Damage_Calculation#Pre-Cap_Modifiers" title="Eg: Formation, Health, Engagement, Night Cutin modifiers">[?]</a>: <input type="number" id="precapdmg" min="0" max="10" onchange="update();" onclick="update();" step=0.1><br></label>
+                    <label>Post-Cap multiplier <a target="_blank" rel="noopener" href="http://kancolle.wikia.com/wiki/Combat/Damage_Calculation#Pre-Cap_Modifiers" title="Eg: Art spot, Contact, AP shell modifiers&#013;NOTE: Critical hit is post flooring, hence why it's in a seperate option">[?]</a>: <input type="number" id="postcapdmg" min="0" max="10" onchange="update();" onclick="update();" step=0.1><br></label>
+                    <label>Critical: <input type="checkbox" id="critical" onchange="update();"><br></label>
+                </div>
+                <label>Ammo remaining: <input type="number" id="ammorem" min="0" max="100" step="20" onchange="update();" onclick="update();">%<br></label>
+                <label>Apply attack twice (like DA/TCI): <input type="checkbox" id="double" onchange="update();"><br></label>
+                <br>
+                <b>Target info</b><br>
+                <label>Abyssal: <input type="checkbox" id="abyssal" onchange="update();"><br></label>
+                <label>Armor: <input type="number" id="armor" min="1" max="9999" onchange="update();" onclick="update();"><br></label>
+                <label>MaxHP: <input type="number" id="maxhp" min="1" max="9999" onchange="update();" onclick="update();"><br></label>
+                <label>CurrHP: <input type="number" id="currhp" min="1" max="9999" onchange="update();" onclick="update();"><br></label>
+            </div>
+            <hr>
+            <div id="graphstuff">
+                <b>Graph</b><br>
+                <canvas id="graph" width="830" height="425" style="border:1px solid black;"></canvas><br>
+                <b>Graph settings</b><br>
+                <label>Change variable/X-axis: <select id="graphvariable" onchange="update();">
+                    <option value="armor">Armor</option>
+                    <option value="atk">Attack power</option>
+                    <option value="maxhp">Max. HP (full health)</option>
+                    <option value="currhp">Current HP</option>
+                </select><br></label>
+                <label>Min: <input type="number" id="graphmin" min="0" max="9999" onchange="update();" onclick="update();" step=5><br></label>
+                <label>Max: <input type="number" id="graphmax" min="0" max="9999" onchange="update();" onclick="update();" step=5><br></label>
+                <label>Color per HP: <input type="checkbox" id="perhp" onchange="update();"><br></label>
+                <div id="note"></div>
+                <br>
+            </div>
+            <b>Exact attack bar</b><br>
+            <canvas id="bar" width="400" height="20" style="border:1px solid black;"></canvas><br>
+            <div id="bar-txt"></div><br>
+            <div id="graphera"></div>
+            <u><a onclick="save()">Save (for sharing)</a></u><br>
+            <br>
+        </main>
+        <div style="clear:both"></div>
+        <hr>
         <i>Formulas used:<br> </i>
-        <i>- engagement: </i><code>precapatk = atk * engagement</code> where <code>engagement = x1.2 (15%) x1 (45%) x0.8 (30%) x0.6 (10%)</code> with saiun: <code>engagement = x1.2 (15%) x1 (45%) x0.8 (40%)</code><br>
-        <i>- cap: </i><code>postcapatk = floor(<span style="color:red">floor(</span>(precapatk > cap) ? cap + sqrt(precapatk - cap) : precapatk<span style="color:red">)</span> * postcapmultiplier)</code><br>
-        <i>- damage: </i><code>dmg = floor(attack - (0.7 * armor + 0.6 * rng.nextInt(armor)))</code><br>
+        <i>- engagement/precap: </i><code>precapatk = atk * (engagement) * precap</code> where <code>engagement = x1.2 (15%) x1 (45%) x0.8 (30%) x0.6 (10%)</code> with saiun: <code>engagement = x1.2 (15%) x1 (45%) x0.8 (40%)</code><br>
+        <i>- cap: </i><code>postcapatk = floor(<span style="color:darkred">floor(</span>(precapatk > cap) ? cap + sqrt(precapatk - cap) : precapatk<span style="color:darkred">)</span> * criticalmodifier) * postcapmultiplier</code><br>
+        <i>- damage: </i><code>dmg = floor((attack - (0.7 * armor + 0.6 * rng.nextInt(armor))) * ammomultiplier)</code><br>
+        <i>- ammomultiplier: </i><code>min(1.0, 2 * ammorem)</code><br>
         <i>- scratch: </i><code>if(dmg < 1) -> dmg = floor(0.06 * currentHP + 0.08 * rng.nextInt(currentHP))</code><br>
         <i>- overkill protection: </i><code>if(dmg >= currentHP) -> dmg = floor(0.5 * currentHP + 0.3 * rng.nextInt(currentHP))</code><br>
+        <i>- marriage hp: </i><code>postring = prering + [4, 4, 4, 5, 6, 7, 7, 8, 8, 9][floor(prering/10)]</code><br>
         <i>where </i><code>nextInt</code><i> returns uniformly, 0 inclusive up to argument exclusive</i><br>
         <br>
         <i>Some formulas come from KC kai's </i><code>setDamageValue</code><i> in </i><code>Server_Controllers.BattleLogic\BattleLogicBase.cs</code><i><br>
         <i>Based on and inspired by <a href="http://kancolle-calc.net/suffering.html">KC-calc suffering</a>, inspired by Pyan's Unmei system</i>
         <script type="text/javascript">
-            var armor, maxhp, currhp, atkmin, atkmax, exatk, abyssal, cap, saiun, double, postcapdmg, engage, perhp;
-            var prevarmor, prevmaxhp, prevcurrhp, prevatkmin, prevatkmax, prevexatk, prevabyssal, prevcap, prevsaiun, prevdouble, prevpostcapdmg, prevengage, prevperhp;
+            var data, prevdata = null, rawdata, defaultdata = {
+                "armor": 52,
+                "maxhp": 38,
+                "currhp": 38,
+                "graphmin": 0,
+                "graphmax": 0,
+                "cap": 0,
+                "ammorem": 100,
+                "postcapdmg": 1,
+                "precapdmg": 1,
+                "atk": 70,
+                "abyssal": false,
+                "saiun": false,
+                "critical": false,
+                "double": false,
+                "engage": false,
+                "perhp": false,
+                "graphvariable": "armor"
+            };
             var context, canvas = document.getElementById("graph"), canvas2 = document.createElement("canvas");
             function update() {
-                armor = parseFloat(document.getElementById('armor').value);
-                maxhp = parseFloat(document.getElementById('maxhp').value);
-                currhp = parseFloat(document.getElementById('currhp').value);
-                atkmin = parseFloat(document.getElementById('atkmin').value);
-                atkmax = parseFloat(document.getElementById('atkmax').value) + 1;
-                cap = parseFloat(document.getElementById('cap').value);
-                postcapdmg = parseFloat(document.getElementById('postcapdmg').value);
-                abyssal = !!document.getElementById('abyssal').checked;
-                saiun = !!document.getElementById('saiun').checked;
-                double = !!document.getElementById('double').checked;
-                engage = !!document.getElementById('engage').checked;
-                perhp = !!document.getElementById('perhp').checked;
-
-                if(prevmaxhp != maxhp || currhp > maxhp) {
-                    currhp += maxhp - (prevmaxhp || maxhp);
-                    if(currhp > maxhp) currhp = maxhp;
-                    document.getElementById('currhp').value = currhp;
-                    document.getElementById('currhp').max = maxhp;
+                canvas = document.getElementById("graph");
+                data = {
+                    armor: parseFloat(document.getElementById('armor').value),
+                    maxhp: parseFloat(document.getElementById('maxhp').value),
+                    currhp: parseFloat(document.getElementById('currhp').value),
+                    graphmin: parseFloat(document.getElementById('graphmin').value),
+                    graphmax: parseFloat(document.getElementById('graphmax').value),
+                    cap: parseFloat(document.getElementById('cap').value),
+                    ammorem: parseFloat(document.getElementById('ammorem').value),
+                    postcapdmg: parseFloat(document.getElementById('postcapdmg').value),
+                    precapdmg: parseFloat(document.getElementById('precapdmg').value),
+                    atk: document.getElementById('atk').value,
+                    abyssal: !!document.getElementById('abyssal').checked,
+                    saiun: !!document.getElementById('saiun').checked,
+                    critical: !!document.getElementById('critical').checked,
+                    double: !!document.getElementById('double').checked,
+                    engage: !!document.getElementById('engage').checked,
+                    perhp: !!document.getElementById('perhp').checked,
+                    graphvariable: document.getElementById('graphvariable').options[document.getElementById('graphvariable').selectedIndex].value
                 }
 
-                document.getElementById('postcapdata').style = cap <= 0 ? "display:none" : "display:block";
-                document.getElementById('saiun').disabled = !engage;
+                if(prevdata != null && (prevdata.maxhp != data.maxhp || data.currhp  > data.maxhp)) {
+                    data.currhp += data.maxhp - (prevdata.maxhp || data.maxhp);
+                    if(data.currhp > data.maxhp) data.currhp = data.maxhp;
+                    if(data.currhp < 1) data.currhp = 1;
+                    document.getElementById('currhp').value = data.currhp;
+                    document.getElementById('currhp').max = data.maxhp;
+                }
 
-                if(atkmin == 0)
-                    atkmin = Math.floor(0.7 * armor) - 2;
-                if(atkmax == 1)
-                    atkmax = Math.ceil(1.3 * armor + currhp) + 2;
-                // console.debug(atkmin,atkmax)
-                exatk = parseFloat(document.getElementById('exatk').value);
+                rawdata = JSON.parse(JSON.stringify(data));
+                data.graphmax += 1;
+                data.critical = data.critical ? 1.5 : 1.0;
+                
+                document.getElementById('postcapdata').style = data.cap <= 0 ? "display:none" : "display:block";
+                document.getElementById('saiun').disabled = !data.engage;
+                
+                switch(data.graphvariable) {
+                    case "armor":
+                        if(data.graphmin == 0)
+                            data.graphmin = Math.max(1, data.armor - 20);
+                        if(data.graphmax == 1)
+                            data.graphmax = data.armor + 20;
+                    break;
+                    case "maxhp":
+                        if(data.graphmin == 0)
+                            data.graphmin = Math.max(1, data.maxhp - 20);
+                        if(data.graphmax == 1)
+                            data.graphmax = data.maxhp + 20;
+                    break;
+                    case "currhp":
+                        if(data.graphmin == 0)
+                            data.graphmin = 1;
+                        if(data.graphmax == 1 || data.graphmax > data.maxhp)
+                            data.graphmax = data.maxhp + 1;
+                    break;
+                    case "atk":
+                        if(data.graphmax == 1)
+                            data.graphmax = Math.min(Math.ceil(1.3 * data.armor + data.currhp) + 2, 325);
+                        if(data.graphmin == 0)
+                            data.graphmin = Math.min(Math.max(1, Math.floor(0.7 * data.armor) - 2), 250);
+                    break;
+                }
+                
+                let onlybar = false;
+                if(prevdata != null) {
+                    prevdata[data.graphvariable] = data[data.graphvariable];
+                    if(data.graphvariable == "maxhp")
+                        prevdata.currhp = data.currhp;
+                    if(JSON.stringify(data) === JSON.stringify(prevdata))
+                        onlybar = true;
+                }
 
-                let onlyexact = false;
-                if(prevarmor == armor && prevdouble == double && prevmaxhp == maxhp && prevcurrhp == currhp
-                    && prevatkmin == atkmin && prevatkmax == atkmax && abyssal == prevabyssal && prevsaiun == saiun 
-                    && prevcap == cap && prevengage == engage && prevpostcapdmg == postcapdmg && prevperhp == perhp)
-                    if(prevexatk == exatk)
-                        return;
-                    else
-                        onlyexact = true;
-
-                prevexatk = exatk;
-                prevarmor = armor;
-                prevmaxhp = maxhp;
-                prevcurrhp = currhp;
-                prevatkmin = atkmin;
-                prevatkmax = atkmax;
-                prevabyssal = abyssal;
-                prevcap = cap;
-                prevsaiun = saiun;
-                prevdouble = double;
-                prevpostcapdmg = postcapdmg;
-                prevengage = engage;
-                prevperhp = perhp;
-
-                let calculated = calculate(exatk);
-                document.getElementById('exatk-txt').innerHTML = `
+                prevdata = data;
+                
+                let calculated = calculate();
+                document.getElementById('bar-txt').innerHTML = `
                 Green: ${(calculated.ok * 100).toFixed(2)}%<br>
                 Shouha: ${(calculated.shouha * 100).toFixed(2)}%<br>
                 Chuuha: ${(calculated.chuuha * 100).toFixed(2)}%<br>
@@ -120,11 +189,16 @@
                 ${calculated.sunk ? ("Sunk: " + (calculated.sunk * 100).toFixed(2) + "%<br>") : ""}<br>
                 HP left: ${(calculated.minhp == calculated.maxhp) ? calculated.minhp : calculated.minhp + " ~ " + calculated.maxhp} 
                 (Damage: ${(calculated.mindmg == calculated.maxdmg) ? calculated.mindmg : calculated.mindmg + " ~ " + calculated.maxdmg})
+
+                ${calculated.overkill || calculated.scratch ? "<br><br>" : ""}
+                ${calculated.scratch ? ("Scratch: " + (calculated.scratch * 100).toFixed(2) + "%<br>") : ""}
+                ${calculated.overkill || calculated.scratch ? ("Normal: " + (calculated.normal * 100).toFixed(2) + "%<br>") : ""}
+                ${calculated.overkill ? ("Overkill: " + (calculated.overkill * 100).toFixed(2) + "%<br>") : ""}
                 `;
 
                 var bar = document.getElementById("bar");
                 bar.width = bar.width;
-                bar.height = perhp ? 20 : 10;
+                bar.height = data.perhp ? 20 : 10;
                 var ctx = bar.getContext("2d");
                 let prev = 0;
                 ctx.fillStyle = "#2fd30a";
@@ -140,8 +214,8 @@
                 ctx.fillRect(prev, 0, calculated.taiha * bar.width, 10);
 
                 prev = bar.width * (1 - calculated.sunk);
-                for(let hp in calculated["hps"]) {
-                    let odds = calculated["hps"][hp];
+                for(let hp in calculated.hps) {
+                    let odds = calculated.hps[hp];
                     if(odds === undefined || hp <= 0)
                         continue;
                     let color = getColor(hp);
@@ -152,10 +226,12 @@
                     ctx.fillRect(prev - 2, 10, 3, 10);
                 }
 
-                if(onlyexact) {
-                    drawArrow();
+                if(onlybar) {
+                    drawArrows(data[data.graphvariable]);
+                    console.log("Only bar needs update");
                     return;
                 }
+                console.log("Graph needs update too I guess");
 
                 canvas.width = canvas.width;
                 var width = canvas.width - 30;
@@ -163,50 +239,55 @@
                 context = canvas.getContext("2d");
 
                 // var status = [];
-                for(let atk = atkmin; atk < atkmax; atk++) {
-                    let stages = calculate(atk);
+                let graphmin = data.graphmin, graphmax = data.graphmax;
+                let defaultVal = data[data.graphvariable];
+                for(let val = graphmin; val < graphmax; val++) {
+                    data[data.graphvariable] = val;
+                    if(data.graphvariable == "maxhp")
+                        data.currhp = val;
+                    let stages = calculate();
                     
                     // console.log(stages);
-                    // status[atk] = stages;
+                    // status[val] = stages;
                     prev = 0;
-                    if(perhp) {
+                    if(data.perhp) {
                         prev = height * (1 - stages.sunk);
-                        for(let hp in stages["hps"]) {
-                            let odds = stages["hps"][hp];
+                        for(let hp in stages.hps) {
+                            let odds = stages.hps[hp];
                             if(odds === undefined || odds <= 0 || hp <= 0)
                                 continue;
                             let color = getColor(hp);
                             context.fillStyle = "hsl(" + color + ", 100%, 50%)";
-                            context.fillRect(width / (atkmax - atkmin) * (atk - atkmin), prev, width / (atkmax - atkmin) + 1, -odds * height);
+                            context.fillRect(width / (graphmax - graphmin) * (val - graphmin), prev, width / (graphmax - graphmin) + 1, -odds * height);
                             prev -= odds * height;
                             context.fillStyle = "hsl(" + color + ", 100%, 40%)";
-                            context.fillRect(width / (atkmax - atkmin) * (atk - atkmin), prev - 2, width / (atkmax - atkmin) + 1, 3);
+                            context.fillRect(width / (graphmax - graphmin) * (val - graphmin), prev - 2, width / (graphmax - graphmin) + 1, 3);
                         }
                     } else {
                         context.fillStyle = "#2fd30a";
-                        context.fillRect(width / (atkmax - atkmin) * (atk - atkmin), prev, width / (atkmax - atkmin), stages.ok * height);
+                        context.fillRect(width / (graphmax - graphmin) * (val - graphmin), prev, width / (graphmax - graphmin), stages.ok * height);
                         prev += stages.ok * height;
                         context.fillStyle = "#d1d100";
-                        context.fillRect(width / (atkmax - atkmin) * (atk - atkmin), prev, width / (atkmax - atkmin), stages.shouha * height);
+                        context.fillRect(width / (graphmax - graphmin) * (val - graphmin), prev, width / (graphmax - graphmin), stages.shouha * height);
                         prev += stages.shouha * height;
                         context.fillStyle = "#e5a416";
-                        context.fillRect(width / (atkmax - atkmin) * (atk - atkmin), prev, width / (atkmax - atkmin), stages.chuuha * height);
+                        context.fillRect(width / (graphmax - graphmin) * (val - graphmin), prev, width / (graphmax - graphmin), stages.chuuha * height);
                         prev += stages.chuuha * height;
                         context.fillStyle = "#e51616";
-                        context.fillRect(width / (atkmax - atkmin) * (atk - atkmin), prev, width / (atkmax - atkmin), stages.taiha * height);
+                        context.fillRect(width / (graphmax - graphmin) * (val - graphmin), prev, width / (graphmax - graphmin), stages.taiha * height);
                         prev += stages.taiha * height;
                     }
-                    if(atk % 5 == 0) {
+                    if(val % 5 == 0) {
                         context.fillStyle = "#000000";
                         context.save();
-                        context.translate(width / (atkmax - atkmin) * (atk - atkmin) + (width / (atkmax - atkmin)) / 2, height + 14);
+                        context.translate(width / (graphmax - graphmin) * (val - graphmin) + (width / (graphmax - graphmin)) / 2, height + 14);
                         context.rotate(-Math.PI/2);
                         context.textAlign = "center";
-                        context.fillText(atk, 0, 3);
+                        context.fillText(val, 0, 3);
                         context.restore();
                     }
                     context.fillStyle = "#000000";
-                    context.fillRect(width / (atkmax - atkmin) * (atk - atkmin), 0, 1, height);
+                    context.fillRect(width / (graphmax - graphmin) * (val - graphmin), 0, 1, height);
                 }
                 context.fillStyle = "#000000";
                 context.fillRect(width, 0, 1, height+1);
@@ -216,63 +297,97 @@
                 }
                 canvas2.width = canvas.width;
                 canvas2.height = canvas.height;
-                canvas2.getContext("2d").drawImage(canvas, 0, 0)
-
-                drawArrow();
+                canvas2.getContext("2d").drawImage(canvas, 0, 0);
+                
+                data[data.graphvariable] = defaultVal;
+                if(data.graphvariable == "maxhp")
+                    data.currhp = parseFloat(document.getElementById('currhp').value);
+                drawArrows(defaultVal);
                 //console.debug(status);
             }
             function getColor(hp) {
-                if(hp / maxhp <= .25) 
-                    return (hp/maxhp) * 150;
-                else if(hp / maxhp <= .5) 
-                    return ((hp-.25*maxhp) / maxhp) * 100 + 50;
-                else if(hp / maxhp <= .75) 
-                    return ((hp-.50*maxhp) / maxhp) * 300 + 100;
+                if(hp / data.maxhp <= .25) 
+                    return (hp/data.maxhp) * 150;
+                else if(hp / data.maxhp <= .5) 
+                    return ((hp-.25*data.maxhp) / data.maxhp) * 100 + 50;
+                else if(hp / data.maxhp <= .75) 
+                    return ((hp-.50*data.maxhp) / data.maxhp) * 300 + 100;
                 else 
-                    return ((hp-.75*maxhp) / maxhp) * 100 + 190;
+                    return ((hp-.75*data.maxhp) / data.maxhp) * 100 + 190;
             }
-            function drawArrow() {
+            function getAfterRingHP(val) {
+                return val + ([4, 4, 4, 5, 6, 7, 7, 8, 8, 9][Math.floor(val/10)] || Number.NEGATIVE_INFINITY);
+            }
+            function drawArrows(val) {
                 canvas.width = canvas.width;
                 context.drawImage(canvas2, 0, 0);
-
-                if(exatk >= atkmin && exatk < atkmax) {
-                    context.fillStyle = "#ff0000";
-                    context.fillText("\u2191", (canvas.width - 30) / (atkmax - atkmin) * (exatk - atkmin) + ((canvas.width - 30) / (atkmax - atkmin)) / 2 -2, canvas.height - 15);
+                drawArrow(val);
+                let note = "<b>Arrow notes</b><br>";
+                switch(data.graphvariable) {
+                    case "armor":
+                        drawArrow(val + 9, "#800080");
+                        drawArrow(val + 18, "#800080");
+                        note += '<span style="color:#800080">Purple</span> arrows: 1 or 2 +9 bulge (large) 「増設バルジ(大型艦)」/ Pugliese 「プリエーゼ式水中防御隔壁」<br>';
+                        drawArrow(val + 7, "#0080ff");
+                        drawArrow(val + 14, "#0080ff");
+                        note += '<span style="color:#0080ff">Blue</span> arrows: 1 or 2 +7 bulge (medium) 「増設バルジ(中型艦)」';
+                        break;
+                    case "maxhp":
+                        drawArrow(val + 1, "#0000ff");
+                        drawArrow(val + 2, "#0000ff");
+                        note += '<span style="color:#0000ff">Dark blue</span> arrows: 1 or 2 hp mods<br>';
+                        drawArrow(getAfterRingHP(val), "#00ff00");
+                        note += '<span style="color:#00ff00">Green</span> arrows: Married, assuming no HP cap<br>';
+                        drawArrow(getAfterRingHP(val) + 1, "#0080ff");
+                        drawArrow(getAfterRingHP(val) + 2, "#0080ff");
+                        note += '<span style="color:#0080ff">Blue</span> arrows: Married + 1 or 2 hp mods, assuming no HP cap';
+                        break;
+                    default:
+                        note = "";
+                        break;
+                }
+                document.getElementById("note").innerHTML = note;
+            }
+            function drawArrow(val, color = "#ff0000") {
+                if(val >= data.graphmin && val < data.graphmax) {
+                    context.fillStyle = color;
+                    context.font = "bold 17pt Courier";
+                    context.fillText("\u2191", (canvas.width - 30) / (data.graphmax - data.graphmin) * (val - data.graphmin) + ((canvas.width - 30) / (data.graphmax - data.graphmin)) / 2 -6, canvas.height - 12);
                 }
             }
-            function calculate(atk) {
+            function calculate() {
                 let stages = {
                     "hps": []
                 };
-                if(cap) {
+                if(data.cap) {
                     let engagements = [[1.2, .15], [1, .45], [.8, .3], [.6, .1]];
-                    if(saiun) 
-                        engagements = [[1.2, .15], [1, .45], [.8, .4]];
-                    if(!engage)
+                    if(!data.engage)
                         engagements = [[1, 1]];
-                    let capdmg = (uncapped) => Math.floor(uncapped > cap ? cap + Math.sqrt(uncapped - cap) : uncapped);
+                    else if(data.saiun) 
+                        engagements = [[1.2, .15], [1, .45], [.8, .4]];
+                    let capdmg = (uncapped) => Math.floor(uncapped > data.cap ? data.cap + Math.sqrt(uncapped - data.cap) : uncapped);
                     for(let eng of engagements) {
-                        let stage = calculateFromPostCapATK(Math.floor(capdmg(eng[0] * atk) * postcapdmg));
+                        let stage = calculateFromPostCapATK(Math.floor(capdmg(eng[0] * data.precapdmg * data.atk) * data.critical) * data.postcapdmg, data.armor);
                         merge(stages, stage, eng[1]);
                     }
                 } else 
-                    stages = calculateFromPostCapATK(atk);
+                    stages = calculateFromPostCapATK(Math.floor(data.atk * data.precapdmg), data.armor);
                 return stages;
             }
             function merge(stages, stage, weight) {
-                for(let state of ["ok", "shouha", "chuuha", "taiha", "sunk"])
+                for(let state of ["ok", "shouha", "chuuha", "taiha", "sunk", "scratch", "normal", "overkill"])
                     stages[state] = (stages[state]||0) + (stage[state] * weight);
-                for(let hp in stage["hps"])
-                    stages["hps"][hp] = (stages["hps"][hp]||0) + (stage["hps"][hp] * weight);
-                for(let side of ["min", "max"]) {
-                    stages[side + "hp"] = compare[side](stages[side + "hp"], stage[side + "hp"]);
-                    stages[side + "dmg"] = compare[side](stages[side + "dmg"], stage[side + "dmg"]);
-                }
+                for(let hp in stage.hps)
+                    stages.hps[hp] = (stages.hps[hp]||0) + (stage.hps[hp] * weight);
+                stages.minhp = compare.min(stages.minhp, stage.minhp);
+                stages.mindmg = compare.min(stages.mindmg, stage.mindmg);
+                stages.maxhp = compare.max(stages.maxhp, stage.maxhp);
+                stages.maxdmg = compare.max(stages.maxdmg, stage.maxdmg);
             }
-            function calculateFromPostCapATK(atk) {
-                if(double) {
-                    let firstAttackDMGs = calculateDamagesDone(atk, currhp);
-                    // console.debug("First ATK", calculateDamagesDone(atk, currhp));
+            function calculateFromPostCapATK(atk, armor) {
+                if(data.double) {
+                    let firstAttackDMGs = calculateDamagesDone(atk, data.currhp, armor).damages;
+                    // console.debug("First ATK", firstAttackDMGs);
 
                     let stages = {
                         "sunk" : 0,
@@ -280,6 +395,9 @@
                         "chuuha" : 0,
                         "shouha" : 0,
                         "ok" : 0,
+                        "scratch" : 0,
+                        "normal" : 0,
+                        "overkill" : 0,
                         "hps" : []
                     };
                     let sum = 0;
@@ -287,19 +405,20 @@
                         sum += firstAttackDMGs[posdmg];
 
                     for(let posdmg in firstAttackDMGs) {
-                        let ch = firstAttackDMGs[posdmg], afterhp = currhp - posdmg;
-                        let stage = calculatePostCap(atk, afterhp, calculateDamagesDone(atk, afterhp, currhp > 0.25 * maxhp && !abyssal));
+                        let ch = firstAttackDMGs[posdmg], afterhp = data.currhp - posdmg;
+                        let stage = calculatePostCap(atk, afterhp, armor, calculateDamagesDone(atk, afterhp, armor, data.currhp > 0.25 * data.maxhp && !data.abyssal));
                         stage.mindmg = parseInt(stage.mindmg, 10) + parseInt(posdmg, 10);
                         stage.maxdmg = parseInt(stage.maxdmg, 10) + parseInt(posdmg, 10);
                         merge(stages, stage, ch/sum);
                     }
                     return stages;
                 } else {
-                    return calculatePostCap(atk, currhp);
+                    return calculatePostCap(atk, data.currhp, armor);
                 }
             }
-            function calculatePostCap(atk, currenthp, dmgsDealth = calculateDamagesDone(atk, currenthp)) {
+            function calculatePostCap(atk, currenthp, armor, calculatedDamage = calculateDamagesDone(atk, currenthp, armor)) {
                 let sum = 0;
+                let dmgsDealth = calculatedDamage.damages;
                 for(let posdmg in dmgsDealth)
                     sum += dmgsDealth[posdmg];
                 let stages = {
@@ -308,51 +427,72 @@
                     "chuuha" : 0,
                     "shouha" : 0,
                     "ok" : 0,
+                    "overkill" : 0,
+                    "normal" : 0,
+                    "scratch" : 0,
                     "hps" : []
                 };
                 for(let posdmg in dmgsDealth) {
                     let ch = dmgsDealth[posdmg], afterhp = currenthp - posdmg;
                     if(ch == 0) continue;
-                    stages["hps"][afterhp] = ch/sum;
+                    stages.hps[afterhp] = ch/sum;
                     if(afterhp <= 0)
                         stages.sunk += ch/sum;
-                    else if(afterhp <= .25 * maxhp)
+                    else if(afterhp <= .25 * data.maxhp)
                         stages.taiha += ch/sum;
-                    else if(afterhp <= .50 * maxhp)
+                    else if(afterhp <= .50 * data.maxhp)
                         stages.chuuha += ch/sum;
-                    else if(afterhp <= .75 * maxhp)
+                    else if(afterhp <= .75 * data.maxhp)
                         stages.shouha += ch/sum;
                     else
                         stages.ok += ch/sum;
-                    for(let side of ["min", "max"]) {
+
+                    /*for(let side of ["min", "max"]) {
                         stages[side + "hp"] = compare[side](stages[side + "hp"], afterhp < 0 ? 0 : afterhp);
                         stages[side + "dmg"] = compare[side](stages[side + "dmg"], posdmg);
-                    }
+                    }*/
+                    stages.minhp = compare.min(stages.minhp, afterhp < 0 ? 0 : afterhp);
+                    stages.mindmg = compare.min(stages.mindmg, posdmg);
+                    stages.maxhp = compare.max(stages.maxhp, afterhp < 0 ? 0 : afterhp);
+                    stages.maxdmg = compare.max(stages.maxdmg, posdmg);
                 }
+                stages.overkill += calculatedDamage.overkill / sum;
+                stages.normal += calculatedDamage.normal / sum;
+                stages.scratch += calculatedDamage.scratch / sum;
                 return stages;
             }
-            function calculateDamagesDone(atk, currenthp, overkillprot = currenthp > 0.25 * maxhp && !abyssal) {
-                let dmgsDealth = {};
+            function calculateDamagesDone(atk, currenthp, armor, overkillprot = currenthp > 0.25 * data.maxhp && !data.abyssal) {
+                let dmgtype = {
+                    "scratch" : 0,
+                    "normal" : 0,
+                    "overkill" : 0
+                };
+                let damages = {};
+                let ammomult = Math.min(1.0, 2.0 * (data.ammorem / 100));
                 for(let arm = 0; arm < armor; arm++) {
-                    let dmg = Math.floor(atk - (0.7 * armor + arm * 0.6));
+                    let dmg = Math.floor((atk - (0.7 * armor + arm * 0.6)) * ammomult);
 
                     if(dmg >= currenthp && overkillprot) { // Overkill protection
                         let possibledmg = [];
                         for(let hpRoll = 0; hpRoll < currenthp; hpRoll++)
                             possibledmg.push(Math.floor(0.5 * currenthp + 0.3 * hpRoll));
                         for(let posdmg of possibledmg)
-                            dmgsDealth[posdmg] = (dmgsDealth[posdmg] || 0) + (1.0 / possibledmg.length);
+                            damages[posdmg] = (damages[posdmg] || 0) + (1.0 / possibledmg.length);
+                        dmgtype.overkill = (dmgtype.overkill || 0) + 1.0;
                     } else if(dmg < 1) { // Scratch
                         let possibledmg = [];
                         for(let hpRoll = 0; hpRoll < currenthp; hpRoll++)
                             possibledmg.push(Math.floor(0.06 * currenthp + 0.08 * hpRoll));
                         for(let posdmg of possibledmg)
-                            dmgsDealth[posdmg] = (dmgsDealth[posdmg] || 0) + (1.0 / possibledmg.length);
+                            damages[posdmg] = (damages[posdmg] || 0) + (1.0 / possibledmg.length);
+                        dmgtype.scratch = (dmgtype.scratch || 0) + 1.0;
                     } else {
-                        dmgsDealth[dmg] = (dmgsDealth[dmg] || 0) + 1.0;
+                        damages[dmg] = (damages[dmg] || 0) + 1.0;
+                        dmgtype.normal = (dmgtype.normal || 0) + 1.0;
                     }
                 }
-                return dmgsDealth;
+                dmgtype.damages = damages;
+                return dmgtype;
             }
             const compare = {
                 min: function(a, b) {
@@ -368,6 +508,58 @@
                     return Math.max(a||b, b||a);
                 }
             }
+            function load() {
+                try {
+                    let restore = function(w) {
+                        for(let key in w) {
+                            let val = w[key];
+                            if(typeof(val) == typeof(true))
+                                document.getElementById(key).checked = val;
+                            else if(parseInt(val) == val)
+                                document.getElementById(key).value = parseInt(val);
+                            else
+                                document.getElementById(key).value = val;
+                        }
+                    }
+                    restore(defaultdata);
+
+                    if(window.location.hash.length < 5) return; 
+                    let r =  decodeURIComponent(window.location.hash.substring(1)).replace(/:/g,'":"').replace(/,/g,'","') + '"';
+                    let w = JSON.parse('{"' + r + '}');
+                    restore(w);
+                    prevdata = null;
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+            function save() {
+                for(let key in rawdata)
+                    if(rawdata[key] == defaultdata[key])
+                        delete rawdata[key];
+                let changes = JSON.stringify(rawdata).replace('{','').replace('}','').replace(/"/g,'');
+                console.log("Saving " + changes)
+                window.location.hash = "#" + changes;
+            }
+            window.onresize = function() {
+                let a = document.getElementById("graphstuff");
+                if(window.innerWidth > 1360) {
+                    if(document.getElementById("graphera")) {
+                        document.getElementById("grapherb").appendChild(graphstuff);
+                        document.getElementById("graphera").innerHTML = "";
+                    }
+                } else {
+                    if(document.getElementById("grapherb")) {
+                        document.getElementById("graphera").appendChild(graphstuff);
+                        document.getElementById("grapherb").innerHTML = "";
+                    }
+                }
+            }
+            window.onhashchange = function() {
+                load();
+                update();
+            }
+            window.onresize();
+            load();
             update();
         </script>
     </body>
