@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>This Asashio Does Not Exist</title>
+        <meta name="theme-color" content="#082E6B"/>
+        <meta name=viewport content="width=device-width, initial-scale=1">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:title" content="This Asashio Does Not Exist">
+        <meta name="twitter:description" content="Make LBAS range maps">
+        <meta name="twitter:image" content="http://flatisjustice.moe/TADNE/119.png">
+        <meta name="author" content="Tibi">
+        <style>
+        @import url(https://fonts.googleapis.com/css?family=Advent+Pro:100);
+        @import url(https://fonts.googleapis.com/css?family=Advent+Pro:100&effect=shadow-multiple);
+
+        @media screen and (min-width: 1000px) {
+            #links {
+                position: fixed;
+                top: 0;
+            }
+            html,body{
+                overflow:hidden;
+            }
+            img {
+                margin-left: auto;
+                margin-right: 5% !important;
+            }
+        }
+        #links {
+            font-family: 'Advent Pro', sans-serif;
+            font-size: 1.5em;
+            font-weight: bolder;
+            margin: .15em .4em;
+            color: #f44;
+            text-shadow: 1px 1px 3px #222;
+        }
+        a {
+            color: #2f2;
+        }
+        img {
+            max-height: 100%;
+            max-width: 100%;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        html {
+            background-color: black;
+        }
+        h2, h1 {
+            display: inline;
+            font-weight: bolder;
+        }
+        h1 {
+            font-size: 1em;
+        }
+        .bar {
+            background: rgb(14, 251, 73);
+            bottom: 0;
+            height: 5px;
+            overflow: hidden;
+            position: absolute;
+            width: 5%;
+        }
+        html,body{
+            margin:0;
+            height:100%;
+        }
+        </style>
+    </head>
+    <body>
+        <img id="face" src="TADNE/119.jpg">
+        <div id="bar" class="bar"></div>
+
+        <main>
+            <div id="links">
+                <h1>Links:</h1><br>
+                <a href="https://www.gwern.net/Faces" target="">Making Anime Faces With StyleGAN - gwern.net</a><br>
+            </div>
+        </main>
+
+        <script>
+            const TIME = 15000;
+            const DELAY = 10;
+
+            const img = document.getElementById("face");
+            const bar = document.getElementById("bar");
+
+            let progress = 0;
+            let animationProgress = 0;
+
+            let updateImg = () => img.setAttribute("src", `TADNE/${Math.floor(Math.random() * 1000)}.jpg`);
+            let updateBar = () => {
+                progress += DELAY;
+                if(progress > TIME) {
+                    progress = 0;
+                    animationProgress *= .5;
+                    updateImg();
+                }
+                animationProgress = (progress / TIME * .2 + animationProgress * .8)
+                bar.style.width = `${animationProgress * 100}%`
+            };
+            updateImg();
+            setInterval(() => updateBar(), DELAY);
+        </script>
+    </body>
+</html>
