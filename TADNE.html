@@ -79,7 +79,9 @@
                 <a href="https://mega.nz/#!wfZmAIgB!f2L0b1HRtWZkljwkjExlCslRj8diE2MC02AyzmQ3Vwc" target="">Download model</a><br>
                 <br>
                 There are 1000 images generated on this site<br>
-                Current image id: <span id="imgid">119</span>
+                Current image id: <span id="imgid">119</span><br>
+                <a onclick="progress=TIME;">New picture</a><br>
+                Automatic update <a id="pause" onclick="running=!running;progress=0;pause.innerText=running?'pause':'continue'">pause</a><br>
             </div>
         </main>
 
@@ -90,15 +92,17 @@
             const img = document.getElementById("face");
             const bar = document.getElementById("bar");
             const imgid = document.getElementById("imgid");
+            const pause = document.getElementById("pause");
 
             let progress = 0;
             let animationProgress = 0;
+            let running = true;
 
-
-            let updateImg = () => img.setAttribute("src", `TADNE/${imgid.innerHTML = Math.floor(Math.random() * 1000)}.jpg`);
-            let updateBar = () => {
-                progress += DELAY;
-                if(progress > TIME) {
+            const updateImg = () => img.setAttribute("src", `TADNE/${imgid.innerText = Math.floor(Math.random() * 1000)}.jpg`);
+            const updateBar = () => {
+                if(running)
+                    progress += DELAY;
+                if(progress >= TIME) {
                     progress = 0;
                     animationProgress *= .5;
                     updateImg();
