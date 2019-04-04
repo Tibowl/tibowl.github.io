@@ -17,6 +17,7 @@
             #links {
                 position: fixed;
                 top: 0;
+                width: 40%;
             }
             html,body{
                 overflow:hidden;
@@ -52,7 +53,7 @@
             font-weight: bolder;
         }
         h1 {
-            font-size: 1em;
+            font-size: 1.25em;
         }
         .bar {
             background: rgb(14, 251, 73);
@@ -74,14 +75,24 @@
 
         <main>
             <div id="links">
-                <h1>Links:</h1><br>
-                <a href="https://www.gwern.net/Faces" target="">Making Anime Faces With StyleGAN - gwern.net</a><br>
-                <a href="https://mega.nz/#!wfZmAIgB!f2L0b1HRtWZkljwkjExlCslRj8diE2MC02AyzmQ3Vwc" target="">Download model</a><br>
-                <br>
-                There are 1000 images generated on this site<br>
+                <h1>Controls:</h1><br>
                 Current image id: <span id="imgid">119</span><br>
-                <a onclick="progress=TIME;">New picture</a><br>
+                <a onclick="progress=TIME;">New picture</a> - 
                 Automatic update <a id="pause" onclick="running=!running;progress=0;pause.innerText=running?'pause':'continue'">pause</a><br>
+                <br>
+                <h1>Inspired by:</h1><br>
+                This <a href="https://thispersondoesnotexist.com/" target="">Person</a>/<a href="https://www.thiswaifudoesnotexist.net/" target="">Waifu</a> Does Not Exist<br>
+                <br>
+                <h1>Made possible by:</h1><br>
+                StyleGAN <a href="https://github.com/NVlabs/stylegan/" target="">GitHub</a> <a href="https://stylegan.xyz/paper" target="">paper</a><br>
+                <a href="https://www.gwern.net/Faces" target="">Making Anime Faces With StyleGAN - Gwern.net</a><br>
+                <br>
+                <h1>More Asashio:</h1><br>
+                <a href="https://twitter.com/FlatIsNice/status/1113186721523535872" target="">Circular interpolation video (Twitter)</a><br>
+                <a href="https://mega.nz/#!wfZmAIgB!f2L0b1HRtWZkljwkjExlCslRj8diE2MC02AyzmQ3Vwc" target="">Download .pkl model</a><br>
+                <br>
+                There are 1000 images (𝜓=0.6) generated on this site.<br>
+                The model used is transfer learned from Gwern's model with 988 original Asashio pictures, 18772 after data augmentation. The model was trained for a total of 42 hours on a single GTX970.<br>
             </div>
         </main>
 
