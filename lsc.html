@@ -91,6 +91,7 @@
                 </select><br></label>
                 <br>
             </div>
+            <table id="table2"><tbody></tbody></table><br>
             <table id="table"><tbody></tbody></table><br>
             <div id="graphera"></div>
             <br>
@@ -210,9 +211,12 @@
                     }
                     // console.log("shipRates", shipRates);
                 }
-                return shipRates;
+                return {
+                    shipRates, groupRates
+                };
             }
-            function makeTable(shipRates) {
+            function makeTable(rates) {
+                const {shipRates, groupRates} = rates
                 const shipNameIdTl = {
                     "26": "Fusou",
                     "27": "Yamashiro",
@@ -254,10 +258,10 @@
                 }
                 let tableText = "";
                 let htmlstr = `<tbody><tr style="display: table-row;">
-</th><th colspan="2"><h4 style="margin:0;text-align:left">LSC Rates</h4></tr>
+<th colspan="2"><h4 style="margin:0;text-align:left">LSC Rates</h4></tr>
 <tr style="display: table-row;">
 <th>Ship</th>
-<th>%</th>
+<th>Rate</th>
 </tr>`
                 for (const shipId of Object.keys(shipRates).sort((a, b) => shipRates[b] - shipRates[a])) {
                     const name = `${shipNameIdTl[shipId]} (${shipId})`
@@ -268,12 +272,30 @@
                     if(colored.includes(shipNameIdTl[shipId]))
                         color = ' style="color:red"'
                     htmlstr += `<tr style="display: table-row;"><th${color}>${name}</th>
-<td>${rate*100}</td>
+<td>${rate*100}%</td>
 </tr>`
                 }
                 
                 htmlstr += `</tbody><br>`
                 document.getElementById("table").innerHTML = htmlstr;
+
+                
+                document.getElementById("table2").innerHTML = `
+<tbody><tr style="display: table-row;">
+    <th colspan="4"><h4 style="margin:0;text-align:left">LSC Pools</h4></tr>
+    <tr style="display: table-row;">
+    <th>Group 1</th>
+    <th>Group 2</th>
+    <th>Group 3</th>
+    <th>Group 4</th>
+    </tr>
+    <tr style="display: table-row;">
+        <td>${groupRates[0]*100}%</td>
+        <td>${groupRates[1]*100}%</td>
+        <td>${groupRates[2]*100}%</td>
+        <td>${groupRates[3]*100}%</td>
+    </tr>
+</tbody><br>`;
             }
             function drawGraph() {
                 const canvas = document.getElementById("graph")
@@ -288,8 +310,9 @@
                 let graphmin = 1000, graphmax = 7000;
                 for(let val = graphmin; val < graphmax; val+=100) {
                     data[data.graphvariable] = val;
-                    let shipRates = calculateRates([data.fuel, data.ammo, data.steel, data.bauxite, data.devmat]);
-                    
+                    let rates = calculateRates([data.fuel, data.ammo, data.steel, data.bauxite, data.devmat]);
+                    const {shipRates, groupRates} = rates
+
                     const bar = shipRates[id] * height * SCALE;
 
                     context.fillStyle = "#2fd30a";
@@ -338,7 +361,7 @@
                     let w = JSON.parse('{"' + r + '}');
                     restore(w);
                 } catch (e) {
-                    // console.log(e);
+                    console.error(e);
                 }
             }
             function save() {
