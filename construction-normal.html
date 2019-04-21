@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Flat is Justice! - normal construction calc</title>
+        <meta name="theme-color" content="#082E6B"/>
+        <meta name=viewport content="width=device-width, initial-scale=1">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:title" content="Flat is Justice - normal construction calc">
+        <meta name="twitter:description" content="Calculate normal construction rates">
+        <meta name="description" content="Calculate normal construction rates">
+        <style type="text/css">
+            input[type="number"] {
+                width:75px;
+            }
+            table > tr > th, table > tr > td, table > * > tr > th, table > * > tr > td {
+                border: 1px #aaa solid;
+                padding: 0.2em
+            }
+            table {
+                max-width: 700px;
+            }
+        </style>
+    </head>
+    <body>
+        <a href="."><b>Flat is Justice - Home</b></a><br>
+
+        <main>
+            <div id="grapherb" style="float:right"></div>
+            <div id="settings">
+                <b>Input</b><br>
+                <label>Fuel: <input type="number" id="fuel" min="30" max="999" step="1" onchange="update();" onclick="update();"><br></label>
+                <label>Ammo: <input type="number" id="ammo" min="30" max="999" step="1"  onchange="update();" onclick="update();"><br></label>
+                <label>Steel: <input type="number" id="steel" min="30" max="999" step="1" onchange="update();" onclick="update();"><br></label>
+                <label>Bauxite: <input type="number" id="bauxite" min="30" max="999" step="1" onchange="update();" onclick="update();"><br></label>
+            </div>
+            <hr>
+            <div id="graphstuff">
+                <b>Graph</b><br>
+                <canvas id="graph" width="830" height="425" style="border:1px solid black;"></canvas><br>
+                <b>Graph settings</b><br>
+                <label>Change variable/X-axis: <select id="graphvariable" onchange="update();">
+                    <option value="fuel">Fuel</option>
+                    <option value="ammo">Ammo</option>
+                    <option value="steel">Steel</option>
+                    <option value="bauxite">Bauxite</option>
+                </select><br></label>
+                <label>Ship: <select id="shipid" onchange="update();">
+                     <option value="1">Mutsuki</option>
+                     <option value="2">Kisaragi</option>
+                     <option value="6">Nagatsuki</option>
+                     <option value="7">Mikazuki</option>
+                     <option value="9">Fubuki</option>
+                     <option value="10">Shirayuki</option>
+                     <option value="11">Miyuki</option>
+                     <option value="12">Isonami</option>
+                     <option value="13">Ayanami</option>
+                     <option value="14">Shikinami</option>
+                     <option value="15">Akebono</option>
+                     <option value="16">Ushio</option>
+                     <option value="17">Kagerou</option>
+                     <option value="18">Shiranui</option>
+                     <option value="19">Kuroshio</option>
+                     <option value="20">Yukikaze</option>
+                     <option value="21">Nagara</option>
+                     <option value="22">Isuzu</option>
+                     <option value="23">Yura</option>
+                     <option value="24">Ooi</option>
+                     <option value="25">Kitakami</option>
+                     <option value="26">Fusou</option>
+                     <option value="27">Yamashiro</option>
+                     <option value="28">Satsuki</option>
+                     <option value="29">Fumizuki</option>
+                     <option value="30">Kikuzuki</option>
+                     <option value="31">Mochizuki</option>
+                     <option value="32">Hatsuyuki</option>
+                     <option value="33">Murakumo</option>
+                     <option value="34">Akatsuki</option>
+                     <option value="35">Hibiki</option>
+                     <option value="36">Ikazuchi</option>
+                     <option value="37">Inazuma</option>
+                     <option value="38">Hatsuharu</option>
+                     <option value="39">Nenohi</option>
+                     <option value="40">Wakaba</option>
+                     <option value="41">Hatsushimo</option>
+                     <option value="42">Shiratsuyu</option>
+                     <option value="43">Shigure</option>
+                     <option value="44">Murasame</option>
+                     <option value="45">Yuudachi</option>
+                     <option value="46">Samidare</option>
+                     <option value="47">Suzukaze</option>
+                     <option value="48">Arare</option>
+                     <option value="49">Kasumi</option>
+                     <option value="50">Shimakaze</option>
+                     <option value="51">Tenryuu</option>
+                     <option value="52">Tatsuta</option>
+                     <option value="53">Natori</option>
+                     <option value="54">Sendai</option>
+                     <option value="55">Jintsuu</option>
+                     <option value="56">Naka</option>
+                     <option value="59">Furutaka</option>
+                     <option value="60">Kako</option>
+                     <option value="61">Aoba</option>
+                     <option value="62">Myoukou</option>
+                     <option value="63">Nachi</option>
+                     <option value="64">Ashigara</option>
+                     <option value="65">Haguro</option>
+                     <option value="66">Takao</option>
+                     <option value="67">Atago</option>
+                     <option value="68">Maya</option>
+                     <option value="69">Choukai</option>
+                     <option value="70">Mogami</option>
+                     <option value="71">Tone</option>
+                     <option value="72">Chikuma</option>
+                     <option value="74">Shouhou</option>
+                     <option value="75">Hiyou</option>
+                     <option value="76">Ryuujou</option>
+                     <option value="77">Ise</option>
+                     <option value="78">Kongou</option>
+                     <option value="79">Haruna</option>
+                     <option value="80">Nagato</option>
+                     <option value="81">Mutsu</option>
+                     <option value="83">Akagi</option>
+                     <option value="84">Kaga</option>
+                     <option value="85">Kirishima</option>
+                     <option value="86">Hiei</option>
+                     <option value="87">Hyuuga</option>
+                     <option value="89">Houshou</option>
+                     <option value="90">Souryuu</option>
+                     <option value="91">Hiryuu</option>
+                     <option value="92">Junyou</option>
+                     <option value="93">Oboro</option>
+                     <option value="94">Sazanami</option>
+                     <option value="95">Asashio</option>
+                     <option value="96">Ooshio</option>
+                     <option value="97">Michishio</option>
+                     <option value="98">Arashio</option>
+                     <option value="99">Kuma</option>
+                     <option value="100">Tama</option>
+                     <option value="101">Kiso</option>
+                     <option value="102">Chitose</option>
+                     <option value="103">Chiyoda</option>
+                     <option value="110">Shoukaku</option>
+                     <option value="111">Zuikaku</option>
+                     <option value="113">Kinu</option>
+                     <option value="114">Abukuma</option>
+                     <option value="115">Yuubari</option>
+                     <option value="116">Zuihou</option>
+                     <option value="123">Kinugasa</option>
+                     <option value="124">Suzuya</option>
+                     <option value="125">Kumano</option>
+                     <option value="126">I-168</option>
+                     <option value="127">I-58</option>
+                     <option value="128">I-8</option>
+                     <option value="132">Akigumo</option>
+                     <option value="154">Katori</option>
+                     <option value="164">Yayoi</option>
+                     <option value="191">I-19</option>
+                </select><br></label>
+                <br>
+            </div>
+            <table id="table2"><tbody></tbody></table><br>
+            <table id="table"><tbody></tbody></table><br>
+            <div id="graphera"></div>
+            <br>
+        </main>
+        <u><a onclick="save()">Save (for sharing)</a></u><br>
+        <div style="clear:both"></div>
+        <hr>
+        <br>
+        <i>Uses everything from KC kai's </i><code>getShipIdLarge</code><i> in </i><code>Server_Controllers/Api_req_Kousyou.cs</code><i><br>
+        <script type="text/javascript">
+            var data, rawdata, defaultdata = {
+                "fuel": 30,
+                "ammo": 30,
+                "steel": 30,
+                "bauxite": 30,
+                "shipid": 26,
+                "graphvariable": "bauxite"
+            };
+            
+            function update() {
+                data = {
+                    "fuel": parseInt(document.getElementById('fuel').value),
+                    "ammo": parseInt(document.getElementById('ammo').value),
+                    "steel": parseInt(document.getElementById('steel').value),
+                    "bauxite": parseInt(document.getElementById('bauxite').value),
+                    "shipid": parseInt(document.getElementById('shipid').options[document.getElementById('shipid').selectedIndex].value),
+                    "graphvariable": document.getElementById('graphvariable').options[document.getElementById('graphvariable').selectedIndex].value
+                }
+                rawdata = JSON.parse(JSON.stringify(data));
+
+                const shipRates = calculateRates([data.fuel, data.ammo, data.steel, data.bauxite, data.devmat]);
+                makeTable(shipRates);
+                drawGraph();
+            }
+
+            function calculateRates(input) {
+                const groups = [
+                    [300,   0, 400, 300],
+                    [400,   0, 600,   0],
+                    [250,   0, 200,   0],
+                    [  0,   0,   0,   0]
+                ]
+
+                const modifiers = [
+                    [  0,    0,   0,    0, 400, 1/25, 300, 1/20],
+                    [  0,    0, 400, 1/25, 600, 1/30,   0,    0],
+                    [  0,    0, 200, 1/13, 200, 1/20,   0,    0],
+                    [100, 1/10,   0,    0,  30, 1/15,   0,    0]
+                ]
+
+                const shipTable = [
+                    [83, 84, 90, 91, 71, 72, 75, 92, 84, 90, 92, 132, 111, 74, 116, 114, 76, 110, 75, 92, 74, 75, 92, 76, 74, 102, 103, 74, 76, 102, 103, 89, 102, 103, 89, 102, 103, 102, 103, 54, 55, 56, 25, 99, 22, 60, 53, 100, 101, 21, 102, 103, 75, 92, 74, 76, 74, 89, 102, 103, 89, 74, 76, 89, 102, 103, 75, 92, 115, 17, 18, 113, 70, 71, 72, 54, 89, 70, 47, 42, 43, 89, 102, 103, 38, 54, 55, 56, 34, 35, 36, 37, 9, 10, 32, 11, 12, 33, 13, 14],
+                    [80, 81, 77, 87, 26, 27, 78, 86, 79, 85, 77, 87, 26, 27, 78, 86, 79, 85, 26, 27, 78, 86, 79, 85, 26, 27, 71, 72, 70, 66, 67, 68, 69, 62, 63, 64, 65, 123, 125, 124, 71, 72, 70, 66, 67, 68, 69, 62, 63, 64, 65, 123, 60, 70, 71, 72, 70, 66, 67, 68, 69, 62, 63, 64, 65, 56, 125, 124, 68, 69, 63, 64, 65, 56, 59, 60, 68, 69, 63, 64, 65, 60, 68, 69, 63, 64, 65, 61, 99, 100, 101, 21, 22, 56, 53, 54, 55, 56, 23, 25],
+                    [113, 114, 50, 20, 71, 72, 70, 66, 67, 68, 69, 62, 63, 64, 65, 123, 60, 154, 71, 72, 70, 66, 67, 68, 69, 62, 63, 64, 65, 59, 60, 61, 63, 64, 65, 59, 60, 61, 99, 100, 101, 21, 22, 23, 53, 54, 55, 56, 51, 52, 68, 69, 63, 64, 65, 60, 24, 25, 99, 100, 101, 21, 22, 60, 53, 54, 55, 56, 51, 52, 25, 99, 100, 101, 21, 22, 60, 53, 54, 55, 56, 128, 127, 55, 56, 22, 23, 53, 100, 101, 126, 55, 56, 22, 60, 126, 127, 191, 126, 56],
+                    [115, 25, 99, 100, 101, 21, 22, 56, 52, 54, 55, 56, 51, 52, 53, 55, 56, 22, 23, 51, 100, 101, 55, 164, 132, 56, 17, 18, 19, 95, 96, 97, 98, 48, 49, 47, 42, 43, 44, 45, 46, 38, 39, 40, 41, 34, 35, 36, 37, 9, 10, 32, 11, 12, 33, 13, 14, 1, 2, 28, 29, 6, 30, 7, 31, 15, 94, 16, 38, 10, 32, 11, 12, 14, 2, 28, 29, 6, 30, 7, 31, 93, 15, 94, 16, 35, 36, 37, 39, 40, 41, 43, 44, 45, 126, 96, 97, 98, 48, 49]
+                ];
+
+                let groupId = 0;
+
+                group: for(let currentGroup in groups) {
+                    const groupStats = groups[currentGroup];
+
+                    for(let i = 0; i < groupStats.length; i++) {
+                        if(input[i] < groupStats[i])
+                            continue group;
+                    }
+                    
+                    groupId = currentGroup;
+                    break;
+                }
+
+                console.log("Selected group:", groupId);
+
+                const shipRates = {};
+
+                let num2 = 0;
+                for(let i = 0; i < modifiers[groupId].length; i += 2) 
+                    num2 += Math.ceil((input[i/2] - modifiers[groupId][i]) * modifiers[groupId][i+1])
+
+                console.log("num2", num2)
+                
+                num2 = Math.abs(num2)
+                if(num2 > 51) num2 = 51;
+
+                let num2Rates = {'0': 1};
+                for(let i = 0; i < num2; i++)
+                    num2Rates[i] = 1 / num2;
+
+                console.log("num2Rates", num2Rates)
+
+                let num7Rates = {}
+                for(let num = 0; num < 100; num++)
+                    for(let num2 in num2Rates) {
+                        let num7 = num + 1 - parseInt(num2)
+                        if(num7 < 1)
+                            num7 = 2 - num7;
+                        num7Rates[num7] = 1/100 * num2Rates[num2] + (num7Rates[num7]||0)
+                    }
+                console.log("num7Rates", num7Rates);
+
+                for (let num7 in num7Rates) {
+                    let shipId = shipTable[parseInt(groupId)][parseInt(num7)]
+                    shipRates[shipId] = num7Rates[num7] + (shipRates[shipId] || 0) 
+                }
+                console.log("shipRates", shipRates);
+                return shipRates;
+            }
+            function makeTable(shipRates) {
+                const shipNameIdTl = {
+                    "1": "Mutsuki",
+                    "2": "Kisaragi",
+                    "6": "Nagatsuki",
+                    "7": "Mikazuki",
+                    "9": "Fubuki",
+                    "10": "Shirayuki",
+                    "11": "Miyuki",
+                    "12": "Isonami",
+                    "13": "Ayanami",
+                    "14": "Shikinami",
+                    "15": "Akebono",
+                    "16": "Ushio",
+                    "17": "Kagerou",
+                    "18": "Shiranui",
+                    "19": "Kuroshio",
+                    "20": "Yukikaze",
+                    "21": "Nagara",
+                    "22": "Isuzu",
+                    "23": "Yura",
+                    "24": "Ooi",
+                    "25": "Kitakami",
+                    "26": "Fusou",
+                    "27": "Yamashiro",
+                    "28": "Satsuki",
+                    "29": "Fumizuki",
+                    "30": "Kikuzuki",
+                    "31": "Mochizuki",
+                    "32": "Hatsuyuki",
+                    "33": "Murakumo",
+                    "34": "Akatsuki",
+                    "35": "Hibiki",
+                    "36": "Ikazuchi",
+                    "37": "Inazuma",
+                    "38": "Hatsuharu",
+                    "39": "Nenohi",
+                    "40": "Wakaba",
+                    "41": "Hatsushimo",
+                    "42": "Shiratsuyu",
+                    "43": "Shigure",
+                    "44": "Murasame",
+                    "45": "Yuudachi",
+                    "46": "Samidare",
+                    "47": "Suzukaze",
+                    "48": "Arare",
+                    "49": "Kasumi",
+                    "50": "Shimakaze",
+                    "51": "Tenryuu",
+                    "52": "Tatsuta",
+                    "53": "Natori",
+                    "54": "Sendai",
+                    "55": "Jintsuu",
+                    "56": "Naka",
+                    "59": "Furutaka",
+                    "60": "Kako",
+                    "61": "Aoba",
+                    "62": "Myoukou",
+                    "63": "Nachi",
+                    "64": "Ashigara",
+                    "65": "Haguro",
+                    "66": "Takao",
+                    "67": "Atago",
+                    "68": "Maya",
+                    "69": "Choukai",
+                    "70": "Mogami",
+                    "71": "Tone",
+                    "72": "Chikuma",
+                    "74": "Shouhou",
+                    "75": "Hiyou",
+                    "76": "Ryuujou",
+                    "77": "Ise",
+                    "78": "Kongou",
+                    "79": "Haruna",
+                    "80": "Nagato",
+                    "81": "Mutsu",
+                    "83": "Akagi",
+                    "84": "Kaga",
+                    "85": "Kirishima",
+                    "86": "Hiei",
+                    "87": "Hyuuga",
+                    "89": "Houshou",
+                    "90": "Souryuu",
+                    "91": "Hiryuu",
+                    "92": "Junyou",
+                    "93": "Oboro",
+                    "94": "Sazanami",
+                    "95": "Asashio",
+                    "96": "Ooshio",
+                    "97": "Michishio",
+                    "98": "Arashio",
+                    "99": "Kuma",
+                    "100": "Tama",
+                    "101": "Kiso",
+                    "102": "Chitose",
+                    "103": "Chiyoda",
+                    "110": "Shoukaku",
+                    "111": "Zuikaku",
+                    "113": "Kinu",
+                    "114": "Abukuma",
+                    "115": "Yuubari",
+                    "116": "Zuihou",
+                    "123": "Kinugasa",
+                    "124": "Suzuya",
+                    "125": "Kumano",
+                    "126": "I-168",
+                    "127": "I-58",
+                    "128": "I-8",
+                    "132": "Akigumo",
+                    "154": "Katori",
+                    "164": "Yayoi",
+                    "191": "I-19",
+                }
+                let tableText = "";
+                let htmlstr = `<tbody><tr style="display: table-row;">
+<th colspan="2"><h4 style="margin:0;text-align:left">LSC Rates</h4></tr>
+<tr style="display: table-row;">
+<th>Ship</th>
+<th>Rate</th>
+</tr>`
+                for (const shipId of Object.keys(shipRates).sort((a, b) => shipRates[b] - shipRates[a])) {
+                    const name = `${shipNameIdTl[shipId]} (${shipId})`
+                    const rate = shipRates[shipId]
+
+                    let color = "";
+                    let colored = ["Yamato", "Musashi", "Maruyu", "Taihou"]
+                    if(colored.includes(shipNameIdTl[shipId]))
+                        color = ' style="color:red"'
+                    htmlstr += `<tr style="display: table-row;"><th${color}>${name}</th>
+<td>${rate*100}%</td>
+</tr>`
+                }
+                
+                htmlstr += `</tbody><br>`
+                document.getElementById("table").innerHTML = htmlstr;
+            }
+            function drawGraph() {
+                const canvas = document.getElementById("graph")
+                canvas.width = canvas.width;
+                const width = canvas.width - 30;
+                const height = canvas.height - 25;
+                const context = canvas.getContext("2d");
+                const id = data.shipid;
+                const defaultVal = data[data.graphvariable];
+                const SCALE = 5;
+
+                let graphmin = 30, graphmax = 1000;
+                for(let val = graphmin; val < graphmax; val+=10) {
+                    data[data.graphvariable] = val;
+                    let shipRates = calculateRates([data.fuel, data.ammo, data.steel, data.bauxite, data.devmat]);
+
+                    const bar = shipRates[id] * height * SCALE;
+
+                    context.fillStyle = "#2fd30a";
+                    context.fillRect(width / (graphmax - graphmin) * (val - graphmin), height - bar, width / (graphmax - graphmin) * 10, bar);
+                    // console.error(shipRates[id])
+
+                    if(val % 250 == 0) {
+                        context.fillStyle = "#000000";
+                        context.save();
+                        context.translate(width / (graphmax - graphmin) * (val - graphmin) + (width / (graphmax - graphmin)) / 2, height + 14);
+                        context.rotate(-Math.PI/2);
+                        context.textAlign = "center";
+                        context.fillText(val, 0, 3);
+                        context.restore();
+                    }
+                    context.fillStyle = "#000000";
+                    context.fillRect(width / (graphmax - graphmin) * (val - graphmin), 0, 1, height);
+                }
+                context.fillStyle = "#000000";
+                context.fillRect(width, 0, 1, height+1);
+                for(let percentage of [1, .75, .5, .25, 0]) {
+                    context.fillRect(0, percentage * height, width, 1);
+                    context.fillText(percentage / SCALE * 100 + "%", width + 3, (1-percentage) * height);
+                }
+                
+                data[data.graphvariable] = defaultVal;
+
+            }
+            function load() {
+                try {
+                    let restore = function(w) {
+                        for(let key in w) {
+                            let val = w[key];
+                            if(typeof(val) == typeof(true))
+                                document.getElementById(key).checked = val;
+                            else if(parseInt(val) == val)
+                                document.getElementById(key).value = parseInt(val);
+                            else
+                                document.getElementById(key).value = val;
+                        }
+                    }
+                    restore(defaultdata);
+
+                    if(window.location.hash.length < 5) return; 
+                    let r =  decodeURIComponent(window.location.hash.substring(1)).replace(/:/g,'":"').replace(/,/g,'","') + '"';
+                    let w = JSON.parse('{"' + r + '}');
+                    restore(w);
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+            function save() {
+                for(let key in rawdata)
+                    if(rawdata[key] == defaultdata[key])
+                        delete rawdata[key];
+                let changes = JSON.stringify(rawdata).replace('{','').replace('}','').replace(/"/g,'');
+                // console.log("Saving " + changes)
+                window.location.hash = "#" + changes;
+            }
+            window.onhashchange = function() {
+                load();
+                update();
+            }
+                        window.onresize = function() {
+                let a = document.getElementById("graphstuff");
+                if(window.innerWidth > 1360) {
+                    if(document.getElementById("graphera")) {
+                        document.getElementById("grapherb").appendChild(graphstuff);
+                        document.getElementById("graphera").innerHTML = "";
+                    }
+                } else {
+                    if(document.getElementById("grapherb")) {
+                        document.getElementById("graphera").appendChild(graphstuff);
+                        document.getElementById("grapherb").innerHTML = "";
+                    }
+                }
+            }
+            window.onresize()
+            load();
+            update();
+        </script>
+    </body>
+</html>
