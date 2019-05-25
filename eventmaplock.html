@@ -303,8 +303,19 @@
                        'https://i.imgur.com/s2hHrKl.png', // title
                        'https://i.imgur.com/GJrSTKS.png'  // minitext
                     ]).load(function() {
+                    delete document.getElementById("download").href
                     for(let i = 1; _getBGTexture(map*10+i) != PIXI.Texture.EMPTY; i++)
                         showMap(map*10+i);
+
+                    blobUtil.canvasToBlob(canvas, 'image/png').then(function (blob) {
+                        console.log(blob.size)
+                        document.getElementById("download").href = blobUtil.createObjectURL(blob);
+                    })
+                    document.getElementById("download").addEventListener('click', function() {
+                        let d = new Date();
+                        this.download = `Tag lock ${map}.png`;
+                    }, false);
+
                 })
             }
             function getPath(url) {

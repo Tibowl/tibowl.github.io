@@ -27,7 +27,7 @@
         </textarea><br>
         <div id="startinfo"><b>API info for <span id='maptitle'>another map</span>!</b><br>
                     Bypass? <input onchange="update()" type="checkbox" id="bypass"><br></div>
-        Map: <input type="text" id="mapid" value="5-2" onchange="update()">
+        Map: <input type="text" id="mapid" value="44-5" onchange="update()">
         <!--<button name="tsunCollect" onclick="tsunDB(document.getElementById('mapid').value)">Get from TsunDB</button>--><br><br>
         <div id='options' style='column-width:300px'>
             Show background <input onchange="update()" type="checkbox" id="background" checked><br>
@@ -117,10 +117,21 @@
 
                 loader = new PIXI.loaders.Loader;
 
-                loader.add(getPath('image.json')).add(`http://${SERVER}/kcs2/img/map/map_common.json`).load(function() {
+                loader.add(getPath('image.json')).add(`http://${SERVER}/kcs2/img/map/map_common.json`)/*.add(`http://${SERVER}/kcs2/img/map/map_event_anime.json`)*/.load(function() {
                     getJSON(getPath('info.json'), function (info) {
                         locData = info;
                         let callback = function() {
+                            /*let mapanime = new PIXI.Container, sprite = new PIXI.Sprite(PIXI.Texture.fromFrame("map_event_anime_0"))
+                            let frame = 0;
+                            mapanime.addChild(sprite)
+                            mapanime.position.set(899, 370)
+                            setInterval(() => {
+                                frame >= 29 ? frame = 0 : frame++,
+                                sprite.texture = PIXI.Texture.fromFrame("map_event_anime_" + frame)
+                                app.render()
+                                console.log(frame)
+                            }, 250);
+                            app.stage.addChild(mapanime)*/
                             if(show.gauge != 0)
                                 getJSON(GAUGE_ROOT + mapname + (show.gauge!=1?("_"+show.gauge):"") + ".json", function (info) {
                                     gaugeData = info;
@@ -237,36 +248,36 @@
                     return 'map_common_' + show.forcedcolor;
                 switch(colorid) {
                     case -1:
-                        return 'map_common_149';
+                        return 'map_common_152';
                     case 1:
-                        return 'map_common_142';
+                        return 'map_common_145';
                     case 2:
                     case 6:
-                        return 'map_common_145';
-                    case 3:
-                        return 'map_common_147';
-                    case 4:
                         return 'map_common_148';
+                    case 3:
+                        return 'map_common_150';
+                    case 4:
+                        return 'map_common_151';
                     case 5:
-                        return 'map_common_136';
+                        return 'map_common_139';
                     case 7:
                         return 'map_common_101';
                     case 8:
-                        return 'map_common_135';
+                        return 'map_common_138';
                     case 9:
-                        return 'map_common_146';
+                        return 'map_common_149';
                     case 10:
                         return 'map_common_96';
                     case 11:
-                        return 'map_common_150';
+                        return 'map_common_153';
                     case 12:
-                        return 'map_common_151';
+                        return 'map_common_154';
                     case 13:
                         return 'map_common_81';
                     case -2:
-                        return 'map_common_144';
+                        return 'map_common_147';
                     case -3:
-                        return 'map_common_141';
+                        return 'map_common_144';
 
                     case -99:
                         return 'map_common_17';
