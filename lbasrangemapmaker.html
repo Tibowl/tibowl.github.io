@@ -8,7 +8,7 @@
         <meta name="twitter:title" content="Flat is Justice - lbas range map maker">
         <meta name="twitter:description" content="Make LBAS range maps">
         <meta name="twitter:image" content="http://flatisjustice.moe/pics/lbasrangemapmaker.png">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.1/pixi.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.8.1/pixi.min.js"></script>
         <script src="https://unpkg.com/blob-util/dist/blob-util.min.js"></script>
 
         <style type="text/css">
@@ -117,7 +117,7 @@
 
                 loader = new PIXI.loaders.Loader;
 
-                loader.add(getPath('image.json')).add(`http://${SERVER}/kcs2/img/map/map_common.json`)/*.add(`http://${SERVER}/kcs2/img/map/map_event_anime.json`)*/.load(function() {
+                loader.add(getPath('image.json'))/*.add("https://i.imgur.com/8UgX5Pz.png")*/.add(`http://${SERVER}/kcs2/img/map/map_common.json`)/*.add(`http://${SERVER}/kcs2/img/map/map_event_anime.json`)*/.load(function() {
                     getJSON(getPath('info.json'), function (info) {
                         locData = info;
                         let callback = function() {
@@ -545,6 +545,27 @@
                         app.stage.addChild(text);
                         text.position.set(middlex, middley);
                     }
+
+                    /*if(nodeInfo.no == 21 || nodeInfo.no == 23) {
+                        let aaa = new PIXI.Graphics();
+                        aaa.position.set(nodeInfo.x, nodeInfo.y);
+                        aaa.id = nodeInfo
+
+                        frame = PIXI.Texture.fromFrame("https://i.imgur.com/8UgX5Pz.png");
+                        let _wave = new PIXI.Sprite(frame);
+                        _wave.anchor.set(.5),
+                        _wave.buttonMode = false;
+                        _wave.interactive = false;
+                        _wave.scale.set(1.35),
+                        aaa.addChild(_wave),
+                        aaa.beginFill(0x00ff00, 0.25);
+                        aaa.buttonMode = !0
+                        aaa.interactive = !0
+                        aaa.drawCircle(0, 0, 38)
+                        aaa.on("mouseup", () => console.log(aaa.id.no));
+                        //.touch ? "touchend" : "mouseup
+                        app.stage.addChild(aaa);
+                    }*/
 
                     let fromId = "Node" + edges[closestFrom.x + ";" + closestFrom.y].map((e) => e.no).join("_");
                     let toId = "Node" + edges[nodeInfo.x + ";" + nodeInfo.y].map((e) => e.no).join("_");
