@@ -27,6 +27,7 @@
         <div id='clipboard'></div>
         <a href="."><b>Flat is Justice - Home</b></a>
         <button style='float:right' onclick='watchForNewServers()'>Watch updates</button><br>
+        <label>Month: <input id="month" placeholder="2019/7"></label><button id="loadmonth" onclick='loadMonth()'>Load</button>
         <br>
         Output: Download: <a id='downloadSumTop'>Summary/Top</a> <a id='download'>All graphs</a> <a id='download10k'>10k+ Players</a> <a id='download1'>#1</a> <a id='download5'>#5</a> <a id='download20'>#20</a> <a id='download100'>#100</a> <a id='download500'>#500</a><br><br>
 
@@ -68,6 +69,9 @@
             var hostname = "https://senka.com.ru";
 
             function update(onlyServerRanks) {
+                minTime = undefined; maxTime = undefined;
+                parsed = {}; maxOfRank = {};
+                players = []
                 allRanksServer = parseInt(document.getElementById('server').value);
                 // Convert data to another format:
                 // parsed[rank][ts][serverId - 1] = points
@@ -75,7 +79,7 @@
                 rectSize = 8;
                 parsed = {}; maxOfRank = {};
                 for(let i = 1; i <= 20; i++) {
-                    if(data[i].code == 1) continue;
+                    if(data[i].code == 1 || data[i].data.cutofflist == undefined) continue;
 
                     if(allRanksServer)
                         for(let player of data[i].data.players) {
@@ -89,7 +93,7 @@
                                 parsed[rank][ts][i - 1] = senka.senka;
                             }
                         }
-                    else
+                    else {
                         for(let cutoff of data[i].data.cutofflist) {
                             let ts = cutoff.timestamp;
                             if(minTime == undefined || ts < minTime) minTime = ts;
@@ -100,6 +104,7 @@
                                 parsed[rank][ts][i - 1] = cutoff.cutoff[rank];
                             }
                         }
+                    }
                 }
 
                 players = [];
@@ -110,6 +115,11 @@
                         return pl;
                     }));
                 }
+                players.forEach((p) => p.curRanking = p.curRanking || p.ranking || 0)
+                players.forEach((p) => p.curMedal = p.curMedal || p.medal || 0)
+                players.forEach((p) => p.senka = p.senka || p.history || [])
+                players.forEach((p) => p.rankno = p.rankno || (p.senka.length ? p.senka[p.senka.length-1].rankno : 0) || 0)
+                
                 players.sort((a, b) => b.curRanking - a.curRanking || a.rankno - b.rankno || a.name - b.name);
 
                 // Not updated
@@ -863,10 +873,12 @@
                 xmlhttp.onreadystatechange = function() {
                     if (xmlhttp.readyState == XMLHttpRequest.DONE) {
                         if (xmlhttp.status == 200) {
+                            let resp = JSON.parse(xmlhttp.responseText);
                             if(callback)
-                                callback(JSON.parse(xmlhttp.responseText));
+                                callback(resp);
                             else {
-                                data[name] = JSON.parse(xmlhttp.responseText);
+                                data[name] = resp;
+
                                 if(Object.keys(data).length < 20)
                                     document.getElementById("found").innerHTML = `Downloading from ${hostname}: ${Object.keys(data).length}/20...`;
                                 else
@@ -886,20 +898,57 @@
                 xmlhttp.setRequestHeader("x-access-token", localStorage.api_token);
                 xmlhttp.send();
             }
+
+            function loadMonth() {
+                let month = document.getElementById("month").value;
+                if(month.length < 6 || month.length > 7 || !month.includes("/") || !month.split("/").length == 2 || !month.split("/")[0].match(/20\d\d/) || !month.split("/")[1].match(/^(\d|1[0-2])$/)) {
+                    alert("Wrong date format: expected year/month. Example: 2019/6");
+                    return;
+                }
+                document.getElementById("found").innerHTML = `Loading... This can take up to 5 minutes`;
+                document.getElementById("month").disabled = true;
+                document.getElementById("loadmonth").disabled = true;
+                for(let i = 1; i <= 20; i++) 
+                    data[i] = undefined;
+                let grab = (i) => get(`${hostname}/history/${i}/${month}`, i, (resp) => {
+                        data[i] = {
+                            "data":{
+                                "cutofflist": resp.cutoff,
+                                "players": resp.senka
+                            }
+                        }
+
+                        for(let j = 1; j <= 20; j++)
+                            if(data[j] == undefined) {
+                                document.getElementById("found").innerHTML = `Downloading from ${hostname}: ${j-1}/20...`;
+                                grab(j);
+                                return;
+                            };
+
+                        document.getElementById("found").innerHTML = '';
+                        document.getElementById("month").disabled = false;
+                        document.getElementById("loadmonth").disabled = false;
+
+                        update();
+                        update();
+                    });
+                grab(1);
+            }
             
             if(!localStorage.api_token) localStorage.api_token = prompt("API key?");
-            document.getElementById("found").innerHTML = `Testing ${hostname}...`;
+
+            /*document.getElementById("found").innerHTML = `Testing ${hostname}...`;
             get(`${hostname}/server/1?date=${new Date().getTime()}`, 1, function(update) {
                 data[1] = update;
                 document.getElementById("found").innerHTML = `Downloading from ${hostname}: 1/20...`;
                 for(let i = 2; i <= 20; i++)
                     get(`${hostname}/server/${i}?date=${new Date().getTime()}`, i);
-            }, function() {
+            }, function() {*/
                 hostname = "https://api.senka.com.ru";
-                document.getElementById("found").innerHTML = `Testing ${hostname}...`;
+                document.getElementById("found").innerHTML = `Loading ${hostname}...`;
                 for(let i = 1; i <= 20; i++)
                     get(`${hostname}/server/${i}?date=${new Date().getTime()}`, i);
-            });
+            //});
             
         </script>
     </body>
