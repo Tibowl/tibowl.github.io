@@ -27,7 +27,7 @@
         <div id='clipboard'></div>
         <a href="."><b>Flat is Justice - Home</b></a>
         <button style='float:right' onclick='watchForNewServers()'>Watch updates</button><br>
-        <label>Month: <input id="month" placeholder="2019/7"></label><button id="loadmonth" onclick='loadMonth()'>Load</button>
+        <label>Month: <input id="month" placeholder="2019/7"><input id="serverhistory" value="0" type="number" min="0" max="20" step="1"></label><button id="loadmonth" onclick='loadMonth()'>Load</button>
         <br>
         Output: Download: <a id='downloadSumTop'>Summary/Top</a> <a id='download'>All graphs</a> <a id='download10k'>10k+ Players</a> <a id='download1'>#1</a> <a id='download5'>#5</a> <a id='download20'>#20</a> <a id='download100'>#100</a> <a id='download500'>#500</a><br><br>
 
@@ -118,6 +118,7 @@
                 players.forEach((p) => p.curRanking = p.curRanking || p.ranking || 0)
                 players.forEach((p) => p.curMedal = p.curMedal || p.medal || 0)
                 players.forEach((p) => p.senka = p.senka || p.history || [])
+                players.forEach((p) => p.senka.forEach((s) => s.senka = s.senka || s.ranking || []))
                 players.forEach((p) => p.rankno = p.rankno || (p.senka.length ? p.senka[p.senka.length-1].rankno : 0) || 0)
                 
                 players.sort((a, b) => b.curRanking - a.curRanking || a.rankno - b.rankno || a.name - b.name);
@@ -475,7 +476,7 @@
                 for(let rankIndex in ranks)
                     for(let i = 0; i < 20; i++) {
                         ctx.font = `800 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
-                        longestNames[parseInt(rankIndex) + 2] = Math.max(longestNames[parseInt(rankIndex) + 2], ctx.measureText(parsed[ranks[rankIndex]][maxTime][i]).width);
+                        longestNames[parseInt(rankIndex) + 2] = Math.max(longestNames[parseInt(rankIndex) + 2], ctx.measureText(parsed[ranks[rankIndex]][maxTime][i]||"----").width);
                         if (parsed[ranks[rankIndex]][maxTime-43200000] && parsed[ranks[rankIndex]][maxTime-43200000][i]) {
                             let diff = parsed[ranks[rankIndex]][maxTime][i] - parsed[ranks[rankIndex]][maxTime - 43200000][i];
                             ctx.font = `500 8px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
@@ -901,6 +902,7 @@
 
             function loadMonth() {
                 let month = document.getElementById("month").value;
+                let serverFilter = document.getElementById("serverhistory").value
                 if(month.length < 6 || month.length > 7 || !month.includes("/") || !month.split("/").length == 2 || !month.split("/")[0].match(/20\d\d/) || !month.split("/")[1].match(/^(\d|1[0-2])$/)) {
                     alert("Wrong date format: expected year/month. Example: 2019/6");
                     return;
@@ -910,6 +912,11 @@
                 document.getElementById("loadmonth").disabled = true;
                 for(let i = 1; i <= 20; i++) 
                     data[i] = undefined;
+                if(serverFilter != 0)
+                    for(let i = 1; i <= 20; i++)
+                        if(serverFilter != i)
+                            data[i] = {code: 1};
+                            
                 let grab = (i) => get(`${hostname}/history/${i}/${month}`, i, (resp) => {
                         data[i] = {
                             "data":{
@@ -932,7 +939,8 @@
                         update();
                         update();
                     });
-                grab(1);
+
+                grab(serverFilter || 1);
             }
             
             if(!localStorage.api_token) localStorage.api_token = prompt("API key?");
