@@ -27,7 +27,7 @@
         </textarea><br>
         <div id="startinfo"><b>API info for <span id='maptitle'>another map</span>!</b><br>
                     Bypass? <input onchange="update()" type="checkbox" id="bypass"><br></div>
-        Map: <input type="text" id="mapid" value="44-5" onchange="update()">
+        Map: <input type="text" id="mapid" value="45-1" onchange="update()">
         <!--<button name="tsunCollect" onclick="tsunDB(document.getElementById('mapid').value)">Get from TsunDB</button>--><br><br>
         <div id='options' style='column-width:300px'>
             Show background <input onchange="update()" type="checkbox" id="background" checked><br>
@@ -230,7 +230,7 @@
                     app.stage.addChild(bgLayer);
 
                 if(locData.airbase && !show.minimalistic) {
-                    let frame = PIXI.Texture.fromFrame("map_common_82");
+                    let frame = PIXI.Texture.fromFrame(colorToTexture(-98));
                     let sprite = new PIXI.Sprite(frame);
                     sprite.anchor.set(.5,.5);
                     sprite.position.set(locData.airbase.x, locData.airbase.y);
@@ -248,37 +248,41 @@
                     return 'map_common_' + show.forcedcolor;
                 switch(colorid) {
                     case -1:
-                        return 'map_common_152';
+                        return 'map_common_159';
                     case 1:
-                        return 'map_common_145';
+                        return 'map_common_152';
                     case 2:
                     case 6:
-                        return 'map_common_148';
+                        return 'map_common_155';
                     case 3:
-                        return 'map_common_150';
+                        return 'map_common_157';
                     case 4:
-                        return 'map_common_151';
+                        return 'map_common_158';
                     case 5:
-                        return 'map_common_139';
+                        return 'map_common_146';
                     case 7:
-                        return 'map_common_101';
+                        return 'map_common_108';
                     case 8:
-                        return 'map_common_138';
+                        return 'map_common_145';
                     case 9:
-                        return 'map_common_149';
+                        return 'map_common_156';
                     case 10:
-                        return 'map_common_96';
+                        return 'map_common_101';
                     case 11:
-                        return 'map_common_153';
+                        return 'map_common_160';
                     case 12:
-                        return 'map_common_154';
+                        return 'map_common_161';
                     case 13:
-                        return 'map_common_81';
+                        return 'map_common_83';
+                    case 14:
+                        return 'map_common_152';
                     case -2:
-                        return 'map_common_147';
+                        return 'map_common_154';
                     case -3:
-                        return 'map_common_144';
+                        return 'map_common_151';
 
+                    case -98:
+                        return 'map_common_84';
                     case -99:
                         return 'map_common_17';
                     default:
@@ -362,11 +366,18 @@
             });
             function drawEdgesOnGraph(callback) {
                 let edges = {};
-                for (let edge of locData.spots)
-                    if(edges[edge.x + ";" + edge.y])
-                        edges[edge.x + ";" + edge.y].push(edge);
-                    else
-                        edges[edge.x + ";" + edge.y] = [edge];
+                edgeLoop: for (let edge of locData.spots) {
+                    for(let xOff = -1; xOff <= 1; xOff++)
+                        for(let yOff = -1; yOff <= 1; yOff++)
+                            if(edges[(edge.x + xOff) + ";" + (edge.y + yOff)]) {
+                                edges[(edge.x + xOff) + ";" + (edge.y + yOff)].push(edge);
+                                edge.x = edge.x + xOff;
+                                edge.y = edge.y + yOff;
+                                continue edgeLoop;    
+                            }
+                    edges[edge.x + ";" + edge.y] = [edge];
+                }
+                console.log("aa", edges)
                 kc3Edges = {};
                 if(show.colors)
                     for (let edge of Object.values(edges)) {
