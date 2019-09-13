@@ -38,7 +38,7 @@
             Guess letters <input onchange="update()" type="checkbox" id="guessLetters"><br>
             Show LBAS range <input onchange="update()" type="checkbox" id="distance" checked><br>
             Show colors (of api when entered) <input onchange="update()" type="checkbox" id="colors" checked><br>
-            Show color of offset tag <input onchange="update()" type="checkbox" id="offsetColored" checked><br>
+            Show color of offset tag <input onchange="update()" type="checkbox" id="offsetColored"><br>
             Show enemies <input onchange="update()" type="checkbox" id="enemies" checked><br>
             Show routes? <input onchange="update()" type="checkbox" id="routes" checked><br>
             Show airraids <input onchange="update()" type="checkbox" id="airraids" checked><br>
@@ -469,7 +469,7 @@
                     let sprite = new PIXI.Sprite(frame);
                     sprite.rotation = (nodeInfo.line.r||0) / 180 * Math.PI
                     sprite.position.set(nodeInfo.x + nodeInfo.line.x, nodeInfo.y + nodeInfo.line.y);
-                    if(show.cleared)
+                    if(show.cleared && show.routes)
                         app.stage.addChild(sprite);
 
                     let bounds = sprite.getBounds();

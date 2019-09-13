@@ -37,11 +37,11 @@
             <label><a href="http://kancolle-calc.net/kanmusu_list.html">kanmusu list</a>: <input id="kanmusulist" onchange="update()" placeholder=".2|1:[...]"></input></label><br>
             <label>Template: 
                 <select id="eventConfigTemplate" onchange="update();">
+                    <option selected value="foreignShips">Foreign ships</option>
                     <option value="2019spring-lovecoal0928">Spring 2019 - lovecoal0928</option>
                     <option value="2018winter2-nicohatealpha">End of Year 2018 - nicohatealpha</option>
                     <option value="2018winter2-nishi">End of Year 2018 - Nishisonic</option>
                     <option value="nicohatealpha">&#19968;&#20843;&#24335;&#12288;&#26217;&#22799;&#12288;&#38480;&#23450;&#28023;&#22495;&#32244;&#24230;&#30906;&#35469;&#34920;</option>
-                    <option selected value="europeanShips">European ships</option>
                     <option value="operationKitaTenGo">Operation Kita + Operation Ten-Go</option>
                     <option value="operationKitaTenGo-JP">&#21271;&#21495;&#20316;&#25126; + &#22346;&#12494;&#23724;&#27798;&#28023;&#25126;</option>
                     <option value="potatoShips">Potato</option>
@@ -90,7 +90,7 @@
                 
                 let ctx = canvas.getContext('2d');
                 ctx.drawImage(selvas, 0, 0, canvas.width, canvas.height);
-                let text = "kanmusu list to image generator made by @FlatIsNice; https://flatisjustice.moe/eventlist";
+                let text = "Image generator by @FlatIsNice: https://flatisjustice.moe/eventlist";
 
                 ctx.fillStyle = "#000";
                 ctx.shadowColor = "#fff";
@@ -109,6 +109,11 @@
                         ctx.font = `400 20px "Helvetica Neue", Helvetica, Arial, sans-serif`;
                         ctx.lineWidth = 2;
                         heightOff = 4;
+                        break; 
+                    case 'foreignShips': 
+                        ctx.font = `600 20px "Helvetica Neue", Helvetica, Arial, sans-serif`;
+                        ctx.lineWidth = 2;
+                        heightOff = 6;
                         break;
                     default:
                         ctx.font = `400 10px "Helvetica Neue", Helvetica, Arial, sans-serif`;
