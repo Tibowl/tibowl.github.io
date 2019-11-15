@@ -679,11 +679,9 @@
                     this.ctx.fillStyle = "#333";
                     this.ctx.font = `800 ${lvlFontSize / 3}px ${fontFamily}`;
                     if (index < ships.length && (index < maxIndex[maxRow-1])) {
-                        console.log(maxIndex, row, maxRow, ships.length, index)
                         this.ctx.fillText(", ", shipPos.x + posOffset - lvlWidth[row] / 2, shipPos.y + currentHeight[row]);
                         posOffset += this.ctx.measureText(", ").width;
                     } else if (maxIndex[maxRow-1] !== ships.length) {
-                        console.log(maxIndex, row, maxRow, ships.length, index)
                         this.ctx.fillText("...", shipPos.x + posOffset - lvlWidth[row] / 2, shipPos.y + currentHeight[row]);
                     }
                 }
@@ -740,9 +738,13 @@
                 this.init();
             });
         }
+        
+        getDef(configName) {
+            return eventConfigDefs[configName] || eventConfigDefs.europeanShips;
+        }
 
         exportList(configName) {
-            this.eventConfig = eventConfigDefs[configName] || eventConfigDefs.europeanShips;
+            this.eventConfig = this.getDef(configName);
             this.baseImage.onload = this.fillShipLvls.bind(this);
             this.baseImage.src = this.eventConfig.baseImgSrc;
         }
