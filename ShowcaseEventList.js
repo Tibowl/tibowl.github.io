@@ -9,6 +9,7 @@
             disclaimerHeightOffset: null,
             fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
             lvlFontSize: 41,
+            maxBoxHeight: 116,
             maxBoxWidth: 149,
             shipPositions: [
                 // Battle of Balikpapan
@@ -565,7 +566,7 @@
         }
 
         addShipToImage(shipPos) {
-            const {fontFamily, lvlFontSize, maxBoxWidth} = this.eventConfig;
+            const {fontFamily, lvlFontSize, maxBoxWidth, maxBoxHeight} = this.eventConfig;
             const ids = [];
             const allShips = KC3Master.all_ships();
             for (const i in allShips) {
@@ -582,22 +583,25 @@
             this.ctx.fillStyle = "#000";
 
             if (ships.length > 0) {
-                let lvlWidth = 0, maxIndex = 0, firstWidth = 0;
+                let lvlWidth = [0], maxIndex = [0], firstWidth = 0, row = 0, maxHeights = [0];
                 for (let index = 0; index < ships.length; index++) {
                     this.ctx.font = `800 ${index ? lvlFontSize / 2 : lvlFontSize}px ${fontFamily}`;
-                    let currentWidth = this.ctx.measureText(ships[index].level).width;
+                    let {width} = this.ctx.measureText(ships[index].level);
 
                     if (index != 0) {
                         this.ctx.font = `800 ${lvlFontSize / 2}px ${fontFamily}`;
-                        currentWidth += this.ctx.measureText(", ").width;
+                        width += this.ctx.measureText(", ").width;
                     } else {
-                        firstWidth = currentWidth;
+                        firstWidth = width;
                     }
 
-                    if (lvlWidth + currentWidth > maxBoxWidth)
-                        break;
-                    lvlWidth += currentWidth;
-                    maxIndex = index + 1;
+                    if (lvlWidth[row] + width >= maxBoxWidth) {
+                        row++;
+                        lvlWidth[row] = 0;
+                    }
+                    lvlWidth[row] += width;
+                    maxHeights[row] = Math.max(maxHeights[row] || 0, index ? lvlFontSize / 2 : lvlFontSize);
+                    maxIndex[row] = index + 1;
                 }
 
                 // Show kai/kai ni status for highest level ship, this is prob most important one, in other cases it could be messy
@@ -617,15 +621,31 @@
                         });
                         suffix = suffix.trim();
                         this.ctx.font = `400 12px ${fontFamily}`;
-                        this.ctx.fillText(suffix, shipPos.x - lvlWidth / 2 + firstWidth, shipPos.y - 18);
+                        this.ctx.fillText(suffix, shipPos.x - lvlWidth[0] / 2 + firstWidth, shipPos.y - 18);
                     } else {
                         this.ctx.font = `800 18px ${fontFamily}`;
-                        this.ctx.fillText("*", shipPos.x - lvlWidth / 2 + firstWidth, shipPos.y - 18);
+                        this.ctx.fillText("*", shipPos.x - lvlWidth[0] / 2 + firstWidth, shipPos.y - 18);
                     }
                 }
 
-                let posOffset = 0, index = 0;
-                while (index < ships.length && index < maxIndex) {
+                let currentHeight = [0]
+                if(row > 0 && maxBoxHeight) {
+                    for(let i = 1; i < row; i++) {
+                        if(maxHeights.slice(0, i).reduce((a,b) => a+b) > maxBoxHeight) break;
+                        currentHeight.push(currentHeight[currentHeight.length - 1] + maxHeights[i])
+                        currentHeight = currentHeight.map(k => k - maxHeights[row] / 2)
+                    }
+                }
+
+                let posOffset = 0, index = 0, maxRow = currentHeight.length;
+                row = 0;
+                while (index < ships.length) {
+                    if(index >= maxIndex[row]) {
+                        row++;
+                        posOffset = 0;
+                        if(row >= maxRow || !maxBoxHeight)
+                            break;
+                    }
                     const ship = ships[index];
                     let text = String(ship.level);
 
@@ -651,18 +671,20 @@
                     }
                     this.ctx.font = `800 ${index ? lvlFontSize / 2 : lvlFontSize}px ${fontFamily}`;
 
-                    this.ctx.fillText(text, shipPos.x + posOffset - lvlWidth / 2, shipPos.y);
+                    this.ctx.fillText(text, shipPos.x + posOffset - lvlWidth[row] / 2, shipPos.y + currentHeight[row]);
                     posOffset += this.ctx.measureText(text).width;
 
                     index++;
 
                     this.ctx.fillStyle = "#333";
                     this.ctx.font = `800 ${lvlFontSize / 3}px ${fontFamily}`;
-                    if (index < ships.length && index < maxIndex) {
-                        this.ctx.fillText(", ", shipPos.x + posOffset - lvlWidth / 2, shipPos.y);
+                    if (index < ships.length && (index < maxIndex[maxRow-1])) {
+                        console.log(maxIndex, row, maxRow, ships.length, index)
+                        this.ctx.fillText(", ", shipPos.x + posOffset - lvlWidth[row] / 2, shipPos.y + currentHeight[row]);
                         posOffset += this.ctx.measureText(", ").width;
-                    } else if (maxIndex !== ships.length) {
-                        this.ctx.fillText("...", shipPos.x + posOffset - lvlWidth / 2, shipPos.y);
+                    } else if (maxIndex[maxRow-1] !== ships.length) {
+                        console.log(maxIndex, row, maxRow, ships.length, index)
+                        this.ctx.fillText("...", shipPos.x + posOffset - lvlWidth[row] / 2, shipPos.y + currentHeight[row]);
                     }
                 }
             } else {
