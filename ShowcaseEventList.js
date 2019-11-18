@@ -630,7 +630,7 @@
 
                 let currentHeight = [0]
                 if(row > 0 && maxBoxHeight) {
-                    for(let i = 1; i < row; i++) {
+                    for(let i = 1; i <= row; i++) {
                         if(maxHeights.slice(0, i).reduce((a,b) => a+b) > maxBoxHeight) break;
                         currentHeight.push(currentHeight[currentHeight.length - 1] + maxHeights[i])
                         currentHeight = currentHeight.map(k => k - maxHeights[row] / 2)
@@ -643,7 +643,7 @@
                     if(index >= maxIndex[row]) {
                         row++;
                         posOffset = 0;
-                        if(row >= maxRow || !maxBoxHeight)
+                        if(row > maxRow || !maxBoxHeight)
                             break;
                     }
                     const ship = ships[index];
