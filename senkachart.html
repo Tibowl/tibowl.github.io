@@ -66,7 +66,7 @@
             var longestJP, longestScore;
             let allRanksServer = 0;
             let players = [];
-            var hostname = "https://senka.com.ru";
+            var hostname = "https://api.kancolle.moe";
 
             function update(onlyServerRanks) {
                 minTime = undefined; maxTime = undefined;
@@ -437,7 +437,7 @@
                 ctx.fillStyle = "#888";
                 ctx.textAlign = "right";
                 ctx.font = `500 10px sans-serif`
-                txt = "Data: senka.com.ru ";
+                txt = "Data: senka.su ";
                 ctx.fillText(txt, width, 9);
                 txt = "Graph generator: @FlatIsNice ";
                 ctx.fillText(txt, width, 19);
@@ -952,7 +952,7 @@
                 for(let i = 2; i <= 20; i++)
                     get(`${hostname}/server/${i}?date=${new Date().getTime()}`, i);
             }, function() {*/
-                hostname = "https://api.senka.com.ru";
+                hostname = "https://api.kancolle.moe";
                 document.getElementById("found").innerHTML = `Loading ${hostname}...`;
                 for(let i = 1; i <= 20; i++)
                     get(`${hostname}/server/${i}?date=${new Date().getTime()}`, i);
