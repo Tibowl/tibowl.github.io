@@ -37,8 +37,9 @@
             <label><a href="http://kancolle-calc.net/kanmusu_list.html">kanmusu list</a>: <input id="kanmusulist" onchange="update()" placeholder=".2|1:[...]"></input></label><br>
             <label>Template: 
                 <select id="eventConfigTemplate" onchange="update();">
-                    <option selected value="2019fall-nishikuma">Fall 2019 - Nishikuma</option>
+                    <option selected value="2020summer-lovecoal0928">Summer 2019 - lovecoal0928</option>
                     <option value="foreignShips">Foreign ships</option>
+                    <option value="2019fall-nishikuma">Fall 2019 - Nishikuma</option>
                     <option value="2019spring-lovecoal0928">Spring 2019 - lovecoal0928</option>
                     <option value="2018winter2-nicohatealpha">End of Year 2018 - nicohatealpha</option>
                     <option value="2018winter2-nishi">End of Year 2018 - Nishisonic</option>
@@ -99,6 +100,11 @@
                 ctx.shadowBlur = 2;
                 let heightOff = 3;
                 switch(selected) {
+                    case '2020summer-lovecoal0928': 
+                        ctx.font = `600 30px "Helvetica Neue", Helvetica, Arial, sans-serif`;
+                        ctx.lineWidth = 2;
+                        heightOff = 6;
+                        break;
                     case '2019spring-lovecoal0928': 
                     case '2018winter2-nishi': 
                         ctx.font = `600 20px "Helvetica Neue", Helvetica, Arial, sans-serif`;
