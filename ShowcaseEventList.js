@@ -9,6 +9,7 @@
             disclaimerHeightOffset: null,
             fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
             lvlFontSize: 45,
+            maxBoxHeight: 60,
             maxBoxWidth: 248,
             shipPositions: [
                 {"x": 186+265 *0, "y": 495 + 149* 0, "id": 110}, // Shoukaku
