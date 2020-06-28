@@ -27,7 +27,8 @@
         </textarea><br>
         <div id="startinfo"><b>API info for <span id='maptitle'>another map</span>!</b><br>
                     Bypass? <input onchange="update()" type="checkbox" id="bypass"><br></div>
-        Map: <input type="text" id="mapid" value="45-1" onchange="update()">
+        Map: <input type="text" id="mapid" value="45-1" onchange="update()"><br>
+        Server: <input type="text" id="server" value="203.104.209.71" onchange="update()">
         <!--<button name="tsunCollect" onclick="tsunDB(document.getElementById('mapid').value)">Get from TsunDB</button>--><br><br>
         <div id='options' style='column-width:300px'>
             Show background <input onchange="update()" type="checkbox" id="background" checked><br>
@@ -64,6 +65,8 @@
             document.body.appendChild(canvas = app.view);
             function update(selectedmap = document.getElementById("mapid").value) {
                 document.getElementById("mapid").value = selectedmap;
+                SERVER = document.getElementById("server").value;
+                GAUGE_ROOT = `http://${SERVER}/kcs2/resources/gauge/`;
 
                 let nonl = document.getElementById("start").value.replace(/\n/g,'').replace(/\r/g,'');
                 eval((nonl || "") == "" ? "svdata={}" : nonl);

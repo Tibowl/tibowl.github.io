@@ -87,13 +87,10 @@
                 }
             }
 
-            function KC3ImageExport(selvas){
+            function KC3ImageExport(){
+                console.time("A")
                 let canvas = document.getElementById("output");
-                canvas.width = selvas.width;
-                canvas.height = selvas.height;
-                
                 let ctx = canvas.getContext('2d');
-                ctx.drawImage(selvas, 0, 0, canvas.width, canvas.height);
                 let text = "Image generator at https://flatisjustice.moe/eventlist";
 
                 ctx.fillStyle = "#000";
@@ -131,13 +128,16 @@
                         ctx.lineWidth = 1;
                         break;
                 }
+                const x = (canvas.width - ctx.measureText(text).width) / 2
+                ctx.strokeText(text, x, canvas.height - heightOff);
+                ctx.fillText(text, x, canvas.height - heightOff);
 
-                ctx.strokeText(text, (canvas.width - ctx.measureText(text).width) / 2, canvas.height - heightOff);
-                ctx.fillText(text, (canvas.width - ctx.measureText(text).width) / 2, canvas.height - heightOff);
-
-                blobUtil.canvasToBlob(canvas, 'image/png').then(function (blob) {
-                    document.getElementById("download").href = blobUtil.createObjectURL(blob);
-                });
+                setTimeout(() => {
+                    blobUtil.canvasToBlob(canvas, 'image/png').then(function (blob) {
+                        document.getElementById("download").href = blobUtil.createObjectURL(blob);
+                    });
+                }, 1);
+                console.timeEnd("A")
                 this.export = () => 0;
                 return this;
             };
@@ -150,7 +150,7 @@
                 let eventConfigTemplate = document.getElementById('eventConfigTemplate');
                 selected = eventConfigTemplate.options[eventConfigTemplate.selectedIndex].value;
                 let sel = new ShowcaseEventList();
-                sel.exportList(selected.replace("-JP", ""));
+                sel.exportList(selected.replace("-JP", ""), document.getElementById("output"));
                 sel.eventConfig.disclaimerHeightOffset = null;
                 switch(selected) {
                     case "operationKitaTenGo-JP":

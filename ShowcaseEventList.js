@@ -924,13 +924,6 @@
             this.buildSettings = {};
             this.complete = function () {
             };
-            this.init();
-        }
-
-        init() {
-            this.baseImage = new Image();
-            this.canvas = document.createElement("CANVAS");
-            this.ctx = this.canvas.getContext("2d");
         }
 
         addShipToImage(shipPos) {
@@ -1063,6 +1056,7 @@
             const {fontFamily, disclaimerHeightOffset, shipPositions, exportFileName} = this.eventConfig;
             this.canvas.width = this.baseImage.width;
             this.canvas.height = this.baseImage.height;
+            this.ctx = this.canvas.getContext("2d", { alpha: false });
             this.ctx.drawImage(this.baseImage, 0, 0, this.canvas.width, this.canvas.height);
 
             let size = 16;
@@ -1103,7 +1097,6 @@
                 method: this.buildSettings.output,
             }).export((error, result) => {
                 this.complete(result || {});
-                this.init();
             });
         }
 
@@ -1111,7 +1104,10 @@
             return eventConfigDefs[configName] || eventConfigDefs.europeanShips;
         }
 
-        exportList(configName) {
+        exportList(configName, canvas = document.createElement("CANVAS")) {
+            this.baseImage = new Image();
+            this.canvas = canvas;
+
             this.eventConfig = this.getDef(configName);
             this.baseImage.onload = this.fillShipLvls.bind(this);
             this.baseImage.src = this.eventConfig.baseImgSrc;
