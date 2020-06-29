@@ -696,7 +696,7 @@
                             let toReplace = kc3Edges[id][1];
 
                             // Guess from ordering
-                            let nodeLetter = nodeNames[nodeCount++];
+                            let nodeLetter = "?";
 
                             // Extract from labels
                             if(locData.labels) {
@@ -709,6 +709,9 @@
                                         closest = dist;
                                     }
                                 }
+                            } 
+                            if (nodeLetter == "?")  {
+                                nodeLetter = nodeNames[nodeCount++]
                             }
 
                             // Replace the shit
