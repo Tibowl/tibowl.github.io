@@ -661,7 +661,7 @@
                         let distance = unique(edge.map((e) => {
                             let n = svdata.api_data.api_cell_data.find((m) => m && m.api_no == e.no);
                             return n?n.api_distance:-99
-                        }).filter((d) => d>=0)).join("/");
+                        }).filter((d) => d >= 0 && d < 99)).join("/");
                         let {x, y} = edge[0];
                         if(distance.length > 0) {
                             let text = new PIXI.Text(distance, lbasStyle);

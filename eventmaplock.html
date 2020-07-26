@@ -252,9 +252,9 @@
                         let rep = line.replace(/\w+.([\w]+)\.getTexture\(/g, "getTexture('$1', ").replace(/this./g, '')+'\n';
 
                         if(type == '_createPlate')
-                            rep = rep.replace(/void [a-z]/g, "_createPlateIcon");
+                            rep = rep.replace(/void [_0-9a-z]+/gi, "_createPlateIcon");
                         if(type == '_createPlate')
-                            rep = rep.replace(/return [a-z]/g, "return _createPlateIcon");
+                            rep = rep.replace(/return [_0-9a-z]+/gi, "return _createPlateIcon");
                         currentCode += rep;
                     }
                 }
@@ -263,7 +263,7 @@
 
                 loader.add([
                         getPath('sally_strategymap.json'),
-                        getPath('sally_strategymap_s.json'),
+                        getPath('sally_strategymap_second.json'),
                        'https://i.imgur.com/wU3MZmG.png', // Unkown ship lock
                        'https://i.imgur.com/QXkeLzo.png', // !
                        'https://i.imgur.com/WxF5fiw.png', // flag
