@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Flat is Justice! - dmg suffer</title>
+    <title>Flat is Justice! - Bugs</title>
     <meta name="theme-color" content="#082E6B" />
     <meta name=viewport content="width=device-width, initial-scale=1">
     <meta name="twitter:card" content="summary">
@@ -23,7 +23,10 @@
             color: blue;
         }
 
-        table > tr > th, table > tr > td, table > * > tr > th, table > * > tr > td {
+        table>tr>th,
+        table>tr>td,
+        table>*>tr>th,
+        table>*>tr>td {
             border: 1px darkgray solid;
         }
     </style>
@@ -33,37 +36,77 @@
     <a href="."><b>Flat is Justice - Home</b></a><br>
 
     <main>
-        <h2>Black HP bug</h2>
-        <label></label>Max HP: <input type="number" id="maxHP" min="1" max="9999" value="888" onchange="update();" onclick="update();"></label><br>
-        <label></label>HP: <input type="number" id="HP" min="1" max="9999" value="888" onchange="update();" onclick="update();"></label><br>
-        <br>
-        <table id="hplist"></table>
+        <section>
+            <h2>Black HP bug</h2>
+            <label>Max HP: <input type="number" id="maxHP" min="1" max="9999" value="888" onchange="update();"
+                    onclick="update();"></label><br>
+            <label>HP: <input type="number" id="HP" min="1" max="9999" value="888" onchange="update();"
+                    onclick="update();"></label><br>
+            <br>
+            <table id="hplist"></table>
+        </section>
+        <section>
+            <h2>Level UP animation</h2>
+            <label>Node XP: <input type="number" id="nodeXP" min="1" max="9999" value="540" onchange="update();"
+                    onclick="update();"></label><br>
+            <br>
+            <table id="xplist"></table>
+        </section>
     </main>
     <div style="clear:both"></div>
     <script type="text/javascript">
         function update() {
+            generateHP()
+            generateXP()
+        }
+        function generateXP() {
+            const nodeXP = parseFloat(document.getElementById('nodeXP').value)
+            const xplist = document.getElementById("xplist")
+            
+            xplist.innerHTML =
+                `Border: 1.0 ~ ${(Math.floor(nodeXP/12)/10).toFixed(1)}XP
+                <tr>
+                    <th>Kanmusu XP left till level up</th>
+                    <th>Plays animation?</th>
+                </tr>`
+
+            let xp = nodeXP
+            let isLastBugged = 0
+            while(isLastBugged < 5) {
+                const isBugged = xp > 119/120 * nodeXP && nodeXP !== xp
+
+                xplist.innerHTML +=
+                `<tr>
+                    <td>${xp} = ${nodeXP}-${nodeXP-xp}</td>
+                    <td style="background-color: ${isBugged ?"#DD5555" : "#55DD55"};text-align: center;">${isBugged ? "❌" : "✔️"}</td>
+                </tr>`
+                if(!isBugged) isLastBugged++
+                xp--
+            }
+        }
+        function generateHP() {
             const maxHP = parseFloat(document.getElementById('maxHP').value)
-            document.getElementById("hplist").innerHTML = 
+            document.getElementById("hplist").innerHTML =
                 `<tr>
                     <th>HP</th>
                     <th>Color (hex)</th>
                     <th></th>
                 </tr>`
-            
+
             let currentHP = parseFloat(document.getElementById('HP').value)
             if (currentHP > maxHP) {
                 currentHP = maxHP
                 document.getElementById('HP').value = maxHP
             }
             addHP(currentHP, maxHP)
-            for(let hp = Math.min(maxHP, Math.ceil(2/3*maxHP) + 5); hp > Math.max(Math.ceil(2/3*maxHP) - 10, 0); hp--)  
+            for (let hp = Math.min(maxHP, Math.ceil(2 / 3 * maxHP) + 1); hp > Math.max(Math.ceil(2 / 3 * maxHP) - 7, 0); hp--)
                 addHP(hp, maxHP)
         }
         function addHP(hp, maxHP) {
-            const colorCode = getColor(hp/maxHP).toString(16).toUpperCase().padStart(6, 0)
+            const colorCode = getColor(hp / maxHP).toString(16).toUpperCase().padStart(6, 0)
             //console.log(`${hp}: #${colorCode}`)
 
-            document.getElementById("hplist").innerHTML += 
+            document.getElementById("hplist").innerHTML +=
                 `<tr>
                     <td>${hp}/${maxHP}</td>
                     <td>#${colorCode}</td>
@@ -72,15 +115,15 @@
         }
         function getColor(hpRatio) {
             if (hpRatio < 0 || hpRatio > 1) throw Error();
-            var  red = 255,
+            var red = 255,
                 green = 255;
-            if (hpRatio < 1 / 3) 
+            if (hpRatio < 1 / 3)
                 green = Math.round(0 + 128 * 3 * hpRatio)
-            else if (hpRatio < 1 / 3 * 2) 
+            else if (hpRatio < 1 / 3 * 2)
                 green = Math.round(128 + 3 * (hpRatio - 1 / 3) * 128)
-            else 
+            else
                 red = Math.round(255 - 255 * 3 * (hpRatio - 1 / 3 * 2))
-            
+
             return (red << 16) + (green << 8);
         }
 
