@@ -23,115 +23,211 @@
         <a href="."><b>Flat is Justice - Home</b></a><br>
         <br>
         main.js section: <br><textarea id="code">
-            _1230113956.prototype._getBGTexture = function(_934160944) {
-                switch (_934160944) {
-                    case 471:
-                        return _1230113952.SALLY_STRATEGYMAP.getTexture(7);
+            _1230114023.prototype._getBGTexture = function(_1990913776) {
+                switch (_1990913776) {
+                    case 481:
+                        return _1230114019.SALLY_STRATEGYMAP.getTexture(34);
+                    case 482:
+                        return _1230114019.SALLY_STRATEGYMAP.getTexture(35);
+                    case 483:
+                        return _1230114019.SALLY_STRATEGYMAP.getTexture(36);
+                    case 484:
+                        return _1230114019.SALLY_STRATEGYMAP.getTexture(37);
+                    case 485:
+                        return _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(23);
+                    case 486:
+                        return _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(24);
+                    case 487:
+                        return _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(25);
                     default:
                         return PIXI.Texture.EMPTY;
                 }
             },
-            _1230113956.prototype._createAreaAnimation = function(_925589753) {
-                switch (this._cleanArea(), _925589753) {
-                    case 471:
+            _1230114023.prototype._createAreaAnimation = function(_948685055) {
+                switch (this._cleanArea(), _948685055) {
+                    case 481:
+                        return void this._createArea(86, 63, _1230114019.SALLY_STRATEGYMAP.getTexture(0));
+                    case 482:
+                        return this._createArea(1, 143, _1230114019.SALLY_STRATEGYMAP.getTexture(1)),
+                        void this._createArea(76, 88, _1230114019.SALLY_STRATEGYMAP.getTexture(2));
+                    case 483:
+                        return this._createArea(23, 36, _1230114019.SALLY_STRATEGYMAP.getTexture(3)),
+                        this._createArea(2, 108, _1230114019.SALLY_STRATEGYMAP.getTexture(4)),
+                        void this._createArea(151, 166, _1230114019.SALLY_STRATEGYMAP.getTexture(5));
+                    case 484:
+                        return this._createArea(84, 58, _1230114019.SALLY_STRATEGYMAP.getTexture(6)),
+                        this._createArea(60, 157, _1230114019.SALLY_STRATEGYMAP.getTexture(7)),
+                        void this._createArea(127, 110, _1230114019.SALLY_STRATEGYMAP.getTexture(8));
+                    case 485:
+                        return this._createArea(147, 29, _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(0)),
+                        this._createArea(1, 109, _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(1)),
+                        void this._createArea(142, 141, _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(2));
+                    case 486:
+                        return void this._createArea(121, 118, _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(3));
+                    case 487:
+                        return void this._createArea(100, 98, _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(4));
                     default:
                         return;
                 }
             },
-            _1230113956.prototype._createArrowAnimation = function(_1315473068) {
-                switch (this._cleanArrow(), _1315473068) {
-                    case 471:
-                        return this._createArrow(0, 107, _1230113952.SALLY_STRATEGYMAP.getTexture(0), _1230113952.SALLY_STRATEGYMAP.getTexture(1)),
-                        void this._createArrow(137, 144, _1230113952.SALLY_STRATEGYMAP.getTexture(2), _1230113952.SALLY_STRATEGYMAP.getTexture(3));
+            _1230114023.prototype._createArrowAnimation = function(_2111657991) {
+                switch (this._cleanArrow(), _2111657991) {
+                    case 481:
+                        return void this._createArrow(16, 65, _1230114019.SALLY_STRATEGYMAP.getTexture(9), _1230114019.SALLY_STRATEGYMAP.getTexture(10));
+                    case 482:
+                        return void this._createArrow(56, 22, _1230114019.SALLY_STRATEGYMAP.getTexture(11), _1230114019.SALLY_STRATEGYMAP.getTexture(12));
+                    case 483:
+                        return this._createArrow(170, 79, _1230114019.SALLY_STRATEGYMAP.getTexture(13), _1230114019.SALLY_STRATEGYMAP.getTexture(14)),
+                        void this._createArrow(12, 115, _1230114019.SALLY_STRATEGYMAP.getTexture(15), _1230114019.SALLY_STRATEGYMAP.getTexture(16));
+                    case 484:
+                        return this._createArrow(77, 117, _1230114019.SALLY_STRATEGYMAP.getTexture(17), _1230114019.SALLY_STRATEGYMAP.getTexture(18)),
+                        void this._createArrow(0, 44, _1230114019.SALLY_STRATEGYMAP.getTexture(19), _1230114019.SALLY_STRATEGYMAP.getTexture(20));
+                    case 485:
+                        return void this._createArrow(28, 72, _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(5), _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(6));
+                    case 486:
+                        return void this._createArrow(9, 41, _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(7), _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(8));
+                    case 487:
+                        return void this._createArrow(1, 6, _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(9), _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(10));
                     default:
                         return;
                 }
             },
-            _1230113956.prototype._createArea = function(_789782147, _789782148, _789782149) {
-                var _789782150 = new _789782151(_789782149);
-                _789782150['x'] = _789782147,
-                _789782150['y'] = _789782148,
-                this._area_layer.addChild(_789782150);
+            _1230114023.prototype._createArea = function(_2049632834, _2049632835, _2049632836) {
+                var _2049632837 = new _2049632838(_2049632836);
+                _2049632837['x'] = _2049632834,
+                _2049632837['y'] = _2049632835,
+                this._area_layer.addChild(_2049632837);
             },
-            _1230113956.prototype._cleanArea = function() {
+            _1230114023.prototype._cleanArea = function() {
                 for (var _2000023186 = 0, _2000023187 = this._area_layer.children; _2000023186 < _2000023187.length; _2000023186++) {
                     _2000023187[_2000023186].dispose();
                 }
                 this._area_layer.removeChildren();
             },
-            _1230113956.prototype._createArrow = function(_1914716600, _1914716601, _1914716602, _1914716603) {
+            _1230114023.prototype._createArrow = function(_1914716600, _1914716601, _1914716602, _1914716603) {
                 var _1914716604 = new _1914716605(_1914716602, _1914716603);
                 _1914716604['x'] = _1914716600,
                 _1914716604['y'] = _1914716601,
                 this._arrow_layer.addChild(_1914716604);
             },
-            _1230113956.prototype._cleanArrow = function() {
+            _1230114023.prototype._cleanArrow = function() {
                 for (var _553291670 = 0, _553291671 = this._arrow_layer.children; _553291670 < _553291671.length; _553291670++) {
                     _553291671[_553291670].dispose();
                 }
                 this._arrow_layer.removeChildren();
             },
-            _1230113956.prototype._createAirBase = function(_508782636) {
+            _1230114023.prototype._createAirBase = function(_508782636) {
                 this._base.removeChildren();
             },
-            _1230113956.prototype._createPlate = function(_1682114550) {
+            _1230114023.prototype._createPlate = function(_1682114550) {
+                var _1682114551 = this;
                 this._plate.removeChildren();
+                var _1250343213 = function(_1250343214, _1250343215, _1250343216) {
+                    var _1134213100 = new PIXI[('Sprite')](_1250343214);
+                    _1134213100.position.set(_1250343215, _1250343216),
+                    _1682114551._plate.addChild(_1134213100);
+                };
                 switch (_1682114550) {
-                    case 471:
+                    case 481:
+                        return void _1250343213(_1230114019.SALLY_STRATEGYMAP.getTexture(22), 149, 47);
+                    case 482:
+                        return void _1250343213(_1230114019.SALLY_STRATEGYMAP.getTexture(23), 149, 44);
+                    case 483:
+                        return void _1250343213(_1230114019.SALLY_STRATEGYMAP.getTexture(24), 115, 150);
+                    case 484:
+                        return void _1250343213(_1230114019.SALLY_STRATEGYMAP.getTexture(25), 43, 146);
+                    case 485:
+                        return void _1250343213(_1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(12), 143, 156);
+                    case 486:
+                        return void _1250343213(_1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(13), 118, 169);
+                    case 487:
+                        return _1250343213(_1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(14), 43, 53),
+                        _1250343213(_1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(15), 102, 163),
+                        void _1250343213(_1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(16), 112, 36);
                     default:
                         return;
                 }
             },
-            _1230113956.prototype._createLabelAnimation = function(_511527563) {
-                switch (this._cleanLabel(), _511527563) {
-                    case 471:
-                        return void this._createLabel(65, 67, _1230113952.SALLY_STRATEGYMAP.getTexture(5), _1230113952.SALLY_STRATEGYMAP.getTexture(6));
+            _1230114023.prototype._createLabelAnimation = function(_1887022779) {
+                switch (this._cleanLabel(), _1887022779) {
+                    case 481:
+                        return void this._createLabel(49, 126, _1230114019.SALLY_STRATEGYMAP.getTexture(26), _1230114019.SALLY_STRATEGYMAP.getTexture(27));
+                    case 482:
+                        return void this._createLabel(27, 125, _1230114019.SALLY_STRATEGYMAP.getTexture(28), _1230114019.SALLY_STRATEGYMAP.getTexture(29));
+                    case 483:
+                        return void this._createLabel(19, 73, _1230114019.SALLY_STRATEGYMAP.getTexture(30), _1230114019.SALLY_STRATEGYMAP.getTexture(31));
+                    case 484:
+                        return void this._createLabel(6, 29, _1230114019.SALLY_STRATEGYMAP.getTexture(32), _1230114019.SALLY_STRATEGYMAP.getTexture(33));
+                    case 485:
+                        return void this._createLabel(51, 85, _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(17), _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(18));
+                    case 486:
+                        return void this._createLabel(53, 117, _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(19), _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(20));
+                    case 487:
+                        return void this._createLabel(30, 112, _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(21), _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(22));
                     default:
                         return;
                 }
             },
-            _1230113956.prototype._createLabel = function(_1988934363, _1988934364, _1988934365, _1988934366) {
-                var _1988934367 = new _1988934368(_1988934365, _1988934366);
-                _1988934367['x'] = _1988934363,
-                _1988934367['y'] = _1988934364,
-                this._label_layer.addChild(_1988934367);
+            _1230114023.prototype._createLabel = function(_1367194, _1367195, _1367196, _1367197) {
+                var _1367198 = new _1367199(_1367196, _1367197);
+                _1367198['x'] = _1367194,
+                _1367198['y'] = _1367195,
+                this._label_layer.addChild(_1367198);
             },
-            _1230113956.prototype._cleanLabel = function() {
+            _1230114023.prototype._cleanLabel = function() {
                 for (var _1177686000 = 0, _1177686001 = this._label_layer.children; _1177686000 < _1177686001.length; _1177686000++) {
                     _1177686001[_1177686000].dispose();
                 }
                 this._label_layer.removeChildren();
             },
-            _1230113956.prototype._createMiniTextAnimation = function(_804504316) {
+            _1230114023.prototype._createMiniTextAnimation = function(_804504316) {
                 switch (this._cleanMiniText(), _804504316) {
-                    case 471:
-                        return void this._createMiniText(192, 286, _1230113952.SALLY_STRATEGYMAP.getTexture(10), _1230113952.SALLY_STRATEGYMAP.getTexture(11));
+                    case 482:
+                    case 483:
+                    case 484:
+                    case 485:
+                    case 486:
+                    case 487:
+                        return void this._createMiniText(192, 286, _1230114019.SALLY_STRATEGYMAP.getTexture(43), _1230114019.SALLY_STRATEGYMAP.getTexture(44));
                     default:
                         return;
                 }
             },
-            _1230113956.prototype._createMiniText = function(_2079775989, _2079775990, _2079775991, _2079775992) {
+            _1230114023.prototype._createMiniText = function(_2079775989, _2079775990, _2079775991, _2079775992) {
                 var _2079775993 = new _2079775994(_2079775991, _2079775992);
                 _2079775993['x'] = _2079775989,
                 _2079775993['y'] = _2079775990,
                 this._mini_text_layer.addChild(_2079775993);
             },
-            _1230113956.prototype._cleanMiniText = function() {
+            _1230114023.prototype._cleanMiniText = function() {
                 for (var _1213532438 = 0, _1213532439 = this._mini_text_layer.children; _1213532438 < _1213532439.length; _1213532438++) {
                     _1213532439[_1213532438].dispose();
                 }
                 this._mini_text_layer.removeChildren();
             },
-            _1230113956.prototype._getTitleTexture = function(_836833585) {
+            _1230114023.prototype._getTitleTexture = function(_836833585) {
                 switch (_836833585) {
-                    case 471:
-                        return _1230113952.SALLY_STRATEGYMAP.getTexture(8);
+                    case 481:
+                        return _1230114019.SALLY_STRATEGYMAP.getTexture(38);
+                    case 482:
+                        return _1230114019.SALLY_STRATEGYMAP.getTexture(39);
+                    case 483:
+                        return _1230114019.SALLY_STRATEGYMAP.getTexture(40);
+                    case 484:
+                        return _1230114019.SALLY_STRATEGYMAP.getTexture(41);
+                    case 485:
+                        return _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(26);
+                    case 486:
+                        return _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(27);
+                    case 487:
+                        return _1230114020.SALLY_STRATEGYMAP_SECOND.getTexture(28);
                     default:
                         return PIXI.Texture.EMPTY;
                 }
             },
+            _1230114023;
 </textarea><br>
-        Map: <input type="text" id="mapid" value="47" onchange="update()"> <br>
+        Map: <input type="text" id="mapid" value="48" onchange="update()"> <br>
         <br>
         <button name="Update" onclick="update()">Force update</button><br><br>
         <a id="download">Download</a><br>
@@ -249,12 +345,14 @@
 
                         currentCode = line.split(' = ')[1]+'\n';
                     } else {
+                        if(type == '_createPlate') console.log('eeee', line)
                         let rep = line.replace(/\w+.([\w]+)\.getTexture\(/g, "getTexture('$1', ").replace(/this./g, '')+'\n';
 
                         if(type == '_createPlate')
-                            rep = rep.replace(/void [_0-9a-z]+/gi, "_createPlateIcon");
+                            rep = rep.replace(/(void )?[_0-9a-z]+\(getTexture/gi, "_createPlateIcon\(getTexture");
                         if(type == '_createPlate')
                             rep = rep.replace(/return [_0-9a-z]+/gi, "return _createPlateIcon");
+                        if(type == '_createPlate') console.log('eeee', rep)
                         currentCode += rep;
                     }
                 }
@@ -297,19 +395,19 @@
                 yOff = 8;
                 app.view.width = (map%10)*300;
                 drawPhase = 'map';
-                _createBG(0,0,_getBGTexture(map));
+                try { _createBG(0,0,_getBGTexture(map)); } catch (e) { console.error(e) }
                 drawPhase = 'arrow';
-                _createArrowAnimation(map);
+                try { _createArrowAnimation(map); } catch (e) { console.error(e) }
                 drawPhase = 'area';
-                _createAreaAnimation(map);
+                try { _createAreaAnimation(map); } catch (e) { console.error(e) }
                 drawPhase = 'label';
-                _createLabelAnimation(map);
+                try { _createLabelAnimation(map); } catch (e) { console.error(e) }
                 drawPhase = 'miniText';
-                _createMiniTextAnimation(map);
+                try { _createMiniTextAnimation(map); } catch (e) { console.error(e) }
                 drawPhase = 'plate';
-                _createPlate(map);
+                try { _createPlate(map); } catch (e) { console.error(e) }
                 drawPhase = 'title';
-                _createTitle(0,305,_getTitleTexture(map));
+                try { _createTitle(0,305,_getTitleTexture(map)); } catch (e) { console.error(e) }
 
                 for(let dir of [[1,0,.5,0], [0,-1,1,.5], [1,0,1,.5], [0,1,.5,0]]) {
                     let text = new PIXI.Text("@FlatIsNice", secretstyle);
