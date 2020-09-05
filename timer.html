@@ -347,16 +347,29 @@
             </blockquote>
         </div>
         Note: while this last one most likely references to the complete block (login & gameplay), foreigners are still
-        blocked from logging in since 2020-02-25 19:47 JST: <span class="diff"
-            data-time="2020-02-25T10:47:00.000Z"></span>.
+        blocked from logging in since 2020-02-25 19:47 JST:
+        <span class="diff" data-time="2020-02-25T10:47:00.000Z"></span>.
+
+        <div class="timer clearfix">
+            Ginga Egusa:
+            <blockquote>
+                <a class="tweetlink" href="https://twitter.com/KanColle_STAFF/status/1289094070158028801"></a>
+
+                本日武勲褒賞で配信する精鋭陸攻隊<mark>「銀河(江草隊)」</mark>は、先行実装です。今後能力等は更新される可能性があります。<mark>また、今後実装予定の新任務で獲得することも可能です。</mark>
+                <a href="https://twitter.com/hashtag/%E8%89%A6%E3%81%93%E3%82%8C">#艦これ</a>
+
+                <footer class="diff" data-time="2020-07-31T07:02:31.000Z"></footer>
+            </blockquote>
+        </div>
     </main>
     <script type="text/javascript">
-        function updateTime() {
+        function updateTime(first = false) {
             const now = Date.now()
 
             const f = (i) => Math.floor(i).toString().padStart(2, 0)
             Array(...document.getElementsByClassName("diff")).forEach(elem => {
-                const then = new Date(elem.getAttribute("data-time")).getTime()
+                const thenDate = new Date(elem.getAttribute("data-time"))
+                const then = thenDate.getTime()
                 const diff = now - then
 
                 const seconds = f((diff / 1000) % 60)
@@ -365,11 +378,28 @@
                 const days = f((diff / 24 / 60 / 60 / 1000))
 
                 elem.innerText = `${days}日 ${hours}時間 ${minutes}分 ${seconds}秒前`
+
+                if (first) {
+                    const thenString = thenDate.toLocaleString("ja-JP", {
+                        timeZone: "Asia/Tokyo",
+                        hour12: false,
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        timeZoneName: "short"
+                    })
+
+                    elem.title = thenString
+                    if (elem.parentElement && elem.parentElement.nodeName == "BLOCKQUOTE")
+                        elem.parentElement.title = thenString
+                }
             })
 
             setTimeout(updateTime, 1010 - (Date.now() % 1000));
         }
-        updateTime()
+        updateTime(true)
     </script>
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </body>
