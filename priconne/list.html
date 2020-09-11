@@ -318,7 +318,7 @@
             }
 
             let yOffset = 25
-            const scanBarVs = [50, 100, 150, 200, 250].map(x => context.getImageData(x, yOffset, 1, 40).data)
+            const scanBarVs = [10, 50, 100, 150, 200, 250].map(x => context.getImageData(x, yOffset, 1, 40).data)
             
             for (let i = 0; i < scanBarVs[0].length; i += 4) {
                 if (scanBarVs.every(a => a[i] > 170 || a[i + 1] > 170 || a[i + 2] > 200))
