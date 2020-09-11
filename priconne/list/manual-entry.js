@@ -49,6 +49,8 @@ function updateData(e) {
     img.isLoaded = false
     img.src = getImageURL(cid, charStats[cid].stars)
     img.style = charStats[cid].stars == 0 ? "filter: grayscale(90%)" : ""
+
+    updateOutput()
 }
 
 function updateTable() {
@@ -60,7 +62,8 @@ function updateTable() {
             const img = document.getElementById(`img-${id}`)
             img.isLoaded = false
             img.src = getImageURL(id, charStats[id].stars)
-            img.style = charStats[id].stars == 0 ? "filter: grayscale(90%)" : ""
+            img.style = charStats[id].stars == 0 ? "filter: grayscale(100%)" : ""
         })
 }
 
+updateTable()
