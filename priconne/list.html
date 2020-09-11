@@ -307,27 +307,26 @@
                 0, 0, canvas.width, canvas.height,
                 0, 0, canvas.width, canvas.height)
 
-            const scanBarH = context.getImageData(0, 50, 40, 1).data
+            const scanBarHs = [50, 100, 150, 200, 250].map(y => context.getImageData(0, y, 40, 1).data)
 
             let xOffset = 0
-            for (let i = 0; i < scanBarH.length; i += 4) {
-                if (scanBarH[i] > 5 || scanBarH[i + 1] > 5 || scanBarH[i + 2] > 5) {
-                    xOffset = i / 4
+            for (let i = 0; i < scanBarHs[0].length; i += 4) {
+                if (scanBarHs.every(a => a[i] > 5 || a[i + 1] > 5 || a[i + 2] > 5))
                     break
-                }
+
+                xOffset++
             }
 
             let yOffset = 25
-            const scanBarV = context.getImageData(50, yOffset, 1, 40).data
-            for (let i = 0; i < scanBarV.length; i += 4) {
-                // console.log(i, scanBarV[i], scanBarV[i+1], scanBarV[i+2])
-
-                if (scanBarV[i] > 170 && scanBarV[i + 1] > 170 && scanBarV[i + 2] > 200) {
-                    yOffset += i / 4
+            const scanBarVs = [50, 100, 150, 200, 250].map(x => context.getImageData(x, yOffset, 1, 40).data)
+            
+            for (let i = 0; i < scanBarVs[0].length; i += 4) {
+                if (scanBarVs.every(a => a[i] > 170 || a[i + 1] > 170 || a[i + 2] > 200))
                     break
-                }
+
+                yOffset++
             }
-            // console.log("Found window offsets:", xOffset, yOffset)
+            console.log("Found window offsets:", xOffset, yOffset)
 
             canvas.width = videoElem.videoWidth - xOffset
             canvas.height = videoElem.videoHeight - yOffset
