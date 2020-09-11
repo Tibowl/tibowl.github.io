@@ -1,4 +1,6 @@
 let isReady = false
+let imageID = 0
+
 /**
  *  AUTOMATIC DETECTION
  * */

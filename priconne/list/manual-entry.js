@@ -12,7 +12,7 @@ Object.entries(hashlist)
         row.innerHTML = `
             <td>
                 <figure>
-                    <img class="table-img" id="img-${id}" src="${getImageURL(id, 0)}" />
+                    <img class="table-img" id="img-${id}" onload="onImgLoad(this)" src="${getImageURL(id, 0)}" />
                     <figcaption>${entry.name}</figcaption>
                 </figure
             </td>
@@ -31,12 +31,22 @@ function getImageURL(id, stars) {
     return `./unit/${id}${Math.min(hashlist[id].maxstar, [6, 1, 1, 3, 3, 3, 6][stars] || 6)}1.webp`
 }
 
+function onImgLoad(e) {
+    e.isLoaded = true
+
+    if (e.callback) {
+        e.callback()
+        e.callback = null
+    }
+}
+
 function updateData(e) {
     const { id, value } = e
     const [type, cid] = id.split("-")
     charStats[cid][type] = +value
 
     const img = document.getElementById(`img-${cid}`)
+    img.isLoaded = false
     img.src = getImageURL(cid, charStats[cid].stars)
     img.style = charStats[cid].stars == 0 ? "filter: grayscale(90%)" : ""
 }
@@ -48,6 +58,7 @@ function updateTable() {
             document.getElementById(`stars-${id}`).value = data.stars
 
             const img = document.getElementById(`img-${id}`)
+            img.isLoaded = false
             img.src = getImageURL(id, charStats[id].stars)
             img.style = charStats[id].stars == 0 ? "filter: grayscale(90%)" : ""
         })

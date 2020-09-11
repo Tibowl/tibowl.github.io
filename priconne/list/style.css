@@ -50,7 +50,8 @@ a:hover {
 }
 
 #video,
-#hashCanvas {
+#hashCanvas,
+#scrap {
     display: none;
 }
 
@@ -81,13 +82,11 @@ input[type=number] {
     border: 1px solid rgb(71, 71, 71);
     border-radius: 3px;
     font-size: 14px;
+    color: #d6d6d6;
 }
 
 table input[type=number] {
     margin: 5px;
-    background-color: rgba(22, 22, 22, 0);
-    width: 60px;
-    border: 1px solid rgb(71, 71, 71);
     border-radius: 5px;
     font-size: 18px;
 }
