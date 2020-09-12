@@ -229,9 +229,9 @@ function fixCanvas() {
 
     let xOffset = 0, yOffset = 25
     if (navigator.userAgent.includes("Chrome")) {
-        xOffset = 0, yOffset = 29
+        xOffset = 0, yOffset = 30
     } else if (navigator.userAgent.includes("Firefox")) {
-        xOffset = 8, yOffset = 29
+        xOffset = 8, yOffset = 31
     } else {
         for (let i = 0; i < scanBarHs[0].length; i += 4) {
             if (scanBarHs.every(a => (a[i] > 30 || a[i + 1] > 30 || a[i + 2] > 30)))
@@ -249,6 +249,14 @@ function fixCanvas() {
 
         yOffset++
     }
+
+    const overrideX = +document.getElementById("x-offset").value
+    if (overrideX >= 0) xOffset = overrideX
+    document.getElementById("x-offset-used").innerText = xOffset
+    
+    const overrideY = +document.getElementById("y-offset").value
+    if (overrideY >= 0) yOffset = overrideY
+    document.getElementById("y-offset-used").innerText = yOffset
     // console.log("Found window offsets:", xOffset, yOffset)
 
     canvas.width = videoElem.videoWidth - xOffset
