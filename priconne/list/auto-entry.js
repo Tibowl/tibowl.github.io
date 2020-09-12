@@ -1,5 +1,6 @@
 let isReady = false
 let imageID = 0
+let imageOutputEnabled = false
 
 /**
  *  AUTOMATIC DETECTION
@@ -66,6 +67,7 @@ function frame() {
     lastHash = currentHash
 
     const info = getInfo(currentHash)
+    console.log("...", info)
 
     const starInfo = getStars()
     if (starInfo.colors.length < 5) return lastHash = []
@@ -226,15 +228,20 @@ function fixCanvas() {
 
     const scanBarHs = [50, 100, 150, 200, 250].map(y => context.getImageData(0, y, 40, 1).data)
 
-    let xOffset = 0
-    for (let i = 0; i < scanBarHs[0].length; i += 4) {
-        if (scanBarHs.every(a => a[i] > 5 || a[i + 1] > 5 || a[i + 2] > 5))
-            break
-
-        xOffset++
+    let xOffset = 0, yOffset = 25
+    if (navigator.userAgent.includes("Chrome")) {
+        xOffset = 0, yOffset = 29
+    } else if (navigator.userAgent.includes("Firefox")) {
+        xOffset = 8, yOffset = 29
+    } else {
+        for (let i = 0; i < scanBarHs[0].length; i += 4) {
+            if (scanBarHs.every(a => (a[i] > 30 || a[i + 1] > 30 || a[i + 2] > 30)))
+                break
+    
+            xOffset++
+        }
     }
 
-    let yOffset = 25
     const scanBarVs = [10, 50, 100, 150, 200, 250].map(x => context.getImageData(x, yOffset, 1, 40).data)
 
     for (let i = 0; i < scanBarVs[0].length; i += 4) {
@@ -243,7 +250,7 @@ function fixCanvas() {
 
         yOffset++
     }
-    // console.log("Found window offsets:", xOffset, yOffset)
+    console.log("Found window offsets:", xOffset, yOffset)
 
     canvas.width = videoElem.videoWidth - xOffset
     canvas.height = videoElem.videoHeight - yOffset

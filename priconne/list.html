@@ -23,7 +23,7 @@
         <p>Click on 'Start' and select Princess Connect window. Make sure the game is running at maximum resolution
             (1280x720). Open the equipment screen and go through all characters.</p>
 
-        <p><button id="start">Start</button><button id="stop" style="display: none;">Stop</button></p>
+        <p><button id="start" class="green">Start</button><button id="stop" class="red" style="display: none;">Stop</button></p>
 
         <video id="video" autoplay></video>
         <canvas id="canvas" style="max-width: 900px;"></canvas>
@@ -57,13 +57,16 @@
             <summary>Change image options</summary>
         </details>
         <h2 id="out">Image output</h2>
-        <label for="render">Enabled</label><input type="checkbox" id="render" onchange="updateOutput()"><br>
+        <button id="enableOutput" class="green" onclick="toggleOutput(true)">Enable</button>
+        <button id="disableOutput" class="red" style="display:none;" onclick="toggleOutput(false)">Disable</button>
+        <br>
+        <br>
         <a id="download" target="_self" href="javascript:void(0)">
-            Download<br>
+            <button>Download</button><br>
             <canvas id="output" style="max-width: 900px;"></canvas>
         </a>
         <canvas id="scrap"></canvas>
-        <img style="display: none;" id="bg" src="./list/bg.png" onload="onBgLoad(this)">
+        <img style="display: none;" id="bg">
     </main>
     <script src="./list/hashlist.js" type="text/javascript"></script>
     <script src="./list/auto-entry.js" type="text/javascript"></script>

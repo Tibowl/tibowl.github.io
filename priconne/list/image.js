@@ -105,22 +105,32 @@ function updateConfig() {
 /**
  * IMAGE GENERATION
  * */
-function onBgLoad(e) {
-    e.isLoaded = true
-    if (e.callback) e.callback()
+function onBgLoad() {
+    this.isLoaded = true
+    if (this.callback) this.callback()
 }
+document.getElementById("bg").onload = onBgLoad
+document.getElementById("bg").src = "./list/bg.png"
+
+function toggleOutput(c) {
+    imageOutputEnabled = c
+    updateOutput()
+    document.getElementById("enableOutput").style = imageOutputEnabled ? "display:none;" : ""
+    document.getElementById("disableOutput").style = !imageOutputEnabled ? "display:none;" : ""
+}
+toggleOutput(false)
 
 const fontFamilyName = `"ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`
 const fontFamilyNumbers = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 async function updateOutput() {
     imageID++
     const currentID = imageID
-    
+
     /** @type {HTMLCanvasElement} */
     const output = document.getElementById("output")
     const context = output.getContext("2d")
 
-    if (!isReady || !document.getElementById("render").checked) return output.height = 0
+    if (!isReady || !imageOutputEnabled) return output.height = 0
     console.log(config, charStats)
 
     let chars = Object
@@ -181,7 +191,7 @@ async function updateOutput() {
             }
             chr.putImageData(imageData, width / 2 - imageSize / 2, 1)
         }
-        
+
         const [top, bottom] = char.name.split("（")
         chr.textAlign = "center"
         chr.font = `800 20px ${fontFamilyName}`
@@ -205,7 +215,7 @@ async function updateOutput() {
                 chr.font = `800 ${smallFontSize}px ${fontFamilyName}`
             chr.fillText(`（${bottom}`, width / 2, imageSize + 7 + fontSize + smallFontSize)
         }
-        
+
         if (char.rank > 0 && config.displayRank) {
             chr.font = `700 ${config.rankFontSize}px ${fontFamilyNumbers}`
             chr.fillStyle = getRankColor(char.rank)
@@ -227,8 +237,8 @@ async function updateOutput() {
             chr.strokeText(`${char.stars}\u2605`, width / 2 - imageSize / 2 + 3, imageSize - 3)
             chr.fillText(`${char.stars}\u2605`, width / 2 - imageSize / 2 + 3, imageSize - 3)
         }
-        rankCount[char.rank] = (rankCount[char.rank]||0) + 1
-        starCount[char.stars] = (starCount[char.stars]||0) + 1
+        rankCount[char.rank] = (rankCount[char.rank] || 0) + 1
+        starCount[char.stars] = (starCount[char.stars] || 0) + 1
 
         const xOff = x * width, yOff = y * height
         context.drawImage(scrap, xOff, yOff)
@@ -245,30 +255,33 @@ async function updateOutput() {
     context.shadowOffsetY = 2
     context.shadowBlur = 2
 
-
     let currentX = 5
-    for(let i = starCount.length - 1; i > 0; i--) {
-        const count = `${i}\u2605: ${starCount[i]}`
-        context.fillStyle = getStarColor(i)
-        context.strokeText(count, currentX, height * rows + 20)
-        context.fillText(count, currentX, height * rows + 20)
-        currentX += context.measureText(count).width + 20
-    }
+    if (config.displayStars)
+        for (let i = starCount.length - 1; i > 0; i--) {
+            const count = `${i}\u2605: ${starCount[i] || 0}`
+            context.fillStyle = getStarColor(i)
+            context.strokeText(count, currentX, height * rows + 20)
+            context.fillText(count, currentX, height * rows + 20)
+            currentX += context.measureText(count).width + 20
+        }
 
     currentX = 5
-    for(let i = rankCount.length - 1; i > 0; i--) {
-        if (i < rankCount.length - 5 || !rankCount[i]) continue
+    if (config.displayRank)
+        for (let i = rankCount.length - 1; i > 0; i--) {
+            if (i < rankCount.length - 5 || !rankCount[i]) continue
 
-        const count = `R${i}: ${rankCount[i]}`
-        context.fillStyle = getRankColor(i)
-        context.strokeText(count, currentX, height * rows + 43)
-        context.fillText(count, currentX, height * rows + 43)
-        currentX += context.measureText(count).width + 15
-    }
+            const count = `R${i}: ${rankCount[i]}`
+            context.fillStyle = getRankColor(i)
+            context.strokeText(count, currentX, height * rows + 43)
+            context.fillText(count, currentX, height * rows + 43)
+            currentX += context.measureText(count).width + 15
+        }
 
-    context.font = `800 15px ${fontFamilyName}`
     context.textAlign = "right"
     context.fillStyle = "#000000"
+    context.fillText(`${chars.filter(k => k.stars > 0).length}/${Object.keys(hashlist).length}`, width * columns - 5, height * rows + 23)
+
+    context.font = `800 15px ${fontFamilyName}`
     context.fillText("Made with PrincessConnect List Maker", width * columns - 5, height * rows + 43)
 }
 
@@ -279,10 +292,10 @@ function getStarColor(stars) {
 function getRankColor(rank) {
     if (rank >= 18) return "#FE4854"
     if (rank >= 11) return "#C382FD"
-    if (rank >=  7) return "#FDDC63"
-    if (rank >=  4) return "#BBCBD9"
-    if (rank >=  2) return "#E7926B"
-                    return "#5595F4"
+    if (rank >= 7) return "#FDDC63"
+    if (rank >= 4) return "#BBCBD9"
+    if (rank >= 2) return "#E7926B"
+    return "#5595F4"
 }
 isReady = true
 updateOutput()
