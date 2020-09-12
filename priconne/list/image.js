@@ -131,7 +131,6 @@ async function updateOutput() {
     const context = output.getContext("2d")
 
     if (!isReady || !imageOutputEnabled) return output.height = 0
-    console.log(config, charStats)
 
     let chars = Object
         .entries(charStats)
@@ -139,7 +138,7 @@ async function updateOutput() {
         .filter(k => k.stars > 0 || config.drawAll)
         .sort((a, b) => a.name.localeCompare(b.name))
 
-    console.log(chars)
+    console.log("Rendering", config, chars)
 
     const columns = config.columns
     const rows = Math.ceil(chars.length / columns)

@@ -67,7 +67,6 @@ function frame() {
     lastHash = currentHash
 
     const info = getInfo(currentHash)
-    console.log("...", info)
 
     const starInfo = getStars()
     if (starInfo.colors.length < 5) return lastHash = []
@@ -76,7 +75,7 @@ function frame() {
     lastChar = info.id
 
     const rank = getRank()
-    console.log(info, starInfo, rank)
+    console.log("Detected", info, starInfo, rank)
 
     charStats[info.id] = { stars: starInfo.starCount, rank }
     updateTable()
@@ -250,7 +249,7 @@ function fixCanvas() {
 
         yOffset++
     }
-    console.log("Found window offsets:", xOffset, yOffset)
+    // console.log("Found window offsets:", xOffset, yOffset)
 
     canvas.width = videoElem.videoWidth - xOffset
     canvas.height = videoElem.videoHeight - yOffset
