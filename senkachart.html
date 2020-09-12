@@ -21,7 +21,6 @@
                 padding: 0.1em
             }
         </style>
-        <script src="https://unpkg.com/blob-util/dist/blob-util.min.js"></script>
     </head>
     <body> 
         <div id='clipboard'></div>
@@ -246,7 +245,7 @@
                 });
                 document.getElementById("download10k").addEventListener('click', function() {
                     let d = new Date();
-                    this.download = `10k+ Players @ ${d.getFullYear()}-${("0"+(d.getMonth()+1)).slice(-2)}-${("0" + d.getDate()).slice(-2)}-${("0" + d.getHours()).slice(-2)}-${("0" + d.getHours()).slice(-2)}.png`;
+                    this.download = `10k+ Players @ ${d.getFullYear()}-${("0"+(d.getMonth()+1)).slice(-2)}-${("0" + d.getDate()).slice(-2)}-${("0" + d.getHours()).slice(-2)}-${("0" + d.getMinutes()).slice(-2)}.png`;
                 }, false);
 
                 ranks.reverse();

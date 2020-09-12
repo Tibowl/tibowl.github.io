@@ -10,6 +10,7 @@
     <meta name="twitter:description" content="Princess Connect: ReDive character list maker">
     <meta name="description" content="Princess Connect: ReDive character list maker">
     <link rel="stylesheet" href="./list/style.css">
+    <script src="https://unpkg.com/blob-util/dist/blob-util.min.js"></script>
 </head>
 
 <body class="container">
@@ -18,7 +19,7 @@
     <main>
         <h1>Princess Connect List Maker</h1>
 
-        <h2>Automatic entry</h2>
+        <h2 id="auto">Automatic entry</h2>
         <p>Click on 'Start' and select Princess Connect window. Make sure the game is running at maximum resolution
             (1280x720). Open the equipment screen and go through all characters.</p>
 
@@ -34,7 +35,7 @@
         </div>
         <br>
 
-        <h2>Manual entry</h2>
+        <h2 id="manual">Manual entry</h2>
         <p></p>
 
         <details>
@@ -51,25 +52,24 @@
             </table>
         </details>
 
-        <h2>Options</h2>
+        <h2 id="options">Options</h2>
         <details id="config">
             <summary>Change image options</summary>
-            
         </details>
-        <h2>Image output</h2>
+        <h2 id="out">Image output</h2>
         <label for="render">Enabled</label><input type="checkbox" id="render" onchange="updateOutput()"><br>
-        <canvas id="output" style="max-width: 900px;"></canvas>
+        <a id="download" target="_self" href="javascript:void(0)">
+            Download<br>
+            <canvas id="output" style="max-width: 900px;"></canvas>
+        </a>
         <canvas id="scrap"></canvas>
+        <img style="display: none;" id="bg" src="./list/bg.png" onload="onBgLoad(this)">
     </main>
     <script src="./list/hashlist.js" type="text/javascript"></script>
     <script src="./list/auto-entry.js" type="text/javascript"></script>
     <script src="./list/manual-entry.js" type="text/javascript"></script>
     <script src="./list/image.js" type="text/javascript"></script>
-    <script type="text/javascript">
-        // charStats = {"1001":{"stars":2,"rank":11},"1002":{"stars":2,"rank":10},"1003":{"stars":2,"rank":1},"1004":{"stars":2,"rank":1},"1005":{"stars":2,"rank":1},"1006":{"stars":2,"rank":1},"1007":{"stars":5,"rank":11},"1008":{"stars":2,"rank":2},"1009":{"stars":0,"rank":0},"1010":{"stars":0,"rank":0},"1011":{"stars":3,"rank":11},"1012":{"stars":3,"rank":1},"1013":{"stars":2,"rank":1},"1014":{"stars":0,"rank":0},"1015":{"stars":2,"rank":11},"1016":{"stars":3,"rank":1},"1017":{"stars":2,"rank":1},"1018":{"stars":3,"rank":1},"1020":{"stars":2,"rank":3},"1021":{"stars":2,"rank":1},"1022":{"stars":1,"rank":1},"1023":{"stars":2,"rank":1},"1025":{"stars":1,"rank":1},"1026":{"stars":2,"rank":3},"1027":{"stars":3,"rank":1},"1028":{"stars":4,"rank":6},"1029":{"stars":5,"rank":11},"1030":{"stars":3,"rank":1},"1031":{"stars":2,"rank":1},"1032":{"stars":3,"rank":1},"1033":{"stars":3,"rank":1},"1034":{"stars":5,"rank":10},"1036":{"stars":3,"rank":4},"1037":{"stars":3,"rank":7},"1038":{"stars":2,"rank":5},"1040":{"stars":3,"rank":8},"1042":{"stars":2,"rank":7},"1043":{"stars":3,"rank":11},"1044":{"stars":0,"rank":0},"1045":{"stars":3,"rank":8},"1046":{"stars":2,"rank":4},"1047":{"stars":0,"rank":0},"1048":{"stars":2,"rank":1},"1049":{"stars":0,"rank":0},"1050":{"stars":1,"rank":1},"1051":{"stars":2,"rank":1},"1052":{"stars":2,"rank":4},"1053":{"stars":5,"rank":11},"1054":{"stars":2,"rank":1},"1055":{"stars":1,"rank":1},"1056":{"stars":4,"rank":1},"1057":{"stars":0,"rank":0},"1058":{"stars":1,"rank":4},"1059":{"stars":4,"rank":12},"1060":{"stars":6,"rank":14},"1061":{"stars":3,"rank":13},"1063":{"stars":3,"rank":1},"1065":{"stars":0,"rank":0},"1066":{"stars":0,"rank":0},"1067":{"stars":0,"rank":0},"1068":{"stars":0,"rank":0},"1070":{"stars":5,"rank":14},"1071":{"stars":4,"rank":16},"1075":{"stars":0,"rank":0},"1076":{"stars":2,"rank":1},"1077":{"stars":0,"rank":0},"1078":{"stars":5,"rank":14},"1079":{"stars":0,"rank":0},"1080":{"stars":2,"rank":1},"1081":{"stars":0,"rank":0},"1082":{"stars":0,"rank":0},"1083":{"stars":0,"rank":0},"1084":{"stars":0,"rank":0},"1085":{"stars":0,"rank":0},"1086":{"stars":0,"rank":0},"1087":{"stars":0,"rank":0},"1088":{"stars":0,"rank":0},"1089":{"stars":0,"rank":0},"1090":{"stars":0,"rank":0},"1091":{"stars":0,"rank":0},"1092":{"stars":0,"rank":0},"1093":{"stars":2,"rank":1},"1094":{"stars":0,"rank":0},"1095":{"stars":0,"rank":0},"1096":{"stars":3,"rank":11},"1097":{"stars":0,"rank":0},"1098":{"stars":0,"rank":0},"1099":{"stars":0,"rank":0},"1100":{"stars":0,"rank":0},"1101":{"stars":0,"rank":0},"1103":{"stars":0,"rank":0},"1104":{"stars":0,"rank":0},"1105":{"stars":2,"rank":1},"1106":{"stars":0,"rank":0},"1107":{"stars":3,"rank":9},"1108":{"stars":0,"rank":0},"1109":{"stars":0,"rank":0},"1110":{"stars":3,"rank":11},"1111":{"stars":0,"rank":0},"1112":{"stars":0,"rank":0},"1113":{"stars":0,"rank":0},"1114":{"stars":3,"rank":10},"1115":{"stars":0,"rank":0},"1116":{"stars":0,"rank":0},"1117":{"stars":3,"rank":4},"1119":{"stars":3,"rank":1},"1120":{"stars":5,"rank":12},"1121":{"stars":0,"rank":0},"1122":{"stars":0,"rank":0},"1123":{"stars":0,"rank":0},"1124":{"stars":0,"rank":0},"1125":{"stars":0,"rank":0},"1126":{"stars":0,"rank":0},"1127":{"stars":0,"rank":0},"1128":{"stars":3,"rank":1},"1129":{"stars":0,"rank":0},"1130":{"stars":2,"rank":1},"1131":{"stars":0,"rank":0},"1132":{"stars":2,"rank":1},"1133":{"stars":3,"rank":1},"1134":{"stars":0,"rank":0},"1135":{"stars":3,"rank":1},"1136":{"stars":3,"rank":1},"1137":{"stars":0,"rank":0},"1802":{"stars":0,"rank":0},"1804":{"stars":5,"rank":15},"1805":{"stars":4,"rank":13}}
-        // updateTable()
-        // updateOutput()
-    </script>
+    <script src="./list/download.js" type="text/javascript"></script>
 </body>
 
 </html>
