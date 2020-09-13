@@ -56,6 +56,7 @@ let lastChar = 0, lastUELevel = 0
 function frame() {
     if (videoElem.videoWidth == 0) return
     fixCanvas()
+    zoom()
 
     const currentHash = getHash(55, 548, 86, 41)
     if (currentHash[0] == 0 && currentHash[1] == 0) {
@@ -86,7 +87,7 @@ function frame() {
 
     const details = document.createElement("span")
     details.innerText = `${info.name}: R${rank} ${starInfo.colors.map(k => (k == "gold" || k == "pink" || k == "white") ? "\u2605" : "\u2606").join("")} UE Lv.${uelevel}`
-    
+
     if (recentDetect.children.length >= 1 && recentDetect.children[0].data == currentData) recentDetect.removeChild(recentDetect.children[0])
 
     const detect = document.createElement("li")
@@ -198,14 +199,14 @@ function getUELevel() {
 
         // "Unlockable"
         [0, 67371008, 0, 2048, 1610641408, 2181726208, 0, 0],
-        [1024, 6144, 1431662592, 2281709568, 0, 3072, 0, ],
+        [1024, 6144, 1431662592, 2281709568, 0, 3072, 0,],
         [201326592, 1543503872, 2820669440, 65536, 196608, 268632064, 671256576, 1024],
     ]
 
-    const hash1   = getHash(365, 179, 12, 17, 2)
-    const hash10  = getHash(351, 179, 12, 17, 2)
+    const hash1 = getHash(365, 179, 12, 17, 2)
+    const hash10 = getHash(351, 179, 12, 17, 2)
     const hash100 = getHash(337, 179, 12, 17, 2)
-    
+
     hash1.shift()
     hash10.shift()
     hash100.shift()
@@ -219,7 +220,7 @@ function getNumber(numbers, ...hashes) {
 
     for (const hash of hashes.reverse()) {
         const number = +getClosestIndex(numbers, hash)
-        if(number >= 10)
+        if (number >= 10)
             total *= 10
         else
             total = total * 10 + number
@@ -263,6 +264,7 @@ function count(v) {
     return c
 }
 
+let xOffset = 0, yOffset = 25
 function fixCanvas() {
     canvas.width = videoElem.videoWidth
     canvas.height = videoElem.videoHeight
@@ -277,7 +279,7 @@ function fixCanvas() {
 
     const scanBarHs = [50, 100, 150, 200, 250].map(y => context.getImageData(0, y, 40, 1).data)
 
-    let xOffset = 0, yOffset = 25
+    xOffset = 0, yOffset = 25
     if (navigator.userAgent.includes("Chrome")) {
         xOffset = 0, yOffset = 30
     } else if (navigator.userAgent.includes("Firefox")) {
@@ -316,6 +318,43 @@ function fixCanvas() {
         0, 0, canvas.width, canvas.height)
 }
 
+const zooming = document.getElementById("zoom")
+function zoom() {
+    if (!zooming.parentElement.open) return
+    const scale = 8
+
+    /** @type {CanvasRenderingContext2D} */
+    const zoomed = zooming.getContext("2d")
+    zoomed.fillStyle = "#000000"
+    zoomed.fillRect(0, 0, zooming.width, zooming.height)
+
+    const offsetX = Math.max(xOffset - (zooming.width / scale / 2), 0)
+    const offsetY = Math.max(yOffset - (zooming.height / scale / 2), 0)
+
+    zoomed.drawImage(videoElem,
+        offsetX, offsetY, zooming.width / scale, zooming.height / scale,
+        0, 0, zooming.width / scale, zooming.height / scale)
+
+    const source = zoomed.getImageData(0, 0, zooming.width / scale, zooming.height / scale)
+    const target = zoomed.createImageData(zooming.width, zooming.height)
+    for (let i = 0; i < zooming.width; i++)
+        for (let j = 0; j < zooming.height; j++)
+            for (let k = 0; k < 4; k++)
+                target.data[(i + j * zooming.height) * 4 + k] =
+                    source.data[(Math.floor(i / scale) + Math.floor(j / scale) * (zooming.height / scale)) * 4 + k]
+    zoomed.putImageData(target, 0, 0)
+
+    zoomed.fillStyle = "#CCCCCC55"
+    for (let i = 0; i < zooming.width / scale; i++)
+        zoomed.fillRect(i * scale, 0, 1, zooming.height)
+    for (let j = 0; j < zooming.height / scale; j++)
+        zoomed.fillRect(0, j * scale, zooming.width, 1)
+
+    zoomed.fillStyle = "#FF0000"
+    zoomed.fillRect(Math.min(xOffset, (zooming.width / scale / 2)) * scale, 0, 1, zooming.height)
+    zoomed.fillRect(0, Math.min(yOffset, (zooming.height / scale / 2)) * scale, zooming.width, 1)
+}
+
 const hashContext = hashCanvas.getContext("2d")
 function getHash(x, y, w, h, mode = 0) {
     hashContext.drawImage(canvas, x, y, w, h, 0, 0, 17, 16)
@@ -330,7 +369,7 @@ function getHash(x, y, w, h, mode = 0) {
 
             const offset1 = (i + j * 17) * 4
             const offset2 = ((i + 1) + j * 17) * 4
-            
+
             const c1 = imgData[offset1] + imgData[offset1 + 1] + imgData[offset1 + 2]
             const c2 = imgData[offset2] + imgData[offset2 + 1] + imgData[offset2 + 2]
 
