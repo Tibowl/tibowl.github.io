@@ -52,7 +52,7 @@ function stopCapture() {
     document.getElementById("stop").style = "display: none;"
 }
 
-let lastHash = [], lastChar = 0
+let lastChar = 0, lastUELevel = 0
 function frame() {
     if (videoElem.videoWidth == 0) return
     fixCanvas()
@@ -63,31 +63,34 @@ function frame() {
         return
     }
 
-    if (currentHash.every((v, i) => v == lastHash[i])) return
-    lastHash = currentHash
-
     const info = getInfo(currentHash)
 
     const starInfo = getStars()
-    if (starInfo.colors.length < 5) return lastHash = []
+    if (starInfo.colors.length < 5) return
 
-    if (info.id == lastChar) return
+    const uelevel = getUELevel()
+    if (info.id == lastChar && uelevel == lastUELevel) return
     lastChar = info.id
+    lastUELevel = uelevel
 
     const rank = getRank()
-    console.log("Detected", info, starInfo, rank)
+    console.log("Detected", info, starInfo, rank, uelevel)
 
-    charStats[info.id] = { stars: starInfo.starCount, rank }
+    charStats[info.id] = { stars: starInfo.starCount, rank, uelevel }
     updateTable()
 
+    const currentData = `${info.name}&${info.rank}&${starInfo.starCount}`
     const img = document.createElement("img")
     img.src = getImageURL(info.id, starInfo.starCount)
     img.style = "max-width: 32px;"
 
     const details = document.createElement("span")
-    details.innerText = `${info.name}: R${rank} ${starInfo.colors.map(k => (k == "gold" || k == "pink" || k == "white") ? "\u2605" : "\u2606").join("")}`
+    details.innerText = `${info.name}: R${rank} ${starInfo.colors.map(k => (k == "gold" || k == "pink" || k == "white") ? "\u2605" : "\u2606").join("")} UE Lv.${uelevel}`
+    
+    if (recentDetect.children.length >= 1 && recentDetect.children[0].data == currentData) recentDetect.removeChild(recentDetect.children[0])
 
     const detect = document.createElement("li")
+    detect.data = currentData
     detect.appendChild(img)
     detect.appendChild(details)
     recentDetect.prepend(detect)
@@ -163,19 +166,66 @@ function getRank() {
         // empty
         [0, 0, 0, 0, 0, 0, 0, 0],
     ]
-    const hash10 = getHash(548, 520, 11, 18, true)
-    const hash1 = getHash(560, 520, 11, 18, true)
+    const hash10 = getHash(548, 520, 11, 18, 1)
+    const hash1 = getHash(560, 520, 11, 18, 1)
 
     hash1.shift()
     hash10.shift()
 
-    // console.log(hash10)
-    // console.log(hash1)
+    return getNumber(numbers, hash1, hash10)
+}
 
-    const number1 = +getClosestIndex(numbers, hash1)
-    const number10 = +getClosestIndex(numbers, hash10)
+function getUELevel() {
+    const numbers = [
+        // 0 - 9
+        [1397760, 134217680, 436207780, 805306380, 12, 805306380, 222298488, 46137216],
+        [0, 16777216, 100663296, 201326592, 1062557012, 715827880, 0, 0],
+        [0, 117440636, 402653372, 805307404, 805310476, 805421068, 796852236, 178782216],
+        [0, 67108896, 12, 805306380, 805502988, 805765148, 804312440, 176177120],
+        [256, 2816, 512, 3145728, 16777472, 524638160, 1073741816, 512],
+        [0, 89587748, 1006632972, 805306380, 805306380, 805371932, 805524976, 536919936],
+        [16384, 25165648, 109215908, 939524108, 805306380, 805306380, 805388376, 180128],
+        [0, 1006632964, 1006632968, 1006633856, 1006653440, 1006796800, 1028653056, 780140544],
+        [1344, 131088368, 405635116, 537853964, 196620, 805552140, 626716700, 178270176],
+        [5505024, 134168580, 402821132, 536883212, 12, 805306392, 223729120, 46135808],
 
-    return (number10 % 10) * 10 + number1
+        // Nothing
+        [0, 0, 0, 0, 0, 0, 0, 0],
+
+        // Lv.
+        [8, 0, 327680, 783360, 2896, 188, 352, 0],
+        [0, 0, 0, 1073741812, 44, 12, 12, 12],
+
+        // "Unlockable"
+        [0, 67371008, 0, 2048, 1610641408, 2181726208, 0, 0],
+        [1024, 6144, 1431662592, 2281709568, 0, 3072, 0, ],
+        [201326592, 1543503872, 2820669440, 65536, 196608, 268632064, 671256576, 1024],
+    ]
+
+    const hash1   = getHash(365, 179, 12, 17, 2)
+    const hash10  = getHash(351, 179, 12, 17, 2)
+    const hash100 = getHash(337, 179, 12, 17, 2)
+    
+    hash1.shift()
+    hash10.shift()
+    hash100.shift()
+
+    // console.log(getNumber(numbers, hash1, hash10, hash100))
+    return getNumber(numbers, hash1, hash10, hash100)
+}
+
+function getNumber(numbers, ...hashes) {
+    let total = 0
+
+    for (const hash of hashes.reverse()) {
+        const number = +getClosestIndex(numbers, hash)
+        if(number >= 10)
+            total *= 10
+        else
+            total = total * 10 + number
+    }
+
+    return total
 }
 
 function getClosestIndex(arr, hash) {
@@ -236,7 +286,7 @@ function fixCanvas() {
         for (let i = 0; i < scanBarHs[0].length; i += 4) {
             if (scanBarHs.every(a => (a[i] > 30 || a[i + 1] > 30 || a[i + 2] > 30)))
                 break
-    
+
             xOffset++
         }
     }
@@ -253,7 +303,7 @@ function fixCanvas() {
     const overrideX = +document.getElementById("x-offset").value
     if (overrideX >= 0) xOffset = overrideX
     document.getElementById("x-offset-used").innerText = xOffset
-    
+
     const overrideY = +document.getElementById("y-offset").value
     if (overrideY >= 0) yOffset = overrideY
     document.getElementById("y-offset-used").innerText = yOffset
@@ -267,7 +317,7 @@ function fixCanvas() {
 }
 
 const hashContext = hashCanvas.getContext("2d")
-function getHash(x, y, w, h, bw = false) {
+function getHash(x, y, w, h, mode = 0) {
     hashContext.drawImage(canvas, x, y, w, h, 0, 0, 17, 16)
 
     const imgData = hashContext.getImageData(0, 0, 17, 16).data
@@ -280,13 +330,27 @@ function getHash(x, y, w, h, bw = false) {
 
             const offset1 = (i + j * 17) * 4
             const offset2 = ((i + 1) + j * 17) * 4
+            
             const c1 = imgData[offset1] + imgData[offset1 + 1] + imgData[offset1 + 2]
             const c2 = imgData[offset2] + imgData[offset2 + 1] + imgData[offset2 + 2]
-            if (bw) {
-                if (c1 > 230 * 3)
-                    hashes[Math.floor(i / 2)] |= 1
-            } else if (c1 > c2)
-                hashes[Math.floor(i / 2)] |= 1
+
+            switch (mode) {
+                case 0:
+                    if (c1 > c2)
+                        hashes[Math.floor(i / 2)] |= 1
+                    break;
+                case 1:
+                    if (c1 > 230 * 3)
+                        hashes[Math.floor(i / 2)] |= 1
+                    break;
+                case 2:
+                    if (imgData[offset1] < 90 && imgData[offset1 + 1] < 90 && imgData[offset1 + 2] < 90)
+                        hashes[Math.floor(i / 2)] |= 1
+                    break;
+
+                default:
+                    break;
+            }
 
             for (let k = 0; k < 3; k++)
                 colors[k] += imgData[offset1 + k]

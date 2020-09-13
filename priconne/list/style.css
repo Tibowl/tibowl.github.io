@@ -79,9 +79,8 @@ button {
     color: #f0f0f0;
 }
 
-.rank-select {
+.rank-select, .star-select, .uelevel-select {
     font-size: 18px;
-
 }
 
 input[type=number] {

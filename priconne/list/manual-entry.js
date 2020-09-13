@@ -18,12 +18,14 @@ Object.entries(hashlist)
             </td>
             <td class="star-select"><input onchange="updateData(this)" type="number" min="0" max="6" value="0" id="stars-${id}" />\u2605</td>
             <td class="rank-select">R<input onchange="updateData(this)" type="number" min="0" max="20" value="1" id="rank-${id}" /></td>
+            <td class="uelevel-select">Lv.<input onchange="updateData(this)" type="number" min="0" max="300" value="1" id="uelevel-${id}" /></td>
         `
 
         dentry.appendChild(row)
         charStats[id] = {
             stars: 0,
-            rank: 0
+            rank: 0,
+            uelevel: 0
         }
     })
 
@@ -58,6 +60,7 @@ function updateTable() {
         .forEach(([id, data]) => {
             document.getElementById(`rank-${id}`).value = data.rank
             document.getElementById(`stars-${id}`).value = data.stars
+            document.getElementById(`uelevel-${id}`).value = data.uelevel
 
             const img = document.getElementById(`img-${id}`)
             img.isLoaded = false

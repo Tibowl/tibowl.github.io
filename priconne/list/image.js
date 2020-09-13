@@ -31,11 +31,25 @@ const configDetails = {
         default: 12,
     },
     rankFontSize: {
-        title: "Rank/star font size",
+        title: "Rank font size",
         type: "number",
         min: 4,
         max: 64,
         default: 24,
+    },
+    starFontSize: {
+        title: "Star font size",
+        type: "number",
+        min: 4,
+        max: 64,
+        default: 24,
+    },
+    ueFontSize: {
+        title: "UE level font size",
+        type: "number",
+        min: 4,
+        max: 64,
+        default: 18,
     },
     drawAll: {
         title: "Draw all (including missing) characters",
@@ -52,6 +66,11 @@ const configDetails = {
         type: "checkbox",
         default: true,
     },
+    displayUE: {
+        title: "Display UE Lv.",
+        type: "checkbox",
+        default: true,
+    },
     bgColor: {
         title: "Background color",
         type: "text",
@@ -64,9 +83,12 @@ const config = {
     fontSize: 18,
     smallFontSize: 12,
     rankFontSize: 24,
+    starFontSize: 24,
+    ueFontSize: 24,
     drawAll: true,
     displayRank: true,
     displayStars: true,
+    displayUE: true,
 }
 Object.entries(configDetails).forEach(([id, settings]) => {
     const label = document.createElement("label")
@@ -134,7 +156,7 @@ async function updateOutput() {
 
     let chars = Object
         .entries(charStats)
-        .map(([id, { stars, rank }]) => { return { id, stars, rank, name: hashlist[id].name } })
+        .map(([id, { stars, rank, uelevel }]) => { return { id, stars, rank, name: hashlist[id].name, uelevel } })
         .filter(k => k.stars > 0 || config.drawAll)
         .sort((a, b) => a.name.localeCompare(b.name))
 
@@ -226,8 +248,19 @@ async function updateOutput() {
             chr.fillText(`R${char.rank}`, width / 2 + imageSize / 2 - 3, imageSize - 3)
         }
 
+        if (char.uelevel > 0 && config.displayUE) {
+            chr.font = `700 ${config.ueFontSize}px ${fontFamilyNumbers}`
+            chr.fillStyle = "#FFFFFF"
+            chr.strokeStyle = "#000"
+            chr.lineWidth = 3
+            chr.shadowBlur = 2
+            chr.textAlign = "left"
+            chr.strokeText(`UE Lv.${char.uelevel}`, width / 2 - imageSize / 2 + 3, config.ueFontSize + 2)
+            chr.fillText(`UE Lv.${char.uelevel}`, width / 2 - imageSize / 2 + 3, config.ueFontSize + 2)
+        }
+
         if (char.stars > 0 && config.displayStars) {
-            chr.font = `700 ${config.rankFontSize}px ${fontFamilyNumbers}`
+            chr.font = `700 ${config.starFontSize}px ${fontFamilyNumbers}`
             chr.fillStyle = getStarColor(char.stars)
             chr.strokeStyle = "#000"
             chr.lineWidth = 3
