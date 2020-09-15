@@ -75,6 +75,24 @@ const configDetails = {
         title: "Background color",
         type: "text",
         default: "#FFFFFFFF",
+    },
+    sort1: {
+        title: "Primary sorting",
+        type: "select",
+        options: ["Name ↑", "Name ↓", "Rank ↓", "Rank ↑", "Stars ↓", "Stars ↑", "UE Level ↓", "UE Level ↑"],
+        default: 0,
+    },
+    sort2: {
+        title: "Secondary sorting",
+        type: "select",
+        options: ["Name ↑", "Name ↓", "Rank ↓", "Rank ↑", "Stars ↓", "Stars ↑", "UE Level ↓", "UE Level ↑"],
+        default: 2,
+    },
+    sort3: {
+        title: "Ternary sorting",
+        type: "select",
+        options: ["Name ↑", "Name ↓", "Rank ↓", "Rank ↑", "Stars ↓", "Stars ↑", "UE Level ↓", "UE Level ↑"],
+        default: 4,
     }
 }
 const config = {
@@ -94,19 +112,32 @@ Object.entries(configDetails).forEach(([id, settings]) => {
     const label = document.createElement("label")
     label.innerText = settings.title
     label.for = id
+    document.getElementById("config").appendChild(label)
 
-    const input = document.createElement("input")
+    let input
+    if(settings.type == "select") {
+        input = document.createElement("select")
+        
+        for (const opt of settings.options) {
+            const option = document.createElement("option")
+            option.text = opt
+            input.appendChild(option)
+        }
+
+        input.selectedIndex = settings.default
+    } else {
+        input = document.createElement("input")
+        input.type = settings.type
+        input.min = settings.min
+        input.max = settings.max
+        input.value = settings.default
+        input.checked = settings.default
+    }
     input.id = id
-    input.type = settings.type
-    input.min = settings.min
-    input.max = settings.max
-    input.value = settings.default
-    input.checked = settings.default
     input.onchange = updateConfig
     input.onchange(input)
-
-    document.getElementById("config").appendChild(label)
     document.getElementById("config").appendChild(input)
+
     document.getElementById("config").appendChild(document.createElement("br"))
 })
 
@@ -119,6 +150,8 @@ function updateConfig() {
         config[id] = this.value
     if (configDetails[id].type == "checkbox")
         config[id] = !!this.checked
+    if (configDetails[id].type == "select")
+        config[id] = this.selectedIndex
 
     if (updateOutput)
         updateOutput()
@@ -158,7 +191,22 @@ async function updateOutput() {
         .entries(charStats)
         .map(([id, { stars, rank, uelevel }]) => { return { id, stars, rank, name: hashlist[id].name, uelevel } })
         .filter(k => k.stars > 0 || config.drawAll)
-        .sort((a, b) => a.name.localeCompare(b.name))
+        .sort((a, b) => {
+            const compares = [
+                a.name.localeCompare(b.name),
+                b.rank - a.rank,
+                b.stars - a.stars,
+                b.uelevel - a.uelevel
+            ]
+
+            for (const sorter of ["sort1", "sort2", "sort3"]) {
+                const sorting = config[sorter]
+                const compared = compares[Math.floor(sorting / 2)]
+                if(compared !== 0)
+                    return (sorting % 2 == 0 ? 1 : -1) * compared
+            }
+            return a.id - b.id
+        })
 
     console.log("Rendering", config, chars)
 
