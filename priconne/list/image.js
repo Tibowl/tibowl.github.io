@@ -21,7 +21,7 @@ const configDetails = {
         type: "number",
         min: 4,
         max: 64,
-        default: 18,
+        default: 20,
     },
     smallFontSize: {
         title: "Smaller font size",
@@ -53,6 +53,11 @@ const configDetails = {
     },
     drawAll: {
         title: "Draw all (including missing) characters",
+        type: "checkbox",
+        default: true,
+    },
+    displayName: {
+        title: "Display name",
         type: "checkbox",
         default: true,
     },
@@ -104,6 +109,7 @@ const config = {
     starFontSize: 24,
     ueFontSize: 24,
     drawAll: true,
+    displayName: true,
     displayRank: true,
     displayStars: true,
     displayUE: true,
@@ -214,7 +220,9 @@ async function updateOutput() {
     const rows = Math.ceil(chars.length / columns)
 
     const imageSize = config.imageSize
-    const [width, height] = [imageSize + 8, imageSize + 12 + config.fontSize + config.smallFontSize]
+    let [width, height] = [imageSize + 8, imageSize + 8]
+    if (config.displayName)
+        height += config.fontSize + config.smallFontSize + 2
     output.width = width * columns
     output.height = height * rows + 50
 
@@ -261,28 +269,30 @@ async function updateOutput() {
             chr.putImageData(imageData, width / 2 - imageSize / 2, 1)
         }
 
-        const [top, bottom] = char.name.split("（")
-        chr.textAlign = "center"
-        chr.font = `800 20px ${fontFamilyName}`
-        chr.fillStyle = "#000"
-
         chr.shadowColor = "#222"
         chr.shadowOffsetX = 1
         chr.shadowOffsetY = 1
         chr.shadowBlur = 1
 
-        let fontSize = config.fontSize
-        while (chr.measureText(top).width > (width - 4) && fontSize-- > 4)
+        if (config.displayName) {
+            const [top, bottom] = char.name.split("（")
+            let fontSize = config.fontSize
+            chr.textAlign = "center"
             chr.font = `800 ${fontSize}px ${fontFamilyName}`
+            chr.fillStyle = "#000"
 
-        chr.fillText(top, width / 2, imageSize + 2 + fontSize)
+            while (chr.measureText(top).width > (width - 4) && fontSize-- > 4)
+                chr.font = `800 ${fontSize}px ${fontFamilyName}`
 
-        if (bottom) {
-            let smallFontSize = config.smallFontSize
-            chr.font = `800 ${smallFontSize}px ${fontFamilyName}`
-            while (chr.measureText(bottom).width > (width - 4) && smallFontSize-- > 4)
+            chr.fillText(top, width / 2, imageSize + 1 + Math.round((fontSize + config.fontSize) / 2))
+
+            if (bottom) {
+                let smallFontSize = config.smallFontSize
                 chr.font = `800 ${smallFontSize}px ${fontFamilyName}`
-            chr.fillText(`（${bottom}`, width / 2, imageSize + 7 + fontSize + smallFontSize)
+                while (chr.measureText(bottom).width > (width - 4) && smallFontSize-- > 4)
+                    chr.font = `800 ${smallFontSize}px ${fontFamilyName}`
+                chr.fillText(`（${bottom}`, width / 2, imageSize + 6 + fontSize + Math.round((smallFontSize + config.smallFontSize) / 2))
+            }
         }
 
         if (char.rank > 0 && config.displayRank) {
