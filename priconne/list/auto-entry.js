@@ -52,7 +52,7 @@ function stopCapture() {
     document.getElementById("stop").style = "display: none;"
 }
 
-let lastChar = 0, lastUELevel = 0
+let lastChar = {}
 function frame() {
     if (videoElem.videoWidth == 0) return
     fixCanvas()
@@ -70,17 +70,22 @@ function frame() {
     if (starInfo.colors.length < 5) return
 
     const uelevel = getUELevel()
-    if (info.id == lastChar && uelevel == lastUELevel) return
-    lastChar = info.id
-    lastUELevel = uelevel
 
     const rank = getRank()
+    if (info.id == lastChar.id && uelevel == lastChar.uelevel && rank == lastChar.rank && starInfo.starCount == lastChar.stars) return
+    lastChar = {
+        id: info.id,
+        uelevel,
+        rank,
+        stars: starInfo.starCount
+    } 
+
     console.log("Detected", info, starInfo, rank, uelevel)
 
     charStats[info.id] = { stars: starInfo.starCount, rank, uelevel }
     updateTable()
 
-    const currentData = `${info.name}&${info.rank}&${starInfo.starCount}`
+    const currentData = `${info.name}`
     const img = document.createElement("img")
     img.src = getImageURL(info.id, starInfo.starCount)
     img.style = "max-width: 32px;"
@@ -311,48 +316,76 @@ function fixCanvas() {
     document.getElementById("y-offset-used").innerText = yOffset
     // console.log("Found window offsets:", xOffset, yOffset)
 
-    canvas.width = videoElem.videoWidth - xOffset
-    canvas.height = videoElem.videoHeight - yOffset
+    canvas.width = 1280 // videoElem.videoWidth - xOffset
+    canvas.height = 720 // videoElem.videoHeight - yOffset
     context.drawImage(videoElem,
         xOffset, yOffset, canvas.width, canvas.height,
         0, 0, canvas.width, canvas.height)
 }
 
-const zooming = document.getElementById("zoom")
+const zoomingTL = document.getElementById("zoomTL")
+const zoomingBR = document.getElementById("zoomBR")
 function zoom() {
-    if (!zooming.parentElement.open) return
+    //if (!zooming.parentElement.open) return
     const scale = 8
 
-    /** @type {CanvasRenderingContext2D} */
-    const zoomed = zooming.getContext("2d")
-    zoomed.fillStyle = "#000000"
-    zoomed.fillRect(0, 0, zooming.width, zooming.height)
+    const zoomedTL = prepareContext(zoomingTL)
+    const zoomedBR = prepareContext(zoomingBR)
 
-    const offsetX = Math.max(xOffset - (zooming.width / scale / 2), 0)
-    const offsetY = Math.max(yOffset - (zooming.height / scale / 2), 0)
+    const offsetXTL = Math.max(xOffset - (zoomingTL.width / scale / 2), 0)
+    const offsetYTL = Math.max(yOffset - (zoomingTL.height / scale / 2), 0)
+    
+    const offsetXBR = Math.max(xOffset - (zoomingBR.width / scale / 2) + 1280, 0)
+    const offsetYBR = Math.max(yOffset - (zoomingBR.height / scale / 2) + 720, 0)
 
-    zoomed.drawImage(videoElem,
-        offsetX, offsetY, zooming.width / scale, zooming.height / scale,
-        0, 0, zooming.width / scale, zooming.height / scale)
+    drawZoomed(zoomedTL, offsetXTL, offsetYTL, scale)
+    drawLines(zoomedTL, scale)
 
-    const source = zoomed.getImageData(0, 0, zooming.width / scale, zooming.height / scale)
-    const target = zoomed.createImageData(zooming.width, zooming.height)
-    for (let i = 0; i < zooming.width; i++)
-        for (let j = 0; j < zooming.height; j++)
+    drawZoomed(zoomedBR, offsetXBR, offsetYBR, scale)
+    drawLines(zoomedBR, scale)
+
+    zoomedTL.fillStyle = "#FF0000"
+    zoomedTL.fillRect(Math.min(xOffset, (zoomingTL.width / scale / 2)) * scale, 0, 1, zoomingTL.height)
+    zoomedTL.fillRect(0, Math.min(yOffset, (zoomingTL.height / scale / 2)) * scale, zoomingTL.width, 1)
+
+    zoomedBR.fillStyle = "#FF0000"
+    zoomedBR.fillRect((zoomingBR.width / scale / 2) * scale, 0, 1, zoomingBR.height)
+    zoomedBR.fillRect(0, (zoomingBR.height / scale / 2) * scale, zoomingBR.width, 1)
+}
+
+/**
+ * 
+ * @param {HTMLCanvasElement} canvas 
+ * @returns {CanvasRenderingContext2D} context
+ */
+function prepareContext(canvas) {
+    const context = canvas.getContext("2d")
+    context.fillStyle = "#000000"
+    context.fillRect(0, 0, canvas.width, canvas.height)
+    return context
+}
+
+function drawLines(context, scale) {
+    context.fillStyle = "#CCCCCC55"
+    for (let i = 0; i < zoomingTL.width / scale; i++)
+        context.fillRect(i * scale, 0, 1, zoomingTL.height)
+    for (let j = 0; j < zoomingTL.height / scale; j++)
+        context.fillRect(0, j * scale, zoomingTL.width, 1)
+}
+
+function drawZoomed(context, offsetX, offsetY, scale) {
+    context.drawImage(videoElem,
+        offsetX, offsetY, zoomingTL.width / scale, zoomingTL.height / scale,
+        0, 0, zoomingTL.width / scale, zoomingTL.height / scale)
+
+    const source = context.getImageData(0, 0, zoomingTL.width / scale, zoomingTL.height / scale)
+    const target = context.createImageData(zoomingTL.width, zoomingTL.height)
+    for (let i = 0; i < zoomingTL.width; i++)
+        for (let j = 0; j < zoomingTL.height; j++)
             for (let k = 0; k < 4; k++)
-                target.data[(i + j * zooming.height) * 4 + k] =
-                    source.data[(Math.floor(i / scale) + Math.floor(j / scale) * (zooming.height / scale)) * 4 + k]
-    zoomed.putImageData(target, 0, 0)
-
-    zoomed.fillStyle = "#CCCCCC55"
-    for (let i = 0; i < zooming.width / scale; i++)
-        zoomed.fillRect(i * scale, 0, 1, zooming.height)
-    for (let j = 0; j < zooming.height / scale; j++)
-        zoomed.fillRect(0, j * scale, zooming.width, 1)
-
-    zoomed.fillStyle = "#FF0000"
-    zoomed.fillRect(Math.min(xOffset, (zooming.width / scale / 2)) * scale, 0, 1, zooming.height)
-    zoomed.fillRect(0, Math.min(yOffset, (zooming.height / scale / 2)) * scale, zooming.width, 1)
+                target.data[(i + j * zoomingTL.height) * 4 + k] =
+                    source.data[(Math.floor(i / scale) + Math.floor(j / scale) * (zoomingTL.height / scale)) * 4 + k]
+    context.putImageData(target, 0, 0)
 }
 
 const hashContext = hashCanvas.getContext("2d")
