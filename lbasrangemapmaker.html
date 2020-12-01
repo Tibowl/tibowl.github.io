@@ -683,7 +683,8 @@
                                 edge[1] = nodeLetter;
                         }
                     }
-
+                    if (mapKey == "map04903_")
+                        replaceLetter(`Node28`, "V");
                     for(let nodeInfo of locData.spots) {
                         let id = nodeInfo.no;
                         if(!nodeInfo.line) {
