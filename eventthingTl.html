@@ -1,49 +1,52 @@
 <!doctype html>
 <html>
-    <head>
-        <title>Flat is Justice! - id -> name/tl</title>
-        <meta name="theme-color" content="#082E6B"/>
-        <meta name=viewport content="width=device-width, initial-scale=1">
-        <meta name="twitter:card" content="summary">
-        <meta name="twitter:title" content="Flat is Justice - id -> name/tl">
-        <meta name="twitter:description" content="Translate (a list of) ship/equip ids to ship name or equipment name">
-        <style type="text/css">
-        	div {
-        		display:inline;
-        	}
-            textarea {
-                width: 700px;
-                height: 200px;
-            }
-        </style>
-    </head>
-    <body> 
-        <a href="."><b>Flat is Justice - Home</b></a><br>
-        Lang: 
-        <input type="radio" name="lang" value="en" id="en" onchange="changeLang(this);" checked><b>EN</b>
-        <input type="radio" name="lang" value="jp" id="jp" onchange="changeLang(this);"><b>JP</b><br>
-        Type: 
-        <input type="radio" name="type" value="ship" id="ship" onchange="changeType(this);" checked><b>Ship</b>
-        <input type="radio" name="type" value="equip" id="equip" onchange="changeType(this);"><b>Equip</b><br>
-        Input: <br>
-        <textarea id="in" onchange="update()">ships: [200, 463, 1, 1628]</textarea>
-        <br>
-        Output: <br>
-        <textarea id="out" onchange="update()"></textarea>
-    	<script type="text/javascript">
 
-            var data = {};
-            var settings = {
-                lang: "en",
-                type: "ship"
-            }
+<head>
+    <title>Flat is Justice! - id -> name/tl</title>
+    <meta name="theme-color" content="#082E6B" />
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Flat is Justice - id -> name/tl">
+    <meta name="twitter:description" content="Translate (a list of) ship/equip ids to ship name or equipment name">
+    <style type="text/css">
+        div {
+            display: inline;
+        }
 
-    		function update() {
-                let input = document.getElementById("in").value + " ";
-                /*let ids = input.match(/\d+/g);
-                ids.sort((a, b) => b.length - a.length || b - a);*/
-                let list;
-                data.items = Object.assign(data.items,
+        textarea {
+            width: 700px;
+            height: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="."><b>Flat is Justice - Home</b></a><br>
+    Lang:
+    <input type="radio" name="lang" value="en" id="en" onchange="changeLang(this);" checked><b>EN</b>
+    <input type="radio" name="lang" value="jp" id="jp" onchange="changeLang(this);"><b>JP</b><br>
+    Type:
+    <input type="radio" name="type" value="ship" id="ship" onchange="changeType(this);" checked><b>Ship</b>
+    <input type="radio" name="type" value="equip" id="equip" onchange="changeType(this);"><b>Equip</b><br>
+    Input: <br>
+    <textarea id="in" onchange="update()">ships: [200, 463, 1, 1628]</textarea>
+    <br>
+    Output: <br>
+    <textarea id="out" onchange="update()"></textarea>
+    <script type="text/javascript">
+
+        var data = {};
+        var settings = {
+            lang: "en",
+            type: "ship"
+        }
+
+        function update() {
+            let input = document.getElementById("in").value + " ";
+            /*let ids = input.match(/\d+/g);
+            ids.sort((a, b) => b.length - a.length || b - a);*/
+            let list;
+            data.items = Object.assign(data.items,
                 {
                     "勲章": "Medal",
                     "補強増設": "Reinforcement Expansion",
@@ -53,156 +56,157 @@
                     "特注家具職人": "Furniture Fairy"
                 });
 
-                let output = "";
-                for(let char of input.split("\n")) {
-                    if(!char || char.length < 2) { 
-                        output += char + "\n";
-                        continue;
+            let output = "";
+            for (let char of input.split("\n")) {
+                if (!char || char.length < 2) {
+                    output += char + "\n";
+                    continue;
+                }
+                let repl = char.replace(`"{"`, "[").replace(`"}"`, "]").replace(/","/g, ",").replace(/\\/g, "");
+                console.log(repl);
+                let json = JSON.parse(repl)
+                console.log(json)
+                for (let i in json) {
+                    let id = json[i].api_id;
+                    let type = json[i].api_type;
+                    switch (type) {
+                        case 1: settings.type = 'useitem'; break;
+                        case 2: settings.type = "ship"; break;
+                        case 3: settings.type = "equip"; break;
                     }
-                    let repl = char.replace(`"{"`, "[").replace(`"}"`, "]").replace(/","/g, ",").replace(/\\/g, "");
-                    console.log(repl);
-                    let json = JSON.parse(repl)
-                    console.log(json)
-                    for(let i in json) {
-                        let id = json[i].api_id;
-                        let type = json[i].api_type;
-                        switch(type) {
-                            case 1: settings.type = 'useitem'; break;
-                            case 2: settings.type = "ship"; break;
-                            case 3: settings.type = "equip"; break;
-                        }
-                        console.log(id);
+                    console.log(id);
 
-                        switch(settings.type) {
-                            case "useitem":
-                                list = data.api_start2.api_mst_useitem;
-                                break;
-                            case "ship":
-                                list = data.api_start2.api_mst_ship;
-                                break;
-                            case "equip":
-                                list = data.api_start2.api_mst_slotitem;
-                                break;
-                        }
-                        let results = list.filter((a) => a.api_id == id)
-                        if(results.length) {
-                            console.log(results);
-
-                            let tl = results[0].api_name;
-
-                            console.log(tl);
-
-                            if(settings.lang == "en") {
-                                if(settings.type == "ship")
-                                    tl = shipName(tl);
-                                else
-                                    tl = data.items[tl] || tl;
-                            }
-
-                            json[i].api_id = tl;
-                        }
-                        output += settings.type + ": " + json[i].api_value + "x " + json[i].api_id + (json[i].api_slot_level>0?' ★'+json[i].api_slot_level:'') + "\n";
+                    switch (settings.type) {
+                        case "useitem":
+                            list = data.api_start2.api_mst_useitem;
+                            break;
+                        case "ship":
+                            list = data.api_start2.api_mst_ship;
+                            break;
+                        case "equip":
+                            list = data.api_start2.api_mst_slotitem;
+                            break;
                     }
+                    let results = list.filter((a) => a.api_id == id)
+                    if (results.length) {
+                        console.log(results);
+
+                        let tl = results[0].api_name;
+
+                        console.log(tl);
+
+                        if (settings.lang == "en") {
+                            if (settings.type == "ship")
+                                tl = shipName(tl);
+                            else
+                                tl = data.items[tl] || tl;
+                        }
+
+                        json[i].api_id = tl;
+                    }
+                    output += settings.type + ": " + json[i].api_value + "x " + json[i].api_id + (json[i].api_slot_level > 0 ? ' ★' + json[i].api_slot_level : '') + "\n";
+                }
                 output += "\n";
-                }
-                console.log(output);
-                document.getElementById("out").value = output.replace(/ $/, '');
-       		}
-
-            function changeLang(clicked) {
-                settings.lang = clicked.value;
-                update();
             }
+            console.log(output);
+            document.getElementById("out").value = output.replace(/ $/, '');
+        }
 
-            function changeType(clicked) {
-                settings.type = clicked.value;
-                update();
-            }
+        function changeLang(clicked) {
+            settings.lang = clicked.value;
+            update();
+        }
 
-            function get(url, name) {
-                var xmlhttp = new XMLHttpRequest();
-                xmlhttp.onreadystatechange = function() {
-                    if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
-                        if (xmlhttp.status == 200) {
-                            data[name] = xmlhttp.responseText;
-                            if(data.ships && data.ship_affix && data.items && data.api_start2) {
-                                data.ships = JSON.parse(data.ships);
-                                data.ship_affix = JSON.parse(data.ship_affix);
-                                data.items = JSON.parse(data.items);
-                                data.api_start2 = JSON.parse(data.api_start2);
+        function changeType(clicked) {
+            settings.type = clicked.value;
+            update();
+        }
 
-                                update();
-                            }
-                       }
-                    }
-                };
-                xmlhttp.open("GET", url, true);
-                xmlhttp.send();
-            }
+        function get(url, name) {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+                    if (xmlhttp.status == 200) {
+                        data[name] = xmlhttp.responseText;
+                        if (data.ships && data.ship_affix && data.items && data.api_start2) {
+                            data.ships = JSON.parse(data.ships);
+                            data.ship_affix = JSON.parse(data.ship_affix);
+                            data.items = JSON.parse(data.items);
+                            data.api_start2 = JSON.parse(data.api_start2);
 
-            // https://github.com/KC3Kai/KC3Kai/blob/master/src/library/modules/Meta.js#L188
-            function shipName(jpName, suffixKey = "suffixes", prefixKey = "prefixes"){
-                // If full string matched, no combination needed
-                if(typeof data.ships[jpName] !== "undefined"){
-                    return data.ships[jpName];
-                }
-                var root = jpName,
-                    combinedPrefixes = [],
-                    prefixesMap = data.ship_affix[prefixKey] || {},
-                    prefixesList = Object.keys(prefixesMap),
-                    combinedSuffixes = [],
-                    suffixesMap = data.ship_affix[suffixKey] || {},
-                    suffixesList = Object.keys(suffixesMap),
-                    occurs = [],
-                    replaced = false;
-                /**********************************************
-                // To combine the translations of root name and prefix/suffix,
-                // the regular expression will read which one comes first,
-                // which mean the prefixes and suffixes in the ship name.
-                // and then, the root string will be chopped to remove the affixes,
-                // the matched one, added to the combination stack (FILO)
-                // removing from the replacement table in order to prevent infinite loop.
-                // if there's no match, it'll instantly stop and return the actual value.
-                ***********************************************/
-                if(prefixesList.length > 0){
-                    while( !!(occurs = (new RegExp("^("+prefixesList.join("|")+").+$","i")).exec(root)) ){
-                        root = root.replace(new RegExp("^"+occurs[1],"i"), "");
-                        if(prefixesMap[occurs[1]].slice(-1) === "$"){
-                            combinedSuffixes.unshift(prefixesMap[occurs[1]].slice(0, -1));
-                        } else {
-                            combinedPrefixes.unshift(prefixesMap[occurs[1]]);
+                            update();
                         }
-                        prefixesList.splice(prefixesList.indexOf(occurs[1]), 1);
-                        replaced = true;
                     }
                 }
-                if(suffixesList.length > 0){
-                    while( !!(occurs = (new RegExp(".+("+suffixesList.join("|")+")$","i")).exec(root)) ){
-                        root = root.replace(new RegExp(occurs[1]+"$","i"), "");
-                        if(suffixesMap[occurs[1]].slice(0, 1) === "^"){
-                            combinedPrefixes.unshift(suffixesMap[occurs[1]].slice(1));
-                        } else {
-                            combinedSuffixes.unshift(suffixesMap[occurs[1]]);
-                        }
-                        suffixesList.splice(suffixesList.indexOf(occurs[1]), 1);
-                        replaced = true;
-                    }
-                }
-                if(replaced){
-                    // Put combined name into cache
-                    return [
-                        (combinedPrefixes.length > 0 ? combinedPrefixes.join("") : "") ,
-                        (data.ships[root] || root) ,
-                        (combinedSuffixes.length > 0 ? combinedSuffixes.join("") : "")
-                    ].join("");
-                }
-                return root;
+            };
+            xmlhttp.open("GET", url, true);
+            xmlhttp.send();
+        }
+
+        // https://github.com/KC3Kai/KC3Kai/blob/master/src/library/modules/Meta.js#L188
+        function shipName(jpName, suffixKey = "suffixes", prefixKey = "prefixes") {
+            // If full string matched, no combination needed
+            if (typeof data.ships[jpName] !== "undefined") {
+                return data.ships[jpName];
             }
-            get("https://raw.githubusercontent.com/KC3Kai/kc3-translations/master/data/en/ships.json", "ships");
-            get("https://raw.githubusercontent.com/KC3Kai/kc3-translations/master/data/en/ship_affix.json", "ship_affix");
-            get("https://raw.githubusercontent.com/KC3Kai/kc3-translations/master/data/en/items.json", "items");
-            get("https://raw.githubusercontent.com/Tibo442/api_start2/master/start2.json", "api_start2");
-            
-    	</script>
-    </body>
+            var root = jpName,
+                combinedPrefixes = [],
+                prefixesMap = data.ship_affix[prefixKey] || {},
+                prefixesList = Object.keys(prefixesMap),
+                combinedSuffixes = [],
+                suffixesMap = data.ship_affix[suffixKey] || {},
+                suffixesList = Object.keys(suffixesMap),
+                occurs = [],
+                replaced = false;
+            /**********************************************
+            // To combine the translations of root name and prefix/suffix,
+            // the regular expression will read which one comes first,
+            // which mean the prefixes and suffixes in the ship name.
+            // and then, the root string will be chopped to remove the affixes,
+            // the matched one, added to the combination stack (FILO)
+            // removing from the replacement table in order to prevent infinite loop.
+            // if there's no match, it'll instantly stop and return the actual value.
+            ***********************************************/
+            if (prefixesList.length > 0) {
+                while (!!(occurs = (new RegExp("^(" + prefixesList.join("|") + ").+$", "i")).exec(root))) {
+                    root = root.replace(new RegExp("^" + occurs[1], "i"), "");
+                    if (prefixesMap[occurs[1]].slice(-1) === "$") {
+                        combinedSuffixes.unshift(prefixesMap[occurs[1]].slice(0, -1));
+                    } else {
+                        combinedPrefixes.unshift(prefixesMap[occurs[1]]);
+                    }
+                    prefixesList.splice(prefixesList.indexOf(occurs[1]), 1);
+                    replaced = true;
+                }
+            }
+            if (suffixesList.length > 0) {
+                while (!!(occurs = (new RegExp(".+(" + suffixesList.join("|") + ")$", "i")).exec(root))) {
+                    root = root.replace(new RegExp(occurs[1] + "$", "i"), "");
+                    if (suffixesMap[occurs[1]].slice(0, 1) === "^") {
+                        combinedPrefixes.unshift(suffixesMap[occurs[1]].slice(1));
+                    } else {
+                        combinedSuffixes.unshift(suffixesMap[occurs[1]]);
+                    }
+                    suffixesList.splice(suffixesList.indexOf(occurs[1]), 1);
+                    replaced = true;
+                }
+            }
+            if (replaced) {
+                // Put combined name into cache
+                return [
+                    (combinedPrefixes.length > 0 ? combinedPrefixes.join("") : ""),
+                    (data.ships[root] || root),
+                    (combinedSuffixes.length > 0 ? combinedSuffixes.join("") : "")
+                ].join("");
+            }
+            return root;
+        }
+        get("https://raw.githubusercontent.com/KC3Kai/kc3-translations/master/data/en/ships.json", "ships");
+        get("https://raw.githubusercontent.com/KC3Kai/kc3-translations/master/data/en/ship_affix.json", "ship_affix");
+        get("https://raw.githubusercontent.com/KC3Kai/kc3-translations/master/data/en/items.json", "items");
+        get("https://raw.githubusercontent.com/Tibo442/api_start2/master/start2.json", "api_start2");
+
+    </script>
+</body>
+
 </html>

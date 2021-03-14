@@ -1,173 +1,189 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <title>Flat is Justice! - normal construction calc</title>
-        <meta name="theme-color" content="#082E6B"/>
-        <meta name=viewport content="width=device-width, initial-scale=1">
-        <meta name="twitter:card" content="summary">
-        <meta name="twitter:title" content="Flat is Justice - normal construction calc">
-        <meta name="twitter:description" content="Calculate normal construction rates">
-        <meta name="description" content="Calculate normal construction rates">
-        <style type="text/css">
-            input[type="number"] {
-                width:75px;
-            }
-            table > tr > th, table > tr > td, table > * > tr > th, table > * > tr > td {
-                border: 1px #aaa solid;
-                padding: 0.2em
-            }
-            table {
-                max-width: 700px;
-            }
-        </style>
-    </head>
-    <body>
-        <a href="."><b>Flat is Justice - Home</b></a><br>
 
-        <main>
-            <div id="grapherb" style="float:right"></div>
-            <div id="settings">
-                <b>Input</b><br>
-                <label>Fuel: <input type="number" id="fuel" min="30" max="999" step="1" onchange="update();" onclick="update();"><br></label>
-                <label>Ammo: <input type="number" id="ammo" min="30" max="999" step="1"  onchange="update();" onclick="update();"><br></label>
-                <label>Steel: <input type="number" id="steel" min="30" max="999" step="1" onchange="update();" onclick="update();"><br></label>
-                <label>Bauxite: <input type="number" id="bauxite" min="30" max="999" step="1" onchange="update();" onclick="update();"><br></label>
-            </div>
-            <hr>
-            <div id="graphstuff">
-                <b>Graph</b><br>
-                <canvas id="graph" width="830" height="425" style="border:1px solid black;"></canvas><br>
-                <b>Graph settings</b><br>
-                <label>Change variable/X-axis: <select id="graphvariable" onchange="update();">
+<head>
+    <title>Flat is Justice! - normal construction calc</title>
+    <meta name="theme-color" content="#082E6B" />
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Flat is Justice - normal construction calc">
+    <meta name="twitter:description" content="Calculate normal construction rates">
+    <meta name="description" content="Calculate normal construction rates">
+    <style type="text/css">
+        input[type="number"] {
+            width: 75px;
+        }
+
+        table>tr>th,
+        table>tr>td,
+        table>*>tr>th,
+        table>*>tr>td {
+            border: 1px #aaa solid;
+            padding: 0.2em
+        }
+
+        table {
+            max-width: 700px;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="."><b>Flat is Justice - Home</b></a><br>
+
+    <main>
+        <div id="grapherb" style="float:right"></div>
+        <div id="settings">
+            <b>Input</b><br>
+            <label>Fuel: <input type="number" id="fuel" min="30" max="999" step="1" onchange="update();"
+                    onclick="update();"><br></label>
+            <label>Ammo: <input type="number" id="ammo" min="30" max="999" step="1" onchange="update();"
+                    onclick="update();"><br></label>
+            <label>Steel: <input type="number" id="steel" min="30" max="999" step="1" onchange="update();"
+                    onclick="update();"><br></label>
+            <label>Bauxite: <input type="number" id="bauxite" min="30" max="999" step="1" onchange="update();"
+                    onclick="update();"><br></label>
+        </div>
+        <hr>
+        <div id="graphstuff">
+            <b>Graph</b><br>
+            <canvas id="graph" width="830" height="425" style="border:1px solid black;"></canvas><br>
+            <b>Graph settings</b><br>
+            <label>Change variable/X-axis: <select id="graphvariable" onchange="update();">
                     <option value="fuel">Fuel</option>
                     <option value="ammo">Ammo</option>
                     <option value="steel">Steel</option>
                     <option value="bauxite">Bauxite</option>
                 </select><br></label>
-                <label>Ship: <select id="shipid" onchange="update();">
-                     <option value="1">Mutsuki</option>
-                     <option value="2">Kisaragi</option>
-                     <option value="6">Nagatsuki</option>
-                     <option value="7">Mikazuki</option>
-                     <option value="9">Fubuki</option>
-                     <option value="10">Shirayuki</option>
-                     <option value="11">Miyuki</option>
-                     <option value="12">Isonami</option>
-                     <option value="13">Ayanami</option>
-                     <option value="14">Shikinami</option>
-                     <option value="15">Akebono</option>
-                     <option value="16">Ushio</option>
-                     <option value="17">Kagerou</option>
-                     <option value="18">Shiranui</option>
-                     <option value="19">Kuroshio</option>
-                     <option value="20">Yukikaze</option>
-                     <option value="21">Nagara</option>
-                     <option value="22">Isuzu</option>
-                     <option value="23">Yura</option>
-                     <option value="24">Ooi</option>
-                     <option value="25">Kitakami</option>
-                     <option value="26">Fusou</option>
-                     <option value="27">Yamashiro</option>
-                     <option value="28">Satsuki</option>
-                     <option value="29">Fumizuki</option>
-                     <option value="30">Kikuzuki</option>
-                     <option value="31">Mochizuki</option>
-                     <option value="32">Hatsuyuki</option>
-                     <option value="33">Murakumo</option>
-                     <option value="34">Akatsuki</option>
-                     <option value="35">Hibiki</option>
-                     <option value="36">Ikazuchi</option>
-                     <option value="37">Inazuma</option>
-                     <option value="38">Hatsuharu</option>
-                     <option value="39">Nenohi</option>
-                     <option value="40">Wakaba</option>
-                     <option value="41">Hatsushimo</option>
-                     <option value="42">Shiratsuyu</option>
-                     <option value="43">Shigure</option>
-                     <option value="44">Murasame</option>
-                     <option value="45">Yuudachi</option>
-                     <option value="46">Samidare</option>
-                     <option value="47">Suzukaze</option>
-                     <option value="48">Arare</option>
-                     <option value="49">Kasumi</option>
-                     <option value="50">Shimakaze</option>
-                     <option value="51">Tenryuu</option>
-                     <option value="52">Tatsuta</option>
-                     <option value="53">Natori</option>
-                     <option value="54">Sendai</option>
-                     <option value="55">Jintsuu</option>
-                     <option value="56">Naka</option>
-                     <option value="59">Furutaka</option>
-                     <option value="60">Kako</option>
-                     <option value="61">Aoba</option>
-                     <option value="62">Myoukou</option>
-                     <option value="63">Nachi</option>
-                     <option value="64">Ashigara</option>
-                     <option value="65">Haguro</option>
-                     <option value="66">Takao</option>
-                     <option value="67">Atago</option>
-                     <option value="68">Maya</option>
-                     <option value="69">Choukai</option>
-                     <option value="70">Mogami</option>
-                     <option value="71">Tone</option>
-                     <option value="72">Chikuma</option>
-                     <option value="74">Shouhou</option>
-                     <option value="75">Hiyou</option>
-                     <option value="76">Ryuujou</option>
-                     <option value="77">Ise</option>
-                     <option value="78">Kongou</option>
-                     <option value="79">Haruna</option>
-                     <option value="80">Nagato</option>
-                     <option value="81">Mutsu</option>
-                     <option value="83">Akagi</option>
-                     <option value="84">Kaga</option>
-                     <option value="85">Kirishima</option>
-                     <option value="86">Hiei</option>
-                     <option value="87">Hyuuga</option>
-                     <option value="89">Houshou</option>
-                     <option value="90">Souryuu</option>
-                     <option value="91">Hiryuu</option>
-                     <option value="92">Junyou</option>
-                     <option value="93">Oboro</option>
-                     <option value="94">Sazanami</option>
-                     <option value="95">Asashio</option>
-                     <option value="96">Ooshio</option>
-                     <option value="97">Michishio</option>
-                     <option value="98">Arashio</option>
-                     <option value="99">Kuma</option>
-                     <option value="100">Tama</option>
-                     <option value="101">Kiso</option>
-                     <option value="102">Chitose</option>
-                     <option value="103">Chiyoda</option>
-                     <option value="110">Shoukaku</option>
-                     <option value="111">Zuikaku</option>
-                     <option value="113">Kinu</option>
-                     <option value="114">Abukuma</option>
-                     <option value="115">Yuubari</option>
-                     <option value="116">Zuihou</option>
-                     <option value="123">Kinugasa</option>
-                     <option value="124">Suzuya</option>
-                     <option value="125">Kumano</option>
-                     <option value="126">I-168</option>
-                     <option value="127">I-58</option>
-                     <option value="128">I-8</option>
-                     <option value="132">Akigumo</option>
-                     <option value="154">Katori</option>
-                     <option value="164">Yayoi</option>
-                     <option value="191">I-19</option>
+            <label>Ship: <select id="shipid" onchange="update();">
+                    <option value="1">Mutsuki</option>
+                    <option value="2">Kisaragi</option>
+                    <option value="6">Nagatsuki</option>
+                    <option value="7">Mikazuki</option>
+                    <option value="9">Fubuki</option>
+                    <option value="10">Shirayuki</option>
+                    <option value="11">Miyuki</option>
+                    <option value="12">Isonami</option>
+                    <option value="13">Ayanami</option>
+                    <option value="14">Shikinami</option>
+                    <option value="15">Akebono</option>
+                    <option value="16">Ushio</option>
+                    <option value="17">Kagerou</option>
+                    <option value="18">Shiranui</option>
+                    <option value="19">Kuroshio</option>
+                    <option value="20">Yukikaze</option>
+                    <option value="21">Nagara</option>
+                    <option value="22">Isuzu</option>
+                    <option value="23">Yura</option>
+                    <option value="24">Ooi</option>
+                    <option value="25">Kitakami</option>
+                    <option value="26">Fusou</option>
+                    <option value="27">Yamashiro</option>
+                    <option value="28">Satsuki</option>
+                    <option value="29">Fumizuki</option>
+                    <option value="30">Kikuzuki</option>
+                    <option value="31">Mochizuki</option>
+                    <option value="32">Hatsuyuki</option>
+                    <option value="33">Murakumo</option>
+                    <option value="34">Akatsuki</option>
+                    <option value="35">Hibiki</option>
+                    <option value="36">Ikazuchi</option>
+                    <option value="37">Inazuma</option>
+                    <option value="38">Hatsuharu</option>
+                    <option value="39">Nenohi</option>
+                    <option value="40">Wakaba</option>
+                    <option value="41">Hatsushimo</option>
+                    <option value="42">Shiratsuyu</option>
+                    <option value="43">Shigure</option>
+                    <option value="44">Murasame</option>
+                    <option value="45">Yuudachi</option>
+                    <option value="46">Samidare</option>
+                    <option value="47">Suzukaze</option>
+                    <option value="48">Arare</option>
+                    <option value="49">Kasumi</option>
+                    <option value="50">Shimakaze</option>
+                    <option value="51">Tenryuu</option>
+                    <option value="52">Tatsuta</option>
+                    <option value="53">Natori</option>
+                    <option value="54">Sendai</option>
+                    <option value="55">Jintsuu</option>
+                    <option value="56">Naka</option>
+                    <option value="59">Furutaka</option>
+                    <option value="60">Kako</option>
+                    <option value="61">Aoba</option>
+                    <option value="62">Myoukou</option>
+                    <option value="63">Nachi</option>
+                    <option value="64">Ashigara</option>
+                    <option value="65">Haguro</option>
+                    <option value="66">Takao</option>
+                    <option value="67">Atago</option>
+                    <option value="68">Maya</option>
+                    <option value="69">Choukai</option>
+                    <option value="70">Mogami</option>
+                    <option value="71">Tone</option>
+                    <option value="72">Chikuma</option>
+                    <option value="74">Shouhou</option>
+                    <option value="75">Hiyou</option>
+                    <option value="76">Ryuujou</option>
+                    <option value="77">Ise</option>
+                    <option value="78">Kongou</option>
+                    <option value="79">Haruna</option>
+                    <option value="80">Nagato</option>
+                    <option value="81">Mutsu</option>
+                    <option value="83">Akagi</option>
+                    <option value="84">Kaga</option>
+                    <option value="85">Kirishima</option>
+                    <option value="86">Hiei</option>
+                    <option value="87">Hyuuga</option>
+                    <option value="89">Houshou</option>
+                    <option value="90">Souryuu</option>
+                    <option value="91">Hiryuu</option>
+                    <option value="92">Junyou</option>
+                    <option value="93">Oboro</option>
+                    <option value="94">Sazanami</option>
+                    <option value="95">Asashio</option>
+                    <option value="96">Ooshio</option>
+                    <option value="97">Michishio</option>
+                    <option value="98">Arashio</option>
+                    <option value="99">Kuma</option>
+                    <option value="100">Tama</option>
+                    <option value="101">Kiso</option>
+                    <option value="102">Chitose</option>
+                    <option value="103">Chiyoda</option>
+                    <option value="110">Shoukaku</option>
+                    <option value="111">Zuikaku</option>
+                    <option value="113">Kinu</option>
+                    <option value="114">Abukuma</option>
+                    <option value="115">Yuubari</option>
+                    <option value="116">Zuihou</option>
+                    <option value="123">Kinugasa</option>
+                    <option value="124">Suzuya</option>
+                    <option value="125">Kumano</option>
+                    <option value="126">I-168</option>
+                    <option value="127">I-58</option>
+                    <option value="128">I-8</option>
+                    <option value="132">Akigumo</option>
+                    <option value="154">Katori</option>
+                    <option value="164">Yayoi</option>
+                    <option value="191">I-19</option>
                 </select><br></label>
-                <br>
-            </div>
-            <table id="table2"><tbody></tbody></table><br>
-            <table id="table"><tbody></tbody></table><br>
-            <div id="graphera"></div>
             <br>
-        </main>
-        <u><a onclick="save()">Save (for sharing)</a></u><br>
-        <div style="clear:both"></div>
-        <hr>
+        </div>
+        <table id="table2">
+            <tbody></tbody>
+        </table><br>
+        <table id="table">
+            <tbody></tbody>
+        </table><br>
+        <div id="graphera"></div>
         <br>
-        <i>Uses everything from KC kai's </i><code>getShipIdLarge</code><i> in </i><code>Server_Controllers/Api_req_Kousyou.cs</code><i><br>
+    </main>
+    <u><a onclick="save()">Save (for sharing)</a></u><br>
+    <div style="clear:both"></div>
+    <hr>
+    <br>
+    <i>Uses everything from KC kai's </i><code>getShipIdLarge</code><i> in
+    </i><code>Server_Controllers/Api_req_Kousyou.cs</code><i><br>
         <script type="text/javascript">
             var data, rawdata, defaultdata = {
                 "fuel": 30,
@@ -177,7 +193,7 @@
                 "shipid": 26,
                 "graphvariable": "bauxite"
             };
-            
+
             function update() {
                 data = {
                     "fuel": parseInt(document.getElementById('fuel').value),
@@ -196,17 +212,17 @@
 
             function calculateRates(input) {
                 const groups = [
-                    [300,   0, 400, 300],
-                    [400,   0, 600,   0],
-                    [250,   0, 200,   0],
-                    [  0,   0,   0,   0]
+                    [300, 0, 400, 300],
+                    [400, 0, 600, 0],
+                    [250, 0, 200, 0],
+                    [0, 0, 0, 0]
                 ]
 
                 const modifiers = [
-                    [  0,    0,   0,    0, 400, 1/25, 300, 1/20],
-                    [  0,    0, 400, 1/25, 600, 1/30,   0,    0],
-                    [  0,    0, 200, 1/13, 200, 1/20,   0,    0],
-                    [100, 1/10,   0,    0,  30, 1/15,   0,    0]
+                    [0, 0, 0, 0, 400, 1 / 25, 300, 1 / 20],
+                    [0, 0, 400, 1 / 25, 600, 1 / 30, 0, 0],
+                    [0, 0, 200, 1 / 13, 200, 1 / 20, 0, 0],
+                    [100, 1 / 10, 0, 0, 30, 1 / 15, 0, 0]
                 ]
 
                 const shipTable = [
@@ -218,14 +234,14 @@
 
                 let groupId = 0;
 
-                group: for(let currentGroup in groups) {
+                group: for (let currentGroup in groups) {
                     const groupStats = groups[currentGroup];
 
-                    for(let i = 0; i < groupStats.length; i++) {
-                        if(input[i] < groupStats[i])
+                    for (let i = 0; i < groupStats.length; i++) {
+                        if (input[i] < groupStats[i])
                             continue group;
                     }
-                    
+
                     groupId = currentGroup;
                     break;
                 }
@@ -235,33 +251,33 @@
                 const shipRates = {};
 
                 let num2 = 0;
-                for(let i = 0; i < modifiers[groupId].length; i += 2) 
-                    num2 += Math.ceil((input[i/2] - modifiers[groupId][i]) * modifiers[groupId][i+1])
+                for (let i = 0; i < modifiers[groupId].length; i += 2)
+                    num2 += Math.ceil((input[i / 2] - modifiers[groupId][i]) * modifiers[groupId][i + 1])
 
                 console.log("num2", num2)
-                
-                num2 = Math.abs(num2)
-                if(num2 > 51) num2 = 51;
 
-                let num2Rates = {'0': 1};
-                for(let i = 0; i < num2; i++)
+                num2 = Math.abs(num2)
+                if (num2 > 51) num2 = 51;
+
+                let num2Rates = { '0': 1 };
+                for (let i = 0; i < num2; i++)
                     num2Rates[i] = 1 / num2;
 
                 console.log("num2Rates", num2Rates)
 
                 let num7Rates = {}
-                for(let num = 0; num < 100; num++)
-                    for(let num2 in num2Rates) {
+                for (let num = 0; num < 100; num++)
+                    for (let num2 in num2Rates) {
                         let num7 = num + 1 - parseInt(num2)
-                        if(num7 < 1)
+                        if (num7 < 1)
                             num7 = 2 - num7;
-                        num7Rates[num7] = 1/100 * num2Rates[num2] + (num7Rates[num7]||0)
+                        num7Rates[num7] = 1 / 100 * num2Rates[num2] + (num7Rates[num7] || 0)
                     }
                 console.log("num7Rates", num7Rates);
 
                 for (let num7 in num7Rates) {
                     let shipId = shipTable[parseInt(groupId)][parseInt(num7)]
-                    shipRates[shipId] = num7Rates[num7] + (shipRates[shipId] || 0) 
+                    shipRates[shipId] = num7Rates[num7] + (shipRates[shipId] || 0)
                 }
                 console.log("shipRates", shipRates);
                 return shipRates;
@@ -392,13 +408,13 @@
 
                     let color = "";
                     let colored = ["Yamato", "Musashi", "Maruyu", "Taihou"]
-                    if(colored.includes(shipNameIdTl[shipId]))
+                    if (colored.includes(shipNameIdTl[shipId]))
                         color = ' style="color:red"'
                     htmlstr += `<tr style="display: table-row;"><th${color}>${name}</th>
-<td>${rate*100}%</td>
+<td>${rate * 100}%</td>
 </tr>`
                 }
-                
+
                 htmlstr += `</tbody><br>`
                 document.getElementById("table").innerHTML = htmlstr;
             }
@@ -413,7 +429,7 @@
                 const SCALE = 5;
 
                 let graphmin = 30, graphmax = 1000;
-                for(let val = graphmin; val < graphmax; val+=10) {
+                for (let val = graphmin; val < graphmax; val += 10) {
                     data[data.graphvariable] = val;
                     let shipRates = calculateRates([data.fuel, data.ammo, data.steel, data.bauxite, data.devmat]);
 
@@ -423,11 +439,11 @@
                     context.fillRect(width / (graphmax - graphmin) * (val - graphmin), height - bar, width / (graphmax - graphmin) * 10, bar);
                     // console.error(shipRates[id])
 
-                    if(val % 250 == 0) {
+                    if (val % 250 == 0) {
                         context.fillStyle = "#000000";
                         context.save();
                         context.translate(width / (graphmax - graphmin) * (val - graphmin) + (width / (graphmax - graphmin)) / 2, height + 14);
-                        context.rotate(-Math.PI/2);
+                        context.rotate(-Math.PI / 2);
                         context.textAlign = "center";
                         context.fillText(val, 0, 3);
                         context.restore();
@@ -436,23 +452,23 @@
                     context.fillRect(width / (graphmax - graphmin) * (val - graphmin), 0, 1, height);
                 }
                 context.fillStyle = "#000000";
-                context.fillRect(width, 0, 1, height+1);
-                for(let percentage of [1, .75, .5, .25, 0]) {
+                context.fillRect(width, 0, 1, height + 1);
+                for (let percentage of [1, .75, .5, .25, 0]) {
                     context.fillRect(0, percentage * height, width, 1);
-                    context.fillText(percentage / SCALE * 100 + "%", width + 3, (1-percentage) * height);
+                    context.fillText(percentage / SCALE * 100 + "%", width + 3, (1 - percentage) * height);
                 }
-                
+
                 data[data.graphvariable] = defaultVal;
 
             }
             function load() {
                 try {
-                    let restore = function(w) {
-                        for(let key in w) {
+                    let restore = function (w) {
+                        for (let key in w) {
                             let val = w[key];
-                            if(typeof(val) == typeof(true))
+                            if (typeof (val) == typeof (true))
                                 document.getElementById(key).checked = val;
-                            else if(parseInt(val) == val)
+                            else if (parseInt(val) == val)
                                 document.getElementById(key).value = parseInt(val);
                             else
                                 document.getElementById(key).value = val;
@@ -460,8 +476,8 @@
                     }
                     restore(defaultdata);
 
-                    if(window.location.hash.length < 5) return; 
-                    let r =  decodeURIComponent(window.location.hash.substring(1)).replace(/:/g,'":"').replace(/,/g,'","') + '"';
+                    if (window.location.hash.length < 5) return;
+                    let r = decodeURIComponent(window.location.hash.substring(1)).replace(/:/g, '":"').replace(/,/g, '","') + '"';
                     let w = JSON.parse('{"' + r + '}');
                     restore(w);
                 } catch (e) {
@@ -469,26 +485,26 @@
                 }
             }
             function save() {
-                for(let key in rawdata)
-                    if(rawdata[key] == defaultdata[key])
+                for (let key in rawdata)
+                    if (rawdata[key] == defaultdata[key])
                         delete rawdata[key];
-                let changes = JSON.stringify(rawdata).replace('{','').replace('}','').replace(/"/g,'');
+                let changes = JSON.stringify(rawdata).replace('{', '').replace('}', '').replace(/"/g, '');
                 // console.log("Saving " + changes)
                 window.location.hash = "#" + changes;
             }
-            window.onhashchange = function() {
+            window.onhashchange = function () {
                 load();
                 update();
             }
-                        window.onresize = function() {
+            window.onresize = function () {
                 let a = document.getElementById("graphstuff");
-                if(window.innerWidth > 1360) {
-                    if(document.getElementById("graphera")) {
+                if (window.innerWidth > 1360) {
+                    if (document.getElementById("graphera")) {
                         document.getElementById("grapherb").appendChild(graphstuff);
                         document.getElementById("graphera").innerHTML = "";
                     }
                 } else {
-                    if(document.getElementById("grapherb")) {
+                    if (document.getElementById("grapherb")) {
                         document.getElementById("graphera").appendChild(graphstuff);
                         document.getElementById("grapherb").innerHTML = "";
                     }
@@ -498,5 +514,6 @@
             load();
             update();
         </script>
-    </body>
+</body>
+
 </html>

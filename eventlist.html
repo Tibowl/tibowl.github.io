@@ -1,214 +1,223 @@
 <!doctype html>
 <html>
-    <head>
-        <title>Flat is Justice! - Generate event table from kanmusu list</title>
 
-        <meta name="twitter:card" content="summary">
-        <meta name="twitter:title" content="Flat is Justice">
-        <meta name="twitter:creator" content="@FlatIsNice">
-        <meta name="twitter:description" content="Generate image from kanmusu list export">
-        <meta name="description" content="Generate image from kanmusu list export">
+<head>
+    <title>Flat is Justice! - Generate event table from kanmusu list</title>
 
-        <meta name="theme-color" content="#082E6B"/>
-        <meta name=viewport content="width=device-width, initial-scale=1">
-        <style type="text/css">
-        	div {
-        		display: inline-block;
-        	}
-            #download {
-                cursor:pointer;
-                color: -webkit-link;
-                text-decoration: underline;
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Flat is Justice">
+    <meta name="twitter:description" content="Generate image from kanmusu list export">
+    <meta name="description" content="Generate image from kanmusu list export">
+
+    <meta name="theme-color" content="#082E6B" />
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <style type="text/css">
+        div {
+            display: inline-block;
+        }
+
+        #download {
+            cursor: pointer;
+            color: -webkit-link;
+            text-decoration: underline;
+        }
+
+        #download:hover {
+            color: blue;
+        }
+
+        textarea {
+            width: 700px;
+            height: 200px;
+        }
+    </style>
+    <script src="ShowcaseEventList.js"></script>
+    <script src="https://unpkg.com/blob-util/dist/blob-util.min.js"></script>
+</head>
+
+<body>
+    <a href="."><b>Flat is Justice - Home</b></a><br>
+    <div>
+        <label><a href="http://kancolle-calc.net/kanmusu_list.html">kanmusu list</a>: <input id="kanmusulist"
+                onchange="update()" placeholder=".2|1:[...]"></input></label><br>
+        <label>Template:
+            <select id="eventConfigTemplate" onchange="update();">
+                <option value="2020summer-nishikuma">Summer 2020 - nishikuma</option>
+                <option value="2020summer-martirsadota">Summer 2020 - martirsadota</option>
+                <option value="2020summer-lovecoal0928">Summer 2020 - lovecoal0928</option>
+                <option selected value="foreignShips">Foreign ships</option>
+                <option value="2019fall-nishikuma">Fall 2019 - Nishikuma</option>
+                <option value="2019spring-lovecoal0928">Spring 2019 - lovecoal0928</option>
+                <option value="2018winter2-nicohatealpha">End of Year 2018 - nicohatealpha</option>
+                <option value="2018winter2-nishi">End of Year 2018 - Nishisonic</option>
+                <option value="nicohatealpha">
+                    &#19968;&#20843;&#24335;&#12288;&#26217;&#22799;&#12288;&#38480;&#23450;&#28023;&#22495;&#32244;&#24230;&#30906;&#35469;&#34920;
+                </option>
+                <option value="operationKitaTenGo">Operation Kita + Operation Ten-Go</option>
+                <option value="operationKitaTenGo-JP">&#21271;&#21495;&#20316;&#25126; +
+                    &#22346;&#12494;&#23724;&#27798;&#28023;&#25126;</option>
+                <option value="potatoShips">Potato</option>
+            </select>
+        </label><br>
+
+        Use [Enter] or click outside of the text box to update.
+    </div>
+    <br>
+    <br>
+    Output: <a id='download'>Download</a><br>
+    <canvas id="output"></canvas><br>
+    Makes use of <a href="https://github.com/KC3Kai/KC3Kai">KC3Kai's</a> event list showcase exporter.
+
+    <script type="text/javascript">
+        window.input = document.getElementById("kanmusulist").value = localStorage.getItem("ships") || "";
+        var selected = "";
+        var ships = [];
+
+        window.KC3ShipManager = {};
+        KC3ShipManager.load = function () { };
+        KC3ShipManager.find = function (searchFunc) {
+            if (ships.length == 0) generateShipList();
+            return ships.filter(searchFunc);
+        }
+
+        window.KC3Master = {};
+        KC3Master.all_ships = function () {
+            let shipids = input.split("|").map((str) => parseInt(str.split(":")[0])).filter((a) => a > 0);
+            let masterShipObj = {};
+            for (let id of shipids)
+                masterShipObj[id] = 0;
+            return masterShipObj;
+        }
+        KC3Master.ship = function (id) {
+            return {
+                kc3_bship: parseInt(id),
+                api_afterlv: 0
             }
-            #download:hover {
-                color:blue;
-            }
-            textarea {
-                width: 700px;
-                height: 200px;
-            }
-        </style>
-        <script src="ShowcaseEventList.js"></script>
-        <script src="https://unpkg.com/blob-util/dist/blob-util.min.js"></script>
-    </head>
-    <body>
-        <a href="."><b>Flat is Justice - Home</b></a><br>
-        <div>
-            <label><a href="http://kancolle-calc.net/kanmusu_list.html">kanmusu list</a>: <input id="kanmusulist" onchange="update()" placeholder=".2|1:[...]"></input></label><br>
-            <label>Template: 
-                <select id="eventConfigTemplate" onchange="update();">
-                    <option value="2020summer-nishikuma">Summer 2020 - nishikuma</option>
-                    <option value="2020summer-martirsadota">Summer 2020 - martirsadota</option>
-                    <option value="2020summer-lovecoal0928">Summer 2020 - lovecoal0928</option>
-                    <option selected value="foreignShips">Foreign ships</option>
-                    <option value="2019fall-nishikuma">Fall 2019 - Nishikuma</option>
-                    <option value="2019spring-lovecoal0928">Spring 2019 - lovecoal0928</option>
-                    <option value="2018winter2-nicohatealpha">End of Year 2018 - nicohatealpha</option>
-                    <option value="2018winter2-nishi">End of Year 2018 - Nishisonic</option>
-                    <option value="nicohatealpha">&#19968;&#20843;&#24335;&#12288;&#26217;&#22799;&#12288;&#38480;&#23450;&#28023;&#22495;&#32244;&#24230;&#30906;&#35469;&#34920;</option>
-                    <option value="operationKitaTenGo">Operation Kita + Operation Ten-Go</option>
-                    <option value="operationKitaTenGo-JP">&#21271;&#21495;&#20316;&#25126; + &#22346;&#12494;&#23724;&#27798;&#28023;&#25126;</option>
-                    <option value="potatoShips">Potato</option>
-                </select>
-            </label><br>
+        }
 
-            Use [Enter] or click outside of the text box to update.
-        </div>
-        <br>
-        <br>
-        Output: <a id='download'>Download</a><br>
-        <canvas id="output"></canvas><br>
-        Makes use of <a href="https://github.com/KC3Kai/KC3Kai">KC3Kai's</a> event list showcase exporter.
+        function KC3ImageExport() {
+            console.time("A")
+            let canvas = document.getElementById("output");
+            let ctx = canvas.getContext('2d');
+            let text = "Image generator at https://flatisjustice.moe/eventlist";
 
-    	<script type="text/javascript">
-            window.input = document.getElementById("kanmusulist").value = localStorage.getItem("ships") || "";
-            var selected = "";
-            var ships = [];
-
-            window.KC3ShipManager = {};
-            KC3ShipManager.load = function() {};
-            KC3ShipManager.find = function(searchFunc) {
-                if(ships.length == 0) generateShipList();
-                return ships.filter(searchFunc);
+            ctx.fillStyle = "#000";
+            ctx.shadowColor = "#fff";
+            ctx.strokeStyle = "#fff";
+            ctx.shadowBlur = 2;
+            let heightOff = 3;
+            switch (selected) {
+                case '2020summer-lovecoal0928':
+                case '2020summer-martirsadota':
+                case '2020summer-nishikuma':
+                    ctx.font = `600 30px "Helvetica Neue", Helvetica, Arial, sans-serif`;
+                    ctx.lineWidth = 2;
+                    heightOff = 6;
+                    break;
+                case '2019spring-lovecoal0928':
+                case '2018winter2-nishi':
+                    ctx.font = `600 20px "Helvetica Neue", Helvetica, Arial, sans-serif`;
+                    ctx.lineWidth = 2;
+                    heightOff = 5.5;
+                    break;
+                case '2018winter2-nicohatealpha':
+                case 'nicohatealpha':
+                    ctx.font = `400 20px "Helvetica Neue", Helvetica, Arial, sans-serif`;
+                    ctx.lineWidth = 2;
+                    heightOff = 4;
+                    break;
+                case 'foreignShips':
+                    ctx.font = `600 20px "Helvetica Neue", Helvetica, Arial, sans-serif`;
+                    ctx.lineWidth = 2;
+                    heightOff = 6;
+                    break;
+                default:
+                    ctx.font = `400 10px "Helvetica Neue", Helvetica, Arial, sans-serif`;
+                    ctx.lineWidth = 1;
+                    break;
             }
+            const x = (canvas.width - ctx.measureText(text).width) / 2
+            ctx.strokeText(text, x, canvas.height - heightOff);
+            ctx.fillText(text, x, canvas.height - heightOff);
 
-            window.KC3Master = {};
-            KC3Master.all_ships = function() {
-                let shipids = input.split("|").map((str) => parseInt(str.split(":")[0])).filter((a) => a > 0);
-                let masterShipObj = {};
-                for(let id of shipids)
-                    masterShipObj[id] = 0;
-                return masterShipObj;
+            setTimeout(() => {
+                blobUtil.canvasToBlob(canvas, 'image/png').then(function (blob) {
+                    document.getElementById("download").href = blobUtil.createObjectURL(blob);
+                });
+            }, 1);
+            console.timeEnd("A")
+            this.export = () => 0;
+            return this;
+        };
+        window.dateFormat = () => 0;
+
+        function update() {
+            input = document.getElementById("kanmusulist").value;
+            localStorage.setItem("ships", input);
+            generateShipList();
+            let eventConfigTemplate = document.getElementById('eventConfigTemplate');
+            selected = eventConfigTemplate.options[eventConfigTemplate.selectedIndex].value;
+            let sel = new ShowcaseEventList();
+            sel.exportList(selected.replace("-JP", ""), document.getElementById("output"));
+            sel.eventConfig.disclaimerHeightOffset = null;
+            switch (selected) {
+                case "operationKitaTenGo-JP":
+                    sel.baseImage.src = "/assets/img/ui/operation_kita_ten-go-JP.png";
+                    break;
+                default:
+                    break;
             }
-            KC3Master.ship = function(id) {
-                return {
-                    kc3_bship: parseInt(id),
-                    api_afterlv: 0
+        }
+
+        function generateShipList() {
+            ships = [];
+            let allShips = window.input.split("|");
+            for (let matchedShip of allShips) {
+                let shipInfo = matchedShip.split(":");
+                let id = shipInfo[0];
+                if (shipInfo.length != 2)
+                    continue;
+                for (let lvl of shipInfo[1].split(","))
+                    ships.push({
+                        masterId: parseInt(id),
+                        level: Math.floor(lvl)
+                    })
+            }
+        }
+
+        document.getElementById("download").addEventListener('click', function () {
+            //this.href = document.getElementById("output").toDataURL();
+            let d = new Date();
+            let eventConfigTemplate = document.getElementById('eventConfigTemplate');
+            let selected = eventConfigTemplate.options[eventConfigTemplate.selectedIndex].text;
+            this.download = `${selected} ${d.getFullYear()}-${("0" + (d.getMonth() + 1)).slice(-2)}-${("0" + d.getDate()).slice(-2)} ${("0" + d.getHours()).slice(-2)}${("0" + d.getMinutes()).slice(-2)}${("0" + d.getSeconds()).slice(-2)}.png`;
+        }, false);
+
+        /*function get(url, name) {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+                    if (xmlhttp.status == 200) {
+                        let js = xmlhttp.responseText;
+                        js = js.replace(/baseImgSrc = \"\//g, "baseImgSrc = \"https://raw.githubusercontent.com/KC3Kai/KC3Kai/update-cumulative/src/");
+                        eval(js);
+                        update();
+                   }
                 }
-            }
-
-            function KC3ImageExport(){
-                console.time("A")
-                let canvas = document.getElementById("output");
-                let ctx = canvas.getContext('2d');
-                let text = "Image generator at https://flatisjustice.moe/eventlist";
-
-                ctx.fillStyle = "#000";
-                ctx.shadowColor = "#fff";
-                ctx.strokeStyle = "#fff";
-                ctx.shadowBlur = 2;
-                let heightOff = 3;
-                switch(selected) {
-                    case '2020summer-lovecoal0928': 
-                    case '2020summer-martirsadota': 
-                    case '2020summer-nishikuma': 
-                        ctx.font = `600 30px "Helvetica Neue", Helvetica, Arial, sans-serif`;
-                        ctx.lineWidth = 2;
-                        heightOff = 6;
-                        break;
-                    case '2019spring-lovecoal0928': 
-                    case '2018winter2-nishi': 
-                        ctx.font = `600 20px "Helvetica Neue", Helvetica, Arial, sans-serif`;
-                        ctx.lineWidth = 2;
-                        heightOff = 5.5;
-                        break;
-                    case '2018winter2-nicohatealpha': 
-                    case 'nicohatealpha': 
-                        ctx.font = `400 20px "Helvetica Neue", Helvetica, Arial, sans-serif`;
-                        ctx.lineWidth = 2;
-                        heightOff = 4;
-                        break; 
-                    case 'foreignShips': 
-                        ctx.font = `600 20px "Helvetica Neue", Helvetica, Arial, sans-serif`;
-                        ctx.lineWidth = 2;
-                        heightOff = 6;
-                        break;
-                    default:
-                        ctx.font = `400 10px "Helvetica Neue", Helvetica, Arial, sans-serif`;
-                        ctx.lineWidth = 1;
-                        break;
-                }
-                const x = (canvas.width - ctx.measureText(text).width) / 2
-                ctx.strokeText(text, x, canvas.height - heightOff);
-                ctx.fillText(text, x, canvas.height - heightOff);
-
-                setTimeout(() => {
-                    blobUtil.canvasToBlob(canvas, 'image/png').then(function (blob) {
-                        document.getElementById("download").href = blobUtil.createObjectURL(blob);
-                    });
-                }, 1);
-                console.timeEnd("A")
-                this.export = () => 0;
-                return this;
             };
-            window.dateFormat = () => 0;
+            xmlhttp.open("GET", url, true);
+            xmlhttp.send();
+        }
 
-    		function update() {
-                input = document.getElementById("kanmusulist").value;
-                localStorage.setItem("ships", input);
-                generateShipList();
-                let eventConfigTemplate = document.getElementById('eventConfigTemplate');
-                selected = eventConfigTemplate.options[eventConfigTemplate.selectedIndex].value;
-                let sel = new ShowcaseEventList();
-                sel.exportList(selected.replace("-JP", ""), document.getElementById("output"));
-                sel.eventConfig.disclaimerHeightOffset = null;
-                switch(selected) {
-                    case "operationKitaTenGo-JP":
-                        sel.baseImage.src = "/assets/img/ui/operation_kita_ten-go-JP.png";
-                        break;
-                    default:
-                        break;
-                }
-    		}
+        get("https://raw.githubusercontent.com/KC3Kai/KC3Kai/update-cumulative/src/library/objects/ShowcaseEventList.js", "ShowcaseEventList");*/
 
-            function generateShipList() {
-                ships = [];
-                let allShips = window.input.split("|");
-                for(let matchedShip of allShips) {
-                    let shipInfo = matchedShip.split(":");
-                    let id = shipInfo[0];
-                    if(shipInfo.length != 2)
-                        continue;
-                    for(let lvl of shipInfo[1].split(","))
-                        ships.push({
-                            masterId: parseInt(id),
-                            level: Math.floor(lvl)
-                        })
-                }
+        var t = setInterval(function () {
+            if (window.ShowcaseEventList != undefined) {
+                clearInterval(t);
+                update();
             }
+        }, 100);
+    </script>
+</body>
 
-            document.getElementById("download").addEventListener('click', function() {
-                //this.href = document.getElementById("output").toDataURL();
-                let d = new Date();
-                let eventConfigTemplate = document.getElementById('eventConfigTemplate');
-                let selected = eventConfigTemplate.options[eventConfigTemplate.selectedIndex].text;
-                this.download = `${selected} ${d.getFullYear()}-${("0"+(d.getMonth()+1)).slice(-2)}-${("0" + d.getDate()).slice(-2)} ${("0" + d.getHours()).slice(-2)}${("0" + d.getMinutes()).slice(-2)}${("0" + d.getSeconds()).slice(-2)}.png`;
-            }, false);
-
-            /*function get(url, name) {
-                var xmlhttp = new XMLHttpRequest();
-                xmlhttp.onreadystatechange = function() {
-                    if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
-                        if (xmlhttp.status == 200) {
-                            let js = xmlhttp.responseText;
-                            js = js.replace(/baseImgSrc = \"\//g, "baseImgSrc = \"https://raw.githubusercontent.com/KC3Kai/KC3Kai/update-cumulative/src/");
-                            eval(js);
-                            update();
-                       }
-                    }
-                };
-                xmlhttp.open("GET", url, true);
-                xmlhttp.send();
-            }
-
-            get("https://raw.githubusercontent.com/KC3Kai/KC3Kai/update-cumulative/src/library/objects/ShowcaseEventList.js", "ShowcaseEventList");*/
-
-            var t = setInterval(function() {
-                if(window.ShowcaseEventList != undefined) {
-                    clearInterval(t);
-                    update();
-                }
-            }, 100);
-    	</script>
-    </body>
 </html>

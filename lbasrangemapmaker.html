@@ -1,790 +1,785 @@
 <!doctype html>
 <html>
-    <head>
-        <title>Flat is Justice! - lbas range map maker</title>
-        <meta name="theme-color" content="#082E6B"/>
-        <meta name=viewport content="width=device-width, initial-scale=1">
-        <meta name="twitter:card" content="summary">
-        <meta name="twitter:title" content="Flat is Justice - lbas range map maker">
-        <meta name="twitter:description" content="Make LBAS range maps">
-        <meta name="twitter:image" content="http://flatisjustice.moe/pics/lbasrangemapmaker.png">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.8.1/pixi.min.js"></script>
-        <script src="https://unpkg.com/blob-util/dist/blob-util.min.js"></script>
 
-        <style type="text/css">
-            input[type="number"] {
-                width:75px;
-            }
-            canvas {
-                margin: 5px;
-            }
-        </style>
-    </head>
-    <body>
-        <a href="."><b>Flat is Justice - Home</b></a><br>
-        <br>
-        /start API (ingame): <br><textarea id="start">svdata={"api_result":1,"api_result_msg":"\u6210\u529f","api_data":{"api_cell_data":[{"api_id":3012,"api_no":0,"api_color_no":0,"api_passed":0},{"api_id":3013,"api_no":1,"api_color_no":4,"api_passed":0},{"api_id":3014,"api_no":2,"api_color_no":4,"api_passed":0},{"api_id":3015,"api_no":3,"api_color_no":4,"api_passed":0},{"api_id":3016,"api_no":4,"api_color_no":2,"api_passed":0},{"api_id":3017,"api_no":5,"api_color_no":4,"api_passed":0},{"api_id":3018,"api_no":6,"api_color_no":4,"api_passed":0},{"api_id":3019,"api_no":7,"api_color_no":2,"api_passed":0},{"api_id":3020,"api_no":8,"api_color_no":3,"api_passed":0},{"api_id":3021,"api_no":9,"api_color_no":4,"api_passed":0},{"api_id":3022,"api_no":10,"api_color_no":5,"api_passed":0},{"api_id":3023,"api_no":11,"api_color_no":4,"api_passed":0},{"api_id":3024,"api_no":12,"api_color_no":4,"api_passed":0},{"api_id":3025,"api_no":13,"api_color_no":5,"api_passed":0}],"api_rashin_flg":1,"api_rashin_id":4,"api_maparea_id":1,"api_mapinfo_no":3,"api_no":3,"api_color_no":4,"api_event_id":4,"api_event_kind":1,"api_next":1,"api_bosscell_no":10,"api_bosscomp":0,"api_airsearch":{"api_plane_type":0,"api_result":0},"api_from_no":0}}
+<head>
+    <title>Flat is Justice! - lbas range map maker</title>
+    <meta name="theme-color" content="#082E6B" />
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Flat is Justice - lbas range map maker">
+    <meta name="twitter:description" content="Make LBAS range maps">
+    <meta name="twitter:image" content="http://flatisjustice.moe/pics/lbasrangemapmaker.png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.8.1/pixi.min.js"></script>
+    <script src="https://unpkg.com/blob-util/dist/blob-util.min.js"></script>
+
+    <style type="text/css">
+        input[type="number"] {
+            width: 75px;
+        }
+
+        canvas {
+            margin: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="."><b>Flat is Justice - Home</b></a><br>
+    <br>
+    /start API (ingame): <br><textarea id="start">svdata={"api_result":1,"api_result_msg":"\u6210\u529f","api_data":{"api_cell_data":[{"api_id":3012,"api_no":0,"api_color_no":0,"api_passed":0},{"api_id":3013,"api_no":1,"api_color_no":4,"api_passed":0},{"api_id":3014,"api_no":2,"api_color_no":4,"api_passed":0},{"api_id":3015,"api_no":3,"api_color_no":4,"api_passed":0},{"api_id":3016,"api_no":4,"api_color_no":2,"api_passed":0},{"api_id":3017,"api_no":5,"api_color_no":4,"api_passed":0},{"api_id":3018,"api_no":6,"api_color_no":4,"api_passed":0},{"api_id":3019,"api_no":7,"api_color_no":2,"api_passed":0},{"api_id":3020,"api_no":8,"api_color_no":3,"api_passed":0},{"api_id":3021,"api_no":9,"api_color_no":4,"api_passed":0},{"api_id":3022,"api_no":10,"api_color_no":5,"api_passed":0},{"api_id":3023,"api_no":11,"api_color_no":4,"api_passed":0},{"api_id":3024,"api_no":12,"api_color_no":4,"api_passed":0},{"api_id":3025,"api_no":13,"api_color_no":5,"api_passed":0}],"api_rashin_flg":1,"api_rashin_id":4,"api_maparea_id":1,"api_mapinfo_no":3,"api_no":3,"api_color_no":4,"api_event_id":4,"api_event_kind":1,"api_next":1,"api_bosscell_no":10,"api_bosscomp":0,"api_airsearch":{"api_plane_type":0,"api_result":0},"api_from_no":0}}
         </textarea><br>
-        <div id="startinfo"><b>API info for <span id='maptitle'>another map</span>!</b><br>
-                    Bypass? <input onchange="update()" type="checkbox" id="bypass"><br></div>
-        Map: <input type="text" id="mapid" value="45-1" onchange="update()"><br>
-        Server: <input type="text" id="server" value="203.104.209.71" onchange="update()">
-        <!--<button name="tsunCollect" onclick="tsunDB(document.getElementById('mapid').value)">Get from TsunDB</button>--><br><br>
-        <div id='options' style='column-width:300px'>
-            Show background <input onchange="update()" type="checkbox" id="background" checked><br>
-            Show routing edges <input onchange="update()" type="checkbox" id="routeedges"><br>
-            Show to edge ids <input onchange="update()" type="checkbox" id="toEdges"><br>
-            Show cleared path <input onchange="update()" type="checkbox" id="cleared" checked><br>
-            Show debug <input onchange="update()" type="checkbox" id="debuglines"><input onchange="update()" type="checkbox" id="debuglinessnap"><input onchange="update()" type="checkbox" id="airraidlines"><input onchange="update()" type="checkbox" id="apiinfo"><br>
-            Guess letters <input onchange="update()" type="checkbox" id="guessLetters"><br>
-            Show LBAS range <input onchange="update()" type="checkbox" id="distance" checked><br>
-            Show colors (of api when entered) <input onchange="update()" type="checkbox" id="colors" checked><br>
-            Show color of offset tag <input onchange="update()" type="checkbox" id="offsetColored"><br>
-            Show enemies <input onchange="update()" type="checkbox" id="enemies" checked><br>
-            Show routes? <input onchange="update()" type="checkbox" id="routes" checked><br>
-            Show airraids <input onchange="update()" type="checkbox" id="airraids" checked><br>
-            Show variation map <input onchange="update()" type="checkbox" id="variation" checked><br>
-            Minimalistic mode <input onchange="update()" type="checkbox" id="minimalistic"><br>
-        </div>
-        Forced color <input type="number" id="forcedcolor" min="-1" max="999" onchange="update();" value="-1"><br>
-        Show gauge <input type="number" id="gauge" min="0" max="20" onchange="update();" value="0">
-        <div id="gaugeinfo"></div>
-        Show hidden routes <input type="number" id="hiddenRoutes" min="0" max="20" onchange="update();" value="0">
-        <div id="hiddenrouteinfo"></div>
-        <br>
-        <button name="Update" onclick="update()">Force update</button><br><br>
-        <a id="download">Download</a><br>
-        <b>Edges map</b><br>
-        <script type="text/javascript">
-            var show = {}, locData, mapKey, svdata, bypass, wrongmap, canvas, bgLayer, loader, map, gaugeData;
-            let SERVER = "203.104.209.71";
-            let GAUGE_ROOT = `http://${SERVER}/kcs2/resources/gauge/`;
+    <div id="startinfo"><b>API info for <span id='maptitle'>another map</span>!</b><br>
+        Bypass? <input onchange="update()" type="checkbox" id="bypass"><br></div>
+    Map: <input type="text" id="mapid" value="45-1" onchange="update()"><br>
+    Server: <input type="text" id="server" value="203.104.209.71" onchange="update()">
+    <!--<button name="tsunCollect" onclick="tsunDB(document.getElementById('mapid').value)">Get from TsunDB</button>--><br><br>
+    <div id='options' style='column-width:300px'>
+        Show background <input onchange="update()" type="checkbox" id="background" checked><br>
+        Show routing edges <input onchange="update()" type="checkbox" id="routeedges"><br>
+        Show to edge ids <input onchange="update()" type="checkbox" id="toEdges"><br>
+        Show cleared path <input onchange="update()" type="checkbox" id="cleared" checked><br>
+        Show debug <input onchange="update()" type="checkbox" id="debuglines"><input onchange="update()" type="checkbox"
+            id="debuglinessnap"><input onchange="update()" type="checkbox" id="airraidlines"><input onchange="update()"
+            type="checkbox" id="apiinfo"><br>
+        Guess letters <input onchange="update()" type="checkbox" id="guessLetters"><br>
+        Show LBAS range <input onchange="update()" type="checkbox" id="distance" checked><br>
+        Show colors (of api when entered) <input onchange="update()" type="checkbox" id="colors" checked><br>
+        Show color of offset tag <input onchange="update()" type="checkbox" id="offsetColored"><br>
+        Show enemies <input onchange="update()" type="checkbox" id="enemies" checked><br>
+        Show routes? <input onchange="update()" type="checkbox" id="routes" checked><br>
+        Show airraids <input onchange="update()" type="checkbox" id="airraids" checked><br>
+        Show variation map <input onchange="update()" type="checkbox" id="variation" checked><br>
+        Minimalistic mode <input onchange="update()" type="checkbox" id="minimalistic"><br>
+    </div>
+    Forced color <input type="number" id="forcedcolor" min="-1" max="999" onchange="update();" value="-1"><br>
+    Show gauge <input type="number" id="gauge" min="0" max="20" onchange="update();" value="0">
+    <div id="gaugeinfo"></div>
+    Show hidden routes <input type="number" id="hiddenRoutes" min="0" max="20" onchange="update();" value="0">
+    <div id="hiddenrouteinfo"></div>
+    <br>
+    <button name="Update" onclick="update()">Force update</button><br><br>
+    <a id="download">Download</a><br>
+    <b>Edges map</b><br>
+    <script type="text/javascript">
+        var show = {}, locData, mapKey, svdata, bypass, wrongmap, canvas, bgLayer, loader, map, gaugeData;
+        let SERVER = "203.104.209.71";
+        let GAUGE_ROOT = `http://${SERVER}/kcs2/resources/gauge/`;
 
-            window.PIXI.utils.skipHello();
-            let app = new PIXI.Application({width: 1200, height: 720, transparent: true, forceCanvas: true, preserveDrawingBuffer:true});
-            document.body.appendChild(canvas = app.view);
-            function update(selectedmap = document.getElementById("mapid").value) {
-                document.getElementById("mapid").value = selectedmap;
-                SERVER = document.getElementById("server").value;
-                GAUGE_ROOT = `http://${SERVER}/kcs2/resources/gauge/`;
+        window.PIXI.utils.skipHello();
+        let app = new PIXI.Application({ width: 1200, height: 720, transparent: true, forceCanvas: true, preserveDrawingBuffer: true });
+        document.body.appendChild(canvas = app.view);
+        function update(selectedmap = document.getElementById("mapid").value) {
+            document.getElementById("mapid").value = selectedmap;
+            SERVER = document.getElementById("server").value;
+            GAUGE_ROOT = `http://${SERVER}/kcs2/resources/gauge/`;
 
-                let nonl = document.getElementById("start").value.replace(/\n/g,'').replace(/\r/g,'');
-                eval((nonl || "") == "" ? "svdata={}" : nonl);
-                show.background = document.getElementById("background").checked;
-                show.routeedges = document.getElementById("routeedges").checked;
-                show.toEdges = document.getElementById("toEdges").checked;
-                show.cleared = document.getElementById("cleared").checked;
-                show.debuglines = document.getElementById("debuglines").checked;
-                show.debuglinessnap = document.getElementById("debuglinessnap").checked;
-                show.airraidlines = document.getElementById("airraidlines").checked;
-                show.apiinfo = document.getElementById("apiinfo").checked;
-                show.guessLetters = document.getElementById("guessLetters").checked;
-                show.distance = document.getElementById("distance").checked;
-                show.colors = document.getElementById("colors").checked;
-                show.offsetColored = document.getElementById("offsetColored").checked;
-                show.enemies = document.getElementById("enemies").checked;
-                show.routes = document.getElementById("routes").checked;
-                show.airraids = document.getElementById("airraids").checked;
-                show.variation = document.getElementById("variation").checked;
-                show.minimalistic = document.getElementById("minimalistic").checked;
+            let nonl = document.getElementById("start").value.replace(/\n/g, '').replace(/\r/g, '');
+            eval((nonl || "") == "" ? "svdata={}" : nonl);
+            show.background = document.getElementById("background").checked;
+            show.routeedges = document.getElementById("routeedges").checked;
+            show.toEdges = document.getElementById("toEdges").checked;
+            show.cleared = document.getElementById("cleared").checked;
+            show.debuglines = document.getElementById("debuglines").checked;
+            show.debuglinessnap = document.getElementById("debuglinessnap").checked;
+            show.airraidlines = document.getElementById("airraidlines").checked;
+            show.apiinfo = document.getElementById("apiinfo").checked;
+            show.guessLetters = document.getElementById("guessLetters").checked;
+            show.distance = document.getElementById("distance").checked;
+            show.colors = document.getElementById("colors").checked;
+            show.offsetColored = document.getElementById("offsetColored").checked;
+            show.enemies = document.getElementById("enemies").checked;
+            show.routes = document.getElementById("routes").checked;
+            show.airraids = document.getElementById("airraids").checked;
+            show.variation = document.getElementById("variation").checked;
+            show.minimalistic = document.getElementById("minimalistic").checked;
 
-                show.forcedcolor = parseInt(document.getElementById("forcedcolor").value);
-                show.gauge = parseInt(document.getElementById("gauge").value);
-                show.hiddenRoutes = parseInt(document.getElementById("hiddenRoutes").value);
-                show.labels = true;
+            show.forcedcolor = parseInt(document.getElementById("forcedcolor").value);
+            show.gauge = parseInt(document.getElementById("gauge").value);
+            show.hiddenRoutes = parseInt(document.getElementById("hiddenRoutes").value);
+            show.labels = true;
 
-                if(show.minimalistic) {
-                    show.enemies = false;
-                    show.routes = false;
-                    show.cleared = false;
-                    show.colors = false;
-                    show.labels = false;
-                }
+            if (show.minimalistic) {
+                show.enemies = false;
+                show.routes = false;
+                show.cleared = false;
+                show.colors = false;
+                show.labels = false;
+            }
 
-                gaugeData = undefined;
-                map = selectedmap.split("-").map((a) => parseInt(a));
+            gaugeData = undefined;
+            map = selectedmap.split("-").map((a) => parseInt(a));
 
-                if(svdata && !(correctmap = (svdata.api_data.api_maparea_id == map[0] && svdata.api_data.api_mapinfo_no == map[1]))) {
-                    document.getElementById("startinfo").style = "";
-                    document.getElementById("maptitle").innerHTML = svdata.api_data.api_maparea_id + "-" + svdata.api_data.api_mapinfo_no
-                    bypass = document.getElementById("bypass").checked;
-                } else
-                    document.getElementById("startinfo").style = "display:none;";
+            if (svdata && !(correctmap = (svdata.api_data.api_maparea_id == map[0] && svdata.api_data.api_mapinfo_no == map[1]))) {
+                document.getElementById("startinfo").style = "";
+                document.getElementById("maptitle").innerHTML = svdata.api_data.api_maparea_id + "-" + svdata.api_data.api_mapinfo_no
+                bypass = document.getElementById("bypass").checked;
+            } else
+                document.getElementById("startinfo").style = "display:none;";
 
-                document.getElementById("apiinfo").disabled = !(correctmap || bypass);
-                document.getElementById("distance").disabled = !(correctmap || bypass);
+            document.getElementById("apiinfo").disabled = !(correctmap || bypass);
+            document.getElementById("distance").disabled = !(correctmap || bypass);
 
-                let mapname = `${pad(map[0], 3)}${pad(map[1], 2)}`;
-                mapKey = `map${mapname}_`
-                //console.log(imageUrl)
+            let mapname = `${pad(map[0], 3)}${pad(map[1], 2)}`;
+            mapKey = `map${mapname}_`
+            //console.log(imageUrl)
 
-                loader = new PIXI.loaders.Loader;
+            loader = new PIXI.loaders.Loader;
 
-                loader.add(getPath('image.json'))/*.add("https://i.imgur.com/8UgX5Pz.png")*/.add(`http://${SERVER}/kcs2/img/map/map_common.json`)/*.add(`http://${SERVER}/kcs2/img/map/map_event_anime.json`)*/.load(function() {
-                    getJSON(getPath('info.json'), function (info) {
-                        locData = info;
-                        let callback = function() {
-                            /*let mapanime = new PIXI.Container, sprite = new PIXI.Sprite(PIXI.Texture.fromFrame("map_event_anime_0"))
-                            let frame = 0;
-                            mapanime.addChild(sprite)
-                            mapanime.position.set(899, 370)
-                            setInterval(() => {
-                                frame >= 29 ? frame = 0 : frame++,
-                                sprite.texture = PIXI.Texture.fromFrame("map_event_anime_" + frame)
-                                app.render()
-                                console.log(frame)
-                            }, 250);
-                            app.stage.addChild(mapanime)*/
-                            if(show.gauge != 0)
-                                getJSON(GAUGE_ROOT + mapname + (show.gauge!=1?("_"+show.gauge):"") + ".json", function (info) {
-                                    gaugeData = info;
-                                    if(gaugeData && gaugeData.vertical && gaugeData.vertical.img) {
-                                        if(!gaugeData.vertical.img_l)
-                                            gaugeData.vertical.img_l = gaugeData.vertical.img + "_light"
-                                        loader.add(gaugeData.vertical.img, GAUGE_ROOT + gaugeData.vertical.img + ".png")
-                                              .add(gaugeData.vertical.img_l, GAUGE_ROOT + gaugeData.vertical.img_l + ".png").load(function() {
-                                            if(locData)
+            loader.add(getPath('image.json'))/*.add("https://i.imgur.com/8UgX5Pz.png")*/.add(`http://${SERVER}/kcs2/img/map/map_common.json`)/*.add(`http://${SERVER}/kcs2/img/map/map_event_anime.json`)*/.load(function () {
+                getJSON(getPath('info.json'), function (info) {
+                    locData = info;
+                    let callback = function () {
+                        /*let mapanime = new PIXI.Container, sprite = new PIXI.Sprite(PIXI.Texture.fromFrame("map_event_anime_0"))
+                        let frame = 0;
+                        mapanime.addChild(sprite)
+                        mapanime.position.set(899, 370)
+                        setInterval(() => {
+                            frame >= 29 ? frame = 0 : frame++,
+                            sprite.texture = PIXI.Texture.fromFrame("map_event_anime_" + frame)
+                            app.render()
+                            console.log(frame)
+                        }, 250);
+                        app.stage.addChild(mapanime)*/
+                        if (show.gauge != 0)
+                            getJSON(GAUGE_ROOT + mapname + (show.gauge != 1 ? ("_" + show.gauge) : "") + ".json", function (info) {
+                                gaugeData = info;
+                                if (gaugeData && gaugeData.vertical && gaugeData.vertical.img) {
+                                    if (!gaugeData.vertical.img_l)
+                                        gaugeData.vertical.img_l = gaugeData.vertical.img + "_light"
+                                    loader.add(gaugeData.vertical.img, GAUGE_ROOT + gaugeData.vertical.img + ".png")
+                                        .add(gaugeData.vertical.img_l, GAUGE_ROOT + gaugeData.vertical.img_l + ".png").load(function () {
+                                            if (locData)
                                                 showMap();
                                         })
-                                    }
-                                }, function (err) {
-                                    document.getElementById("gaugeinfo").innerHTML = `No gauge with id ${show.gauge} found!`
-                                });
-                        }
-                        if(show.hiddenRoutes) {
-                            getAddingInfo(1, callback);
-                            showMap();
-                        } else
-                            showMap(callback);
-                    });
-                })
-
-                document.getElementById("hiddenrouteinfo").innerHTML = "";
-                document.getElementById("gaugeinfo").innerHTML = "";
-            }
-            function getPath(url) {
-                return `http://${SERVER}/kcs2/resources/map/${pad(map[0], 3)}/${pad(map[1], 2)}_${url}`
-            }
-            function getAddingInfo(depth, callback) {
-                document.getElementById("hiddenrouteinfo").innerHTML = `Searching ${depth} deep...`;
-                getJSON(getPath(`info${locData.spots.length}.json`), function (info) {
-                    document.getElementById("hiddenrouteinfo").innerHTML = `Found ${depth-1} hidden node unlocks, loading spritesheet...`;
-                    loader.add(getPath(`image${locData.spots.length}.json`)).load(function() {
-                        document.getElementById("hiddenrouteinfo").innerHTML = `Found ${depth-1} hidden node unlocks, rendering`;
-                        console.log("Merging")
-                        if(locData.bg && info.bg)
-                            for(let background of info.bg)
-                                locData.bg.push(background);
-                        else if(info.bg) locData.bg = info.bg;
-
-                        if(locData.spots && info.spots)
-                            for(let spot of info.spots)
-                                locData.spots.push(spot);
-                        else if(info.spots) locData.spots = info.spots;
-
-                        if(locData.enemies && info.enemies)
-                            for(let enemy of info.enemies)
-                                locData.enemies.push(enemy);
-                        else if(info.enemies) locData.enemies = info.enemies;
-
-                        if(locData.labels && info.labels)
-                            for(let label of info.labels)
-                                locData.labels.push(label);
-                        else if(info.labels) locData.labels = info.labels;
-
-                        if(locData.airraids && info.airraids)
-                            for(let airraid of info.airraids)
-                                locData.airraids.push(airraid);
-                        else if(info.airraids) locData.airraids = info.airraids;
-
-                        if(info.airbase)
-                            locData.airbase = info.airbase;
-
-                        console.log("Merged, rendering")
-                        showMap();
-                        depth++;
-                        if(depth > show.hiddenRoutes) {
-                            document.getElementById("hiddenrouteinfo").innerHTML = `Found ${depth-1} hidden node unlocks, reached max depth ${show.hiddenRoutes}`;
-                            if(callback) callback();
-                        } else
-                            getAddingInfo(depth, callback);
-                    })
-                }, function (err) {
-                    console.log("No more hidden routes");
-                    document.getElementById("hiddenrouteinfo").innerHTML = `Found ${depth-1} hidden node unlocks, no more on servers`;
-                })
-            }
-            function showMap(callback) {
-                for (var i = app.stage.children.length - 1; i >= 0; i--) {  app.stage.removeChild(app.stage.children[i]); };
-                bgLayer = new PIXI.Container;
-                let ind = 0;
-                for (let bg in locData.bg) {
-                    if(show.minimalistic && ind++ > 0) continue;
-                    console.log(locData.bg[bg], typeof locData.bg[bg])
-                    let frame;
-                    if(locData.bg[bg] == undefined || typeof locData.bg[bg] == 'string')
-                        frame = PIXI.Texture.fromFrame(mapKey + locData.bg[bg]);
-                    else if (show.variation)
-                        frame = PIXI.Texture.fromFrame(mapKey+locData.bg[bg].img);
-                    let sprite = new PIXI.Sprite(frame);
-                    bgLayer.addChild(sprite);
-                }
-                if(show.background)
-                    app.stage.addChild(bgLayer);
-
-                if(locData.airbase && !show.minimalistic) {
-                    let frame = PIXI.Texture.fromFrame(colorToTexture(-98));
-                    let sprite = new PIXI.Sprite(frame);
-                    sprite.anchor.set(.5,.5);
-                    sprite.position.set(locData.airbase.x, locData.airbase.y);
-                    bgLayer.addChild(sprite);
-                }
-                drawEdgesOnGraph(callback);
-            }
-            function getNodeInfo(id) {
-                return locData.spots[id]; //.find((n) => n.no == id)
-            }
-            function colorToTexture(colorid) {
-                // .prototype._getTexture
-                // MAP_COMMON.getTexture
-                if(show.forcedcolor > 0)
-                    return 'map_common_' + show.forcedcolor;
-                switch(colorid) {
-                    case -1:
-                        return 'map_common_159';
-                    case 1:
-                        return 'map_common_152';
-                    case 2:
-                    case 6:
-                        return 'map_common_155';
-                    case 3:
-                        return 'map_common_157';
-                    case 4:
-                        return 'map_common_158';
-                    case 5:
-                        return 'map_common_146';
-                    case 7:
-                        return 'map_common_108';
-                    case 8:
-                        return 'map_common_145';
-                    case 9:
-                        return 'map_common_156';
-                    case 10:
-                        return 'map_common_101';
-                    case 11:
-                        return 'map_common_160';
-                    case 12:
-                        return 'map_common_161';
-                    case 13:
-                        return 'map_common_82';
-                    case -2:
-                        return 'map_common_154';
-                    case -3:
-                        return 'map_common_151';
-                    case 14:
-                        return 'map_common_152';
-
-                    case -98:
-                        return 'map_common_83';
-                    case -99:
-                        return 'map_common_17';
-                    default:
-                        return colorToTexture(-1);
-                }
-            }
-            function drawEnds(edgeData) {
-                let highestEdge = Math.max(...locData.spots.map((n) => n.no));
-
-                //console.log(highestEdge);
-                let wikiaCoordinates = ``, doneWikiaLetters = {};
-                for(let id in locData.spots) {
-                    let nodeInfo = getNodeInfo(id);
-                    let {x,y} = nodeInfo;
-
-                    if (!edgeData[id]) continue;
-
-                    let msg = edgeData[id][1];
-                    console.log(id, x, y,msg)
-                    let text = new PIXI.Text(msg, bigStyle)
-                    text.anchor.set(.5,.5)
-                    app.stage.addChild(text);
-                    text.position.set(x + 30, y - 30);
-
-                    if(doneWikiaLetters[msg]) continue;
-                    doneWikiaLetters[msg] = {x, y};
-                    wikiaCoordinates += `{{Map/ImageNode|${msg}|x=${Math.round(x*700/1200)}|y=${Math.round(y*700/1200)}}}\n`
-                }
-                console.log(JSON.stringify(doneWikiaLetters))
-                console.log(wikiaCoordinates)
-            }
-            kc3Edges = {};
-
-            let smallStyle = new PIXI.TextStyle({
-              fontFamily: "Arial",
-              fontSize: 16,
-              fill: "white",
-              stroke: '#ff3300',
-              strokeThickness: 3
-            });
-            let medStyle = new PIXI.TextStyle({
-              fontFamily: "Arial",
-              fontSize: 18,
-              fill: "white",
-              stroke: '#ff3300',
-              strokeThickness: 4,
-              dropShadow: true,
-              dropShadowColor: "#000000",
-              dropShadowBlur: 4,
-              dropShadowAngle: Math.PI / 6,
-              dropShadowDistance: 6,
-            });
-            let bigStyle = new PIXI.TextStyle({
-              fontFamily: "Arial",
-              fontSize: 36,
-              fill: "white",
-              stroke: '#003300',
-              strokeThickness: 4,
-              dropShadow: true,
-              dropShadowColor: "#000000",
-              dropShadowBlur: 4,
-              dropShadowAngle: Math.PI / 6,
-              dropShadowDistance: 6,
-            });
-            let lbasStyle = new PIXI.TextStyle({
-              fontFamily: "Arial",
-              fontSize: 36,
-              fill: "#6f3",
-              stroke: '#003300',
-              strokeThickness: 3,
-              dropShadow: true,
-              dropShadowColor: "#001100",
-              dropShadowBlur: 4,
-              dropShadowAngle: Math.PI / 6,
-              dropShadowDistance: 4,
-            });
-            let secretstyle = new PIXI.TextStyle({
-              fontFamily: "Arial",
-              fontSize: 20,
-              fill: "#080",
-            });
-            function drawEdgesOnGraph(callback) {
-                let edges = {};
-                edgeLoop: for (let edge of locData.spots) {
-                    for(let xOff = -1; xOff <= 1; xOff++)
-                        for(let yOff = -1; yOff <= 1; yOff++)
-                            if(edges[(edge.x + xOff) + ";" + (edge.y + yOff)]) {
-                                edges[(edge.x + xOff) + ";" + (edge.y + yOff)].push(edge);
-                                edge.x = edge.x + xOff;
-                                edge.y = edge.y + yOff;
-                                continue edgeLoop;    
-                            }
-                    edges[edge.x + ";" + edge.y] = [edge];
-                }
-                console.log("aa", edges)
-                kc3Edges = {};
-                if(show.colors)
-                    for (let edge of Object.values(edges)) {
-                        let nodeInfo = edge[0];
-                        if(correctmap||bypass) {
-                            let nodecell = svdata.api_data.api_cell_data[nodeInfo.no];
-                            for(let i = 0; i < edge.length; i++) {
-                                if(nodecell && nodecell.tsundb_color != undefined) break;
-                                nodeInfo = edge[i];
-                                nodecell = svdata.api_data.api_cell_data[nodeInfo.no];
-                            }
-                            if((correctmap || bypass) && nodecell && nodecell.api_color_no != 0)
-                                nodeInfo.color = nodecell.tsundb_color == undefined ? nodecell.api_color_no : nodecell.tsundb_color;
-                        }
-                        if(show.airraids && locData.airraids) {
-                            let airraid;
-                            for(let i = 0; i < edge.length; i++)
-                                if(airraid = locData.airraids.find((ar) => ar.no == edge[i].no)) {
-                                    nodeInfo.color = 10;
-
-                                    if(show.airraidlines) {
-                                        let line = new PIXI.Graphics();
-                                        line.lineStyle(1.5, 0xffff00, .75);
-                                        line.moveTo(airraid.from.x, airraid.from.y);
-                                        line.lineTo(airraid.to.x, airraid.to.y);
-                                        app.stage.addChild(line);
-                                    }
                                 }
-                        }
-                        if(nodeInfo.color) {
-                            if(show.offsetColored && nodeInfo.offsets)
-                                nodeInfo.color = parseInt(Object.keys(nodeInfo.offsets)[0]);
-                            console.log(nodeInfo, nodeInfo.no, nodeInfo.color);
-                            let offsetX = 0, offsetY = 0;
-                            if(nodeInfo.color == 5)
-                                offsetY = -5;
-                            if(nodeInfo.offsets && nodeInfo.offsets[nodeInfo.color]) {
-                                offsetX = nodeInfo.offsets[nodeInfo.color].x;
-                                offsetY = nodeInfo.offsets[nodeInfo.color].y;
-                            }
+                            }, function (err) {
+                                document.getElementById("gaugeinfo").innerHTML = `No gauge with id ${show.gauge} found!`
+                            });
+                    }
+                    if (show.hiddenRoutes) {
+                        getAddingInfo(1, callback);
+                        showMap();
+                    } else
+                        showMap(callback);
+                });
+            })
 
-                            if(nodeInfo.color == -99) {
-                                let frame = PIXI.Texture.fromFrame(colorToTexture(-99));
-                                let sprite = new PIXI.Sprite(frame);
-                                sprite.anchor.set(.5,.5)
-                                sprite.position.set(nodeInfo.x + offsetX, nodeInfo.y + offsetY);
-                                app.stage.addChild(sprite);
-                                nodeInfo.color = nodeInfo.color==-99?1:-1;
+            document.getElementById("hiddenrouteinfo").innerHTML = "";
+            document.getElementById("gaugeinfo").innerHTML = "";
+        }
+        function getPath(url) {
+            return `http://${SERVER}/kcs2/resources/map/${pad(map[0], 3)}/${pad(map[1], 2)}_${url}`
+        }
+        function getAddingInfo(depth, callback) {
+            document.getElementById("hiddenrouteinfo").innerHTML = `Searching ${depth} deep...`;
+            getJSON(getPath(`info${locData.spots.length}.json`), function (info) {
+                document.getElementById("hiddenrouteinfo").innerHTML = `Found ${depth - 1} hidden node unlocks, loading spritesheet...`;
+                loader.add(getPath(`image${locData.spots.length}.json`)).load(function () {
+                    document.getElementById("hiddenrouteinfo").innerHTML = `Found ${depth - 1} hidden node unlocks, rendering`;
+                    console.log("Merging")
+                    if (locData.bg && info.bg)
+                        for (let background of info.bg)
+                            locData.bg.push(background);
+                    else if (info.bg) locData.bg = info.bg;
+
+                    if (locData.spots && info.spots)
+                        for (let spot of info.spots)
+                            locData.spots.push(spot);
+                    else if (info.spots) locData.spots = info.spots;
+
+                    if (locData.enemies && info.enemies)
+                        for (let enemy of info.enemies)
+                            locData.enemies.push(enemy);
+                    else if (info.enemies) locData.enemies = info.enemies;
+
+                    if (locData.labels && info.labels)
+                        for (let label of info.labels)
+                            locData.labels.push(label);
+                    else if (info.labels) locData.labels = info.labels;
+
+                    if (locData.airraids && info.airraids)
+                        for (let airraid of info.airraids)
+                            locData.airraids.push(airraid);
+                    else if (info.airraids) locData.airraids = info.airraids;
+
+                    if (info.airbase)
+                        locData.airbase = info.airbase;
+
+                    console.log("Merged, rendering")
+                    showMap();
+                    depth++;
+                    if (depth > show.hiddenRoutes) {
+                        document.getElementById("hiddenrouteinfo").innerHTML = `Found ${depth - 1} hidden node unlocks, reached max depth ${show.hiddenRoutes}`;
+                        if (callback) callback();
+                    } else
+                        getAddingInfo(depth, callback);
+                })
+            }, function (err) {
+                console.log("No more hidden routes");
+                document.getElementById("hiddenrouteinfo").innerHTML = `Found ${depth - 1} hidden node unlocks, no more on servers`;
+            })
+        }
+        function showMap(callback) {
+            for (var i = app.stage.children.length - 1; i >= 0; i--) { app.stage.removeChild(app.stage.children[i]); };
+            bgLayer = new PIXI.Container;
+            let ind = 0;
+            for (let bg in locData.bg) {
+                if (show.minimalistic && ind++ > 0) continue;
+                console.log(locData.bg[bg], typeof locData.bg[bg])
+                let frame;
+                if (locData.bg[bg] == undefined || typeof locData.bg[bg] == 'string')
+                    frame = PIXI.Texture.fromFrame(mapKey + locData.bg[bg]);
+                else if (show.variation)
+                    frame = PIXI.Texture.fromFrame(mapKey + locData.bg[bg].img);
+                let sprite = new PIXI.Sprite(frame);
+                bgLayer.addChild(sprite);
+            }
+            if (show.background)
+                app.stage.addChild(bgLayer);
+
+            if (locData.airbase && !show.minimalistic) {
+                let frame = PIXI.Texture.fromFrame(colorToTexture(-98));
+                let sprite = new PIXI.Sprite(frame);
+                sprite.anchor.set(.5, .5);
+                sprite.position.set(locData.airbase.x, locData.airbase.y);
+                bgLayer.addChild(sprite);
+            }
+            drawEdgesOnGraph(callback);
+        }
+        function getNodeInfo(id) {
+            return locData.spots[id]; //.find((n) => n.no == id)
+        }
+        function colorToTexture(colorid) {
+            // .prototype._getTexture
+            // MAP_COMMON.getTexture
+            if (show.forcedcolor > 0)
+                return 'map_common_' + show.forcedcolor;
+            switch (colorid) {
+                case -1:
+                    return 'map_common_159';
+                case 1:
+                    return 'map_common_152';
+                case 2:
+                case 6:
+                    return 'map_common_155';
+                case 3:
+                    return 'map_common_157';
+                case 4:
+                    return 'map_common_158';
+                case 5:
+                    return 'map_common_146';
+                case 7:
+                    return 'map_common_108';
+                case 8:
+                    return 'map_common_145';
+                case 9:
+                    return 'map_common_156';
+                case 10:
+                    return 'map_common_101';
+                case 11:
+                    return 'map_common_160';
+                case 12:
+                    return 'map_common_161';
+                case 13:
+                    return 'map_common_82';
+                case -2:
+                    return 'map_common_154';
+                case -3:
+                    return 'map_common_151';
+                case 14:
+                    return 'map_common_152';
+
+                case -98:
+                    return 'map_common_83';
+                case -99:
+                    return 'map_common_17';
+                default:
+                    return colorToTexture(-1);
+            }
+        }
+        function drawEnds(edgeData) {
+            let highestEdge = Math.max(...locData.spots.map((n) => n.no));
+
+            //console.log(highestEdge);
+            let wikiaCoordinates = ``, doneWikiaLetters = {};
+            for (let id in locData.spots) {
+                let nodeInfo = getNodeInfo(id);
+                let { x, y } = nodeInfo;
+
+                if (!edgeData[id]) continue;
+
+                let msg = edgeData[id][1];
+                console.log(id, x, y, msg)
+                let text = new PIXI.Text(msg, bigStyle)
+                text.anchor.set(.5, .5)
+                app.stage.addChild(text);
+                text.position.set(x + 30, y - 30);
+
+                if (doneWikiaLetters[msg]) continue;
+                doneWikiaLetters[msg] = { x, y };
+                wikiaCoordinates += `{{Map/ImageNode|${msg}|x=${Math.round(x * 700 / 1200)}|y=${Math.round(y * 700 / 1200)}}}\n`
+            }
+            console.log(JSON.stringify(doneWikiaLetters))
+            console.log(wikiaCoordinates)
+        }
+        kc3Edges = {};
+
+        let smallStyle = new PIXI.TextStyle({
+            fontFamily: "Arial",
+            fontSize: 16,
+            fill: "white",
+            stroke: '#ff3300',
+            strokeThickness: 3
+        });
+        let medStyle = new PIXI.TextStyle({
+            fontFamily: "Arial",
+            fontSize: 18,
+            fill: "white",
+            stroke: '#ff3300',
+            strokeThickness: 4,
+            dropShadow: true,
+            dropShadowColor: "#000000",
+            dropShadowBlur: 4,
+            dropShadowAngle: Math.PI / 6,
+            dropShadowDistance: 6,
+        });
+        let bigStyle = new PIXI.TextStyle({
+            fontFamily: "Arial",
+            fontSize: 36,
+            fill: "white",
+            stroke: '#003300',
+            strokeThickness: 4,
+            dropShadow: true,
+            dropShadowColor: "#000000",
+            dropShadowBlur: 4,
+            dropShadowAngle: Math.PI / 6,
+            dropShadowDistance: 6,
+        });
+        let lbasStyle = new PIXI.TextStyle({
+            fontFamily: "Arial",
+            fontSize: 36,
+            fill: "#6f3",
+            stroke: '#003300',
+            strokeThickness: 3,
+            dropShadow: true,
+            dropShadowColor: "#001100",
+            dropShadowBlur: 4,
+            dropShadowAngle: Math.PI / 6,
+            dropShadowDistance: 4,
+        });
+        let secretstyle = new PIXI.TextStyle({
+            fontFamily: "Arial",
+            fontSize: 20,
+            fill: "#080",
+        });
+        function drawEdgesOnGraph(callback) {
+            let edges = {};
+            edgeLoop: for (let edge of locData.spots) {
+                for (let xOff = -1; xOff <= 1; xOff++)
+                    for (let yOff = -1; yOff <= 1; yOff++)
+                        if (edges[(edge.x + xOff) + ";" + (edge.y + yOff)]) {
+                            edges[(edge.x + xOff) + ";" + (edge.y + yOff)].push(edge);
+                            edge.x = edge.x + xOff;
+                            edge.y = edge.y + yOff;
+                            continue edgeLoop;
+                        }
+                edges[edge.x + ";" + edge.y] = [edge];
+            }
+            console.log("aa", edges)
+            kc3Edges = {};
+            if (show.colors)
+                for (let edge of Object.values(edges)) {
+                    let nodeInfo = edge[0];
+                    if (correctmap || bypass) {
+                        let nodecell = svdata.api_data.api_cell_data[nodeInfo.no];
+                        for (let i = 0; i < edge.length; i++) {
+                            if (nodecell && nodecell.tsundb_color != undefined) break;
+                            nodeInfo = edge[i];
+                            nodecell = svdata.api_data.api_cell_data[nodeInfo.no];
+                        }
+                        if ((correctmap || bypass) && nodecell && nodecell.api_color_no != 0)
+                            nodeInfo.color = nodecell.tsundb_color == undefined ? nodecell.api_color_no : nodecell.tsundb_color;
+                    }
+                    if (show.airraids && locData.airraids) {
+                        let airraid;
+                        for (let i = 0; i < edge.length; i++)
+                            if (airraid = locData.airraids.find((ar) => ar.no == edge[i].no)) {
+                                nodeInfo.color = 10;
+
+                                if (show.airraidlines) {
+                                    let line = new PIXI.Graphics();
+                                    line.lineStyle(1.5, 0xffff00, .75);
+                                    line.moveTo(airraid.from.x, airraid.from.y);
+                                    line.lineTo(airraid.to.x, airraid.to.y);
+                                    app.stage.addChild(line);
+                                }
                             }
-                            console.log(nodeInfo.color, colorToTexture(nodeInfo.color))
-                            let frame = PIXI.Texture.fromFrame(colorToTexture(nodeInfo.color));
+                    }
+                    if (nodeInfo.color) {
+                        if (show.offsetColored && nodeInfo.offsets)
+                            nodeInfo.color = parseInt(Object.keys(nodeInfo.offsets)[0]);
+                        console.log(nodeInfo, nodeInfo.no, nodeInfo.color);
+                        let offsetX = 0, offsetY = 0;
+                        if (nodeInfo.color == 5)
+                            offsetY = -5;
+                        if (nodeInfo.offsets && nodeInfo.offsets[nodeInfo.color]) {
+                            offsetX = nodeInfo.offsets[nodeInfo.color].x;
+                            offsetY = nodeInfo.offsets[nodeInfo.color].y;
+                        }
+
+                        if (nodeInfo.color == -99) {
+                            let frame = PIXI.Texture.fromFrame(colorToTexture(-99));
                             let sprite = new PIXI.Sprite(frame);
-                            sprite.anchor.set(.5,.5)
+                            sprite.anchor.set(.5, .5)
                             sprite.position.set(nodeInfo.x + offsetX, nodeInfo.y + offsetY);
                             app.stage.addChild(sprite);
+                            nodeInfo.color = nodeInfo.color == -99 ? 1 : -1;
                         }
-                    }
-
-                if(locData.labels && show.labels) {
-                    for(let label of locData.labels) {
-                        let frame = PIXI.Texture.fromFrame(mapKey + label.img);
+                        console.log(nodeInfo.color, colorToTexture(nodeInfo.color))
+                        let frame = PIXI.Texture.fromFrame(colorToTexture(nodeInfo.color));
                         let sprite = new PIXI.Sprite(frame);
-                        sprite.position.set(label.x, label.y);
+                        sprite.anchor.set(.5, .5)
+                        sprite.position.set(nodeInfo.x + offsetX, nodeInfo.y + offsetY);
                         app.stage.addChild(sprite);
                     }
                 }
 
-                if (show.minimalistic) {
+            if (locData.labels && show.labels) {
+                for (let label of locData.labels) {
+                    let frame = PIXI.Texture.fromFrame(mapKey + label.img);
+                    let sprite = new PIXI.Sprite(frame);
+                    sprite.position.set(label.x, label.y);
+                    app.stage.addChild(sprite);
+                }
+            }
+
+            if (show.minimalistic) {
+                let circle = new PIXI.Graphics();
+                circle.beginFill(0x222222, .2);
+                circle.arc(0, 0, 9999, 0, 2 * Math.PI);
+                app.stage.addChild(circle);
+            }
+
+            for (let nodeInfo of locData.spots) {
+                let id = nodeInfo.no;
+
+                if (nodeInfo.route && show.routes) {
+                    console.log(nodeInfo.route)
+                    let frame = PIXI.Texture.fromFrame(mapKey + nodeInfo.route.img);
+                    let sprite = new PIXI.Sprite(frame);
+                    sprite.rotation = (nodeInfo.route.r || 0) / 180 * Math.PI
+                    sprite.position.set(nodeInfo.x + (nodeInfo.line.x || 0), nodeInfo.y + (nodeInfo.line.y || 0));
+                    app.stage.addChild(sprite);
+                }
+                if (!nodeInfo.line) continue;
+
+                let frame = PIXI.Texture.fromFrame(mapKey + (nodeInfo.line.img || ("route_" + id)))
+                let sprite = new PIXI.Sprite(frame);
+                sprite.rotation = (nodeInfo.line.r || 0) / 180 * Math.PI
+                sprite.position.set(nodeInfo.x + nodeInfo.line.x, nodeInfo.y + nodeInfo.line.y);
+                if (show.cleared && show.routes)
+                    app.stage.addChild(sprite);
+
+                let bounds = sprite.getBounds();
+                //console.log(id, nodeInfo, bounds)
+                let middlex = bounds.x + bounds.width / 2;
+                let middley = bounds.y + bounds.height / 2;
+                let x = bounds.x + bounds.width;
+                let y = bounds.y + bounds.height;
+                if (nodeInfo.line.x < 0)
+                    x += nodeInfo.line.x;
+                if (nodeInfo.line.y < 0)
+                    y += nodeInfo.line.y;
+
+                let closestFrom = undefined;
+                for (let node of locData.spots)
+                    if (node.x != nodeInfo.x || node.y != nodeInfo.y)
+                        if (closestFrom == undefined || (node.x - x) ** 2 + (node.y - y) ** 2 < (closestFrom.x - x) ** 2 + (closestFrom.y - y) ** 2)
+                            closestFrom = node;
+
+                if (show.debuglines) {
+                    let line = new PIXI.Graphics();
+                    line.lineStyle(1, 0x00ff00, .75);
+                    line.moveTo(bounds.x, bounds.y);
+                    line.lineTo(bounds.x + bounds.width, bounds.y);
+                    line.lineTo(bounds.x + bounds.width, bounds.y + bounds.height);
+                    line.lineTo(bounds.x, bounds.y + bounds.height);
+                    line.lineTo(bounds.x, bounds.y);
+                    app.stage.addChild(line);
+
+                    line = new PIXI.Graphics();
+                    line.moveTo(nodeInfo.x, nodeInfo.y);
+                    line.lineStyle(1.5, 0xff0000, 1);
+                    let endCoords = { x, y };
+                    if (show.debuglinessnap)
+                        endCoords = closestFrom;
+                    line.lineTo(endCoords.x, endCoords.y);
+                    app.stage.addChild(line);
+
+
+                    line = new PIXI.Graphics();
+                    let angle = Math.atan2(nodeInfo.y - endCoords.y, nodeInfo.x - endCoords.x);
+                    line.setTransform(nodeInfo.x + (endCoords.x - nodeInfo.x) / 2, nodeInfo.y + (endCoords.y - nodeInfo.y) / 2, 1, 1, angle);
+                    line.lineStyle(5, 0xff0000, 1);
+                    line.moveTo(0, 0);
+                    line.lineTo(-10, -10);
+                    line.moveTo(0, 0);
+                    line.lineTo(-10, +10);
+                    app.stage.addChild(line);
+
                     let circle = new PIXI.Graphics();
-                    circle.beginFill(0x222222, .2);
-                    circle.arc(0, 0, 9999, 0, 2*Math.PI);
+                    circle.beginFill(0x0000ff);
+                    circle.arc(nodeInfo.x, nodeInfo.y, 5, 0, 2 * Math.PI);
+                    app.stage.addChild(circle);
+                    /*
+                    line = new PIXI.Graphics();
+                    line.lineStyle(1, 0x0000ff, 1);
+                    line.moveTo(nodeInfo.x, nodeInfo.y);
+                    line.lineTo(nodeInfo.x+5, nodeInfo.y+5);
+                    line.lineTo(nodeInfo.x-5, nodeInfo.y-5);
+                    line.moveTo(nodeInfo.x, nodeInfo.y);
+                    line.lineTo(nodeInfo.x-5, nodeInfo.y+5);
+                    line.lineTo(nodeInfo.x+5, nodeInfo.y-5);
+                    app.stage.addChild(line);*/
+                }
+
+
+                if (show.minimalistic) {
+                    let line = new PIXI.Graphics();
+                    line.moveTo(nodeInfo.x, nodeInfo.y);
+                    line.lineStyle(10, 0xcccccc, .6);
+                    let endCoords = closestFrom;
+                    line.lineTo(endCoords.x, endCoords.y);
+                    app.stage.addChild(line);
+
+                    let circle = new PIXI.Graphics();
+                    circle.beginFill(0xcccccc);
+                    circle.arc(nodeInfo.x, nodeInfo.y, 5, 0, 2 * Math.PI);
                     app.stage.addChild(circle);
                 }
 
-                for(let nodeInfo of locData.spots) {
-                    let id = nodeInfo.no;
-
-                    if(nodeInfo.route && show.routes) {
-                        console.log(nodeInfo.route)
-                        let frame = PIXI.Texture.fromFrame(mapKey + nodeInfo.route.img);
-                        let sprite = new PIXI.Sprite(frame);
-                        sprite.rotation = (nodeInfo.route.r||0) / 180 * Math.PI
-                        sprite.position.set(nodeInfo.x + (nodeInfo.line.x||0), nodeInfo.y + (nodeInfo.line.y||0));
-                        app.stage.addChild(sprite);
-                    }
-                    if(!nodeInfo.line) continue;
-
-                    let frame = PIXI.Texture.fromFrame(mapKey + (nodeInfo.line.img || ("route_" + id)))
-                    let sprite = new PIXI.Sprite(frame);
-                    sprite.rotation = (nodeInfo.line.r||0) / 180 * Math.PI
-                    sprite.position.set(nodeInfo.x + nodeInfo.line.x, nodeInfo.y + nodeInfo.line.y);
-                    if(show.cleared && show.routes)
-                        app.stage.addChild(sprite);
-
-                    let bounds = sprite.getBounds();
-                    //console.log(id, nodeInfo, bounds)
-                    let middlex = bounds.x + bounds.width/2;
-                    let middley = bounds.y + bounds.height/2;
-                    let x = bounds.x + bounds.width;
-                    let y = bounds.y + bounds.height;
-                    if(nodeInfo.line.x < 0)
-                        x += nodeInfo.line.x;
-                    if(nodeInfo.line.y < 0)
-                        y += nodeInfo.line.y;
-
-                    let closestFrom = undefined;
-                    for (let node of locData.spots)
-                        if(node.x != nodeInfo.x || node.y != nodeInfo.y)
-                            if (closestFrom == undefined || (node.x-x)**2 + (node.y-y)**2 < (closestFrom.x-x)**2 + (closestFrom.y-y)**2)
-                                closestFrom = node;
-
-                    if(show.debuglines) {
-                        let line = new PIXI.Graphics();
-                        line.lineStyle(1, 0x00ff00, .75);
-                        line.moveTo(bounds.x, bounds.y);
-                        line.lineTo(bounds.x + bounds.width, bounds.y);
-                        line.lineTo(bounds.x + bounds.width, bounds.y + bounds.height);
-                        line.lineTo(bounds.x, bounds.y + bounds.height);
-                        line.lineTo(bounds.x, bounds.y);
-                        app.stage.addChild(line);
-
-                        line = new PIXI.Graphics();
-                        line.moveTo(nodeInfo.x, nodeInfo.y);
-                        line.lineStyle(1.5, 0xff0000, 1);
-                        let endCoords = {x,y};
-                        if(show.debuglinessnap)
-                            endCoords = closestFrom;
-                        line.lineTo(endCoords.x, endCoords.y);
-                        app.stage.addChild(line);
-
-
-                        line = new PIXI.Graphics();
-                        let angle = Math.atan2(nodeInfo.y - endCoords.y, nodeInfo.x - endCoords.x);
-                        line.setTransform(nodeInfo.x+(endCoords.x-nodeInfo.x)/2, nodeInfo.y+(endCoords.y-nodeInfo.y)/2, 1, 1, angle);
-                        line.lineStyle(5, 0xff0000, 1);
-                        line.moveTo(0, 0);
-                        line.lineTo(-10, -10);
-                        line.moveTo(0, 0);
-                        line.lineTo(-10, +10);
-                        app.stage.addChild(line);
-
-                        let circle = new PIXI.Graphics();
-                        circle.beginFill(0x0000ff);
-                        circle.arc(nodeInfo.x, nodeInfo.y, 5, 0, 2*Math.PI);
-                        app.stage.addChild(circle);
-                        /*
-                        line = new PIXI.Graphics();
-                        line.lineStyle(1, 0x0000ff, 1);
-                        line.moveTo(nodeInfo.x, nodeInfo.y);
-                        line.lineTo(nodeInfo.x+5, nodeInfo.y+5);
-                        line.lineTo(nodeInfo.x-5, nodeInfo.y-5);
-                        line.moveTo(nodeInfo.x, nodeInfo.y);
-                        line.lineTo(nodeInfo.x-5, nodeInfo.y+5);
-                        line.lineTo(nodeInfo.x+5, nodeInfo.y-5);
-                        app.stage.addChild(line);*/
-                    }
-
-
-                    if(show.minimalistic) {
-                        let line = new PIXI.Graphics();
-                        line.moveTo(nodeInfo.x, nodeInfo.y);
-                        line.lineStyle(10, 0xcccccc, .6);
-                        let endCoords = closestFrom;
-                        line.lineTo(endCoords.x, endCoords.y);
-                        app.stage.addChild(line);
-
-                        let circle = new PIXI.Graphics();
-                        circle.beginFill(0xcccccc);
-                        circle.arc(nodeInfo.x, nodeInfo.y, 5, 0, 2*Math.PI);
-                        app.stage.addChild(circle);
-                    }
-
-                    if(show.routeedges) {
-                        let text = new PIXI.Text(id, medStyle)
-                        text.anchor.set(.5,.5)
-                        app.stage.addChild(text);
-                        text.position.set(middlex, middley);
-                    }
-
-                    /*if(nodeInfo.no == 21 || nodeInfo.no == 23) {
-                        let aaa = new PIXI.Graphics();
-                        aaa.position.set(nodeInfo.x, nodeInfo.y);
-                        aaa.id = nodeInfo
-
-                        frame = PIXI.Texture.fromFrame("https://i.imgur.com/8UgX5Pz.png");
-                        let _wave = new PIXI.Sprite(frame);
-                        _wave.anchor.set(.5),
-                        _wave.buttonMode = false;
-                        _wave.interactive = false;
-                        _wave.scale.set(1.35),
-                        aaa.addChild(_wave),
-                        aaa.beginFill(0x00ff00, 0.25);
-                        aaa.buttonMode = !0
-                        aaa.interactive = !0
-                        aaa.drawCircle(0, 0, 38)
-                        aaa.on("mouseup", () => console.log(aaa.id.no));
-                        //.touch ? "touchend" : "mouseup
-                        app.stage.addChild(aaa);
-                    }*/
-
-                    let fromId = "Node" + edges[closestFrom.x + ";" + closestFrom.y].map((e) => e.no).join("_");
-                    let toId = "Node" + edges[nodeInfo.x + ";" + nodeInfo.y].map((e) => e.no).join("_");
-
-                    kc3Edges[id] = [fromId, toId];
-                }
-
-                if(show.gauge != 0 && gaugeData) {
-                    if(gaugeData.vertical.bar) {
-                        let colorbox = new PIXI.Graphics;
-                        colorbox.beginFill(gaugeData.vertical.bar.color || 16711680);
-                        let barH = gaugeData.vertical.bar.h || 253;
-                        let barW = gaugeData.vertical.bar.w || 18;
-
-                        colorbox.drawRect(gaugeData.vertical.x + gaugeData.vertical.bar.x, gaugeData.vertical.y + gaugeData.vertical.bar.y, barW, barH);
-                        colorbox.endFill()
-                        app.stage.addChild(colorbox);
-                    }
-                    let frame = PIXI.Texture.fromFrame(gaugeData.vertical.img)
-                    let sprite = new PIXI.Sprite(frame);
-                    sprite.position.set(gaugeData.vertical.x, gaugeData.vertical.y);
-                    app.stage.addChild(sprite);
-
-                    frame = PIXI.Texture.fromFrame(gaugeData.vertical.img_l)
-                    sprite = new PIXI.Sprite(frame);
-                    let lightoffset = gaugeData.vertical.light ? gaugeData.vertical.light : {x:0,y:0}
-                    sprite.position.set(gaugeData.vertical.x + lightoffset.x, gaugeData.vertical.y + lightoffset.y);
-                    app.stage.addChild(sprite);
-                }
-
-                if(show.enemies && locData.enemies) {
-                    for(let enemy of locData.enemies) {
-                        let frame = PIXI.Texture.fromFrame(mapKey + enemy.img)
-                        let sprite = new PIXI.Sprite(frame);
-                        sprite.alpha = .8;
-                        sprite.position.set(enemy.x, enemy.y);
-                        app.stage.addChild(sprite);
-
-                        if(show.airraidlines) {
-                            let nodeInfo = locData.spots.find((n) => n.no == enemy.no);
-                            if(nodeInfo) {
-                                let line = new PIXI.Graphics();
-                                line.lineStyle(2, 0xff00ff, 1);
-                                line.moveTo(enemy.x + sprite.getBounds().width / 2, enemy.y + sprite.getBounds().height / 2);
-                                line.lineTo(nodeInfo.x, nodeInfo.y);
-                                app.stage.addChild(line);
-                            }
-                        }
-                    }
-                }
-
-                if(show.toEdges)
-                    for (let edge of Object.values(edges)) {
-                        let ids = edge.map((e) => e.no).join(", ");
-
-                        let {x, y} = edge[0]
-                        let text = new PIXI.Text(ids, smallStyle);
-                        text.anchor.set(.5,.5);
-                        app.stage.addChild(text);
-                        text.position.set(x,y)
-                    }
-                if(show.apiinfo && (correctmap || bypass))
-                    for (let edge of Object.values(edges)) {
-                        let info = edge.map(function (e) {
-                            let d = svdata.api_data.api_cell_data.find((m) => m && m.api_no == e.no);
-                            if(d)
-                            return `${e.no}:${d.api_color_no==undefined?'':' c: '+d.api_color_no}${d.tsundb_color==undefined?'':' t: '+d.tsundb_color} ${d.api_distance==undefined?'':' r: '+d.api_distance}`
-                        }).join(", ");
-
-                        let {x, y} = edge[0]
-                        let text = new PIXI.Text(info, smallStyle);
-                        text.anchor.set(.5,.5);
-                        app.stage.addChild(text);
-                        text.position.set(x, y + 30)
-                    }
-
-                if(show.distance && svdata && svdata.api_data && svdata.api_data.api_cell_data && (correctmap || bypass))
-                    for (let edge of Object.values(edges)) {
-                        let distance = unique(edge.map((e) => {
-                            let n = svdata.api_data.api_cell_data.find((m) => m && m.api_no == e.no);
-                            return n?n.api_distance:-99
-                        }).filter((d) => d >= 0 && d < 99)).join("/");
-                        let {x, y} = edge[0];
-                        if(distance.length > 0) {
-                            let text = new PIXI.Text(distance, lbasStyle);
-                            text.anchor.set(.5,.5);
-                            app.stage.addChild(text);
-                            text.position.set(x, y - 30)
-                        }
-                    }
-
-                if(show.guessLetters) {
-                    let nodeCount = 0;
-                    let startCount = 0;
-                    let nodeNames = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
-                    let replaceLetter = (toReplace, nodeLetter) => {
-                        for(let edge of Object.values(kc3Edges)) {
-                            if (edge[0] == toReplace)
-                                edge[0] = nodeLetter;
-                            if (edge[1] == toReplace)
-                                edge[1] = nodeLetter;
-                        }
-                    }
-                    if (mapKey == "map04903_")
-                        replaceLetter(`Node28`, "V");
-                    for(let nodeInfo of locData.spots) {
-                        let id = nodeInfo.no;
-                        if(!nodeInfo.line) {
-                            // Replace starting points
-                            replaceLetter(`Node${id}`, (startCount++) ? `Start ${startCount}` : "Start");
-                            continue;
-                        }
-
-                        if(kc3Edges[id][1].indexOf("Node") == 0 && nodeCount < nodeNames.length) {
-                            let toReplace = kc3Edges[id][1];
-
-                            // Guess from ordering
-                            let nodeLetter = "?";
-
-                            // Extract from labels
-                            if(locData.labels) {
-                                let closest = 35 * 35;
-                                for(let label of locData.labels) {
-                                    let dist = (label.x - nodeInfo.x) ** 2 + (label.y - 20 - nodeInfo.y) ** 2;
-                                    if (label.img.indexOf("text_") > 0 && dist < closest) {
-                                        nodeLetter = label.img.split("text_")[1];
-                                        // console.log(dist, nodeLetter, label.y - nodeInfo.y, label.x - nodeInfo.x)
-                                        closest = dist;
-                                    }
-                                }
-                            } 
-                            if (nodeLetter == "?")  {
-                                nodeLetter = nodeNames[nodeCount++]
-                            }
-
-                            // Replace the shit
-                            replaceLetter(toReplace, nodeLetter);
-                        }
-                    }
-                    drawEnds(kc3Edges);
-                }
-
-                for(let dir of [[1,0,.5,0], [0,-1,1,.5]]) {
-                    let text = new PIXI.Text("@FlatIsNice", secretstyle);
-                    text.setTransform(app.stage.width*dir[2], app.stage.height*dir[3], 1, 1, Math.atan2(-dir[1], dir[0]));
-                    text.anchor.set(.5,0);
-                    if((show.apiinfo || show.distance) && (correctmap || bypass))
-                        text.alpha = 1/128;
-                    else
-                        text.alpha = 1/255;
+                if (show.routeedges) {
+                    let text = new PIXI.Text(id, medStyle)
+                    text.anchor.set(.5, .5)
                     app.stage.addChild(text);
+                    text.position.set(middlex, middley);
                 }
 
-                app.render();
-                console.log(`"World ${document.getElementById("mapid").value}" : {\n${Object.keys(kc3Edges).map((k) => `      "${k}" : ["${kc3Edges[k][0]}", "${kc3Edges[k][1]}"]`).join(",\n")}\n    },`)
-                delete document.getElementById("download").href
-                blobUtil.canvasToBlob(canvas, 'image/png').then(function (blob) {
-                    console.log(blob.size)
-                    document.getElementById("download").href = blobUtil.createObjectURL(blob);
-                })
-                document.getElementById("download").addEventListener('click', function() {
-                    let d = new Date();
-                    this.download = `Map ${document.getElementById("mapid").value}.png`;
-                }, false);
+                /*if(nodeInfo.no == 21 || nodeInfo.no == 23) {
+                    let aaa = new PIXI.Graphics();
+                    aaa.position.set(nodeInfo.x, nodeInfo.y);
+                    aaa.id = nodeInfo
 
-                if(callback) callback();
+                    frame = PIXI.Texture.fromFrame("https://i.imgur.com/8UgX5Pz.png");
+                    let _wave = new PIXI.Sprite(frame);
+                    _wave.anchor.set(.5),
+                    _wave.buttonMode = false;
+                    _wave.interactive = false;
+                    _wave.scale.set(1.35),
+                    aaa.addChild(_wave),
+                    aaa.beginFill(0x00ff00, 0.25);
+                    aaa.buttonMode = !0
+                    aaa.interactive = !0
+                    aaa.drawCircle(0, 0, 38)
+                    aaa.on("mouseup", () => console.log(aaa.id.no));
+                    //.touch ? "touchend" : "mouseup
+                    app.stage.addChild(aaa);
+                }*/
+
+                let fromId = "Node" + edges[closestFrom.x + ";" + closestFrom.y].map((e) => e.no).join("_");
+                let toId = "Node" + edges[nodeInfo.x + ";" + nodeInfo.y].map((e) => e.no).join("_");
+
+                kc3Edges[id] = [fromId, toId];
             }
 
-            function pad(n, width = 3, z = '0') {
-                n = n + '';
-                return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+            if (show.gauge != 0 && gaugeData) {
+                if (gaugeData.vertical.bar) {
+                    let colorbox = new PIXI.Graphics;
+                    colorbox.beginFill(gaugeData.vertical.bar.color || 16711680);
+                    let barH = gaugeData.vertical.bar.h || 253;
+                    let barW = gaugeData.vertical.bar.w || 18;
+
+                    colorbox.drawRect(gaugeData.vertical.x + gaugeData.vertical.bar.x, gaugeData.vertical.y + gaugeData.vertical.bar.y, barW, barH);
+                    colorbox.endFill()
+                    app.stage.addChild(colorbox);
+                }
+                let frame = PIXI.Texture.fromFrame(gaugeData.vertical.img)
+                let sprite = new PIXI.Sprite(frame);
+                sprite.position.set(gaugeData.vertical.x, gaugeData.vertical.y);
+                app.stage.addChild(sprite);
+
+                frame = PIXI.Texture.fromFrame(gaugeData.vertical.img_l)
+                sprite = new PIXI.Sprite(frame);
+                let lightoffset = gaugeData.vertical.light ? gaugeData.vertical.light : { x: 0, y: 0 }
+                sprite.position.set(gaugeData.vertical.x + lightoffset.x, gaugeData.vertical.y + lightoffset.y);
+                app.stage.addChild(sprite);
             }
-            function getJSON(url, callback, errorcallback) {
-                var xhr = new XMLHttpRequest();
-                xhr.open('GET', url, true);
-                xhr.responseType = 'json';
-                xhr.onload = function() {
-                    var status = xhr.status;
-                    if (status === 200) {
-                        callback(xhr.response);
-                    } else {
-                        if(!errorcallback)
-                            alert("Error with request " + url + ": " + status);
-                        else
-                            errorcallback(status)
+
+            if (show.enemies && locData.enemies) {
+                for (let enemy of locData.enemies) {
+                    let frame = PIXI.Texture.fromFrame(mapKey + enemy.img)
+                    let sprite = new PIXI.Sprite(frame);
+                    sprite.alpha = .8;
+                    sprite.position.set(enemy.x, enemy.y);
+                    app.stage.addChild(sprite);
+
+                    if (show.airraidlines) {
+                        let nodeInfo = locData.spots.find((n) => n.no == enemy.no);
+                        if (nodeInfo) {
+                            let line = new PIXI.Graphics();
+                            line.lineStyle(2, 0xff00ff, 1);
+                            line.moveTo(enemy.x + sprite.getBounds().width / 2, enemy.y + sprite.getBounds().height / 2);
+                            line.lineTo(nodeInfo.x, nodeInfo.y);
+                            app.stage.addChild(line);
+                        }
                     }
-                };
-                xhr.send();
+                }
+            }
+
+            if (show.toEdges)
+                for (let edge of Object.values(edges)) {
+                    let ids = edge.map((e) => e.no).join(", ");
+
+                    let { x, y } = edge[0]
+                    let text = new PIXI.Text(ids, smallStyle);
+                    text.anchor.set(.5, .5);
+                    app.stage.addChild(text);
+                    text.position.set(x, y)
+                }
+            if (show.apiinfo && (correctmap || bypass))
+                for (let edge of Object.values(edges)) {
+                    let info = edge.map(function (e) {
+                        let d = svdata.api_data.api_cell_data.find((m) => m && m.api_no == e.no);
+                        if (d)
+                            return `${e.no}:${d.api_color_no == undefined ? '' : ' c: ' + d.api_color_no}${d.tsundb_color == undefined ? '' : ' t: ' + d.tsundb_color} ${d.api_distance == undefined ? '' : ' r: ' + d.api_distance}`
+                    }).join(", ");
+
+                    let { x, y } = edge[0]
+                    let text = new PIXI.Text(info, smallStyle);
+                    text.anchor.set(.5, .5);
+                    app.stage.addChild(text);
+                    text.position.set(x, y + 30)
+                }
+
+            if (show.distance && svdata && svdata.api_data && svdata.api_data.api_cell_data && (correctmap || bypass))
+                for (let edge of Object.values(edges)) {
+                    let distance = unique(edge.map((e) => {
+                        let n = svdata.api_data.api_cell_data.find((m) => m && m.api_no == e.no);
+                        return n ? n.api_distance : -99
+                    }).filter((d) => d >= 0 && d < 99)).join("/");
+                    let { x, y } = edge[0];
+                    if (distance.length > 0) {
+                        let text = new PIXI.Text(distance, lbasStyle);
+                        text.anchor.set(.5, .5);
+                        app.stage.addChild(text);
+                        text.position.set(x, y - 30)
+                    }
+                }
+
+            if (show.guessLetters) {
+                let nodeCount = 0;
+                let startCount = 0;
+                let nodeNames = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
+                let replaceLetter = (toReplace, nodeLetter) => {
+                    for (let edge of Object.values(kc3Edges)) {
+                        if (edge[0] == toReplace)
+                            edge[0] = nodeLetter;
+                        if (edge[1] == toReplace)
+                            edge[1] = nodeLetter;
+                    }
+                }
+                if (mapKey == "map04903_")
+                    replaceLetter(`Node28`, "V");
+                for (let nodeInfo of locData.spots) {
+                    let id = nodeInfo.no;
+                    if (!nodeInfo.line) {
+                        // Replace starting points
+                        replaceLetter(`Node${id}`, (startCount++) ? `Start ${startCount}` : "Start");
+                        continue;
+                    }
+
+                    if (kc3Edges[id][1].indexOf("Node") == 0 && nodeCount < nodeNames.length) {
+                        let toReplace = kc3Edges[id][1];
+
+                        // Guess from ordering
+                        let nodeLetter = "?";
+
+                        // Extract from labels
+                        if (locData.labels) {
+                            let closest = 35 * 35;
+                            for (let label of locData.labels) {
+                                let dist = (label.x - nodeInfo.x) ** 2 + (label.y - 20 - nodeInfo.y) ** 2;
+                                if (label.img.indexOf("text_") > 0 && dist < closest) {
+                                    nodeLetter = label.img.split("text_")[1];
+                                    // console.log(dist, nodeLetter, label.y - nodeInfo.y, label.x - nodeInfo.x)
+                                    closest = dist;
+                                }
+                            }
+                        }
+                        if (nodeLetter == "?") {
+                            nodeLetter = nodeNames[nodeCount++]
+                        }
+
+                        // Replace the shit
+                        replaceLetter(toReplace, nodeLetter);
+                    }
+                }
+                drawEnds(kc3Edges);
+            }
+
+            app.render();
+            console.log(`"World ${document.getElementById("mapid").value}" : {\n${Object.keys(kc3Edges).map((k) => `      "${k}" : ["${kc3Edges[k][0]}", "${kc3Edges[k][1]}"]`).join(",\n")}\n    },`)
+            delete document.getElementById("download").href
+            blobUtil.canvasToBlob(canvas, 'image/png').then(function (blob) {
+                console.log(blob.size)
+                document.getElementById("download").href = blobUtil.createObjectURL(blob);
+            })
+            document.getElementById("download").addEventListener('click', function () {
+                let d = new Date();
+                this.download = `Map ${document.getElementById("mapid").value}.png`;
+            }, false);
+
+            if (callback) callback();
+        }
+
+        function pad(n, width = 3, z = '0') {
+            n = n + '';
+            return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+        }
+        function getJSON(url, callback, errorcallback) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.responseType = 'json';
+            xhr.onload = function () {
+                var status = xhr.status;
+                if (status === 200) {
+                    callback(xhr.response);
+                } else {
+                    if (!errorcallback)
+                        alert("Error with request " + url + ": " + status);
+                    else
+                        errorcallback(status)
+                }
             };
-            function tsunDB(map) {
-                getJSON(`http://tsundb.kc3.moe/api/routes/data/${map}?offset=0&limit=1&next_route=0`, function(data){
-                    document.getElementById("start").value = "svdata=" + JSON.stringify({api_data: { api_cell_data: data[0].mapNodes } });
-                });
-            }
+            xhr.send();
+        };
+        function tsunDB(map) {
+            getJSON(`http://tsundb.kc3.moe/api/routes/data/${map}?offset=0&limit=1&next_route=0`, function (data) {
+                document.getElementById("start").value = "svdata=" + JSON.stringify({ api_data: { api_cell_data: data[0].mapNodes } });
+            });
+        }
 
-            function unique(arr) {
-                if(!arr) return [];
-                return arr.reduce(function(accum, current) {
-                    if (accum.indexOf(current) < 0) {
-                        accum.push(current);
-                    }
-                    return accum;
-                }, []);
-            }
-            update();
-        </script>
-    </body>
+        function unique(arr) {
+            if (!arr) return [];
+            return arr.reduce(function (accum, current) {
+                if (accum.indexOf(current) < 0) {
+                    accum.push(current);
+                }
+                return accum;
+            }, []);
+        }
+        update();
+    </script>
+</body>
+
 </html>

@@ -1,179 +1,185 @@
 <!doctype html>
 <html>
-    <head>
-        <title>Flat is Justice! - Merge images manually</title>
-        <meta name="theme-color" content="#082E6B"/>
-        <meta name=viewport content="width=device-width, initial-scale=1">
-        <meta name="twitter:card" content="summary">
-        <meta name="twitter:title" content="Flat is Justice - Merge images manually">
-        <meta name="twitter:description" content="Merges overlapping images manually">
-        <style type="text/css">
-            body {
-                background-color: #ccc;
-            }
-        </style>
-    </head>
-    <body>
-        <a href="."><b>Flat is Justice - Home</b></a><br>
 
-        URL A: <input type="text" id="urlA" onchange="update()" value="https://i.imgur.com/GFHH3e8.png"><br>
-        URL B: <input type="text" id="urlB" onchange="update()" value="https://i.imgur.com/1Iy83nL.png"><br>
-        <button name="Update" onclick="update()">Update</button><br><br>
+<head>
+    <title>Flat is Justice! - Merge images manually</title>
+    <meta name="theme-color" content="#082E6B" />
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Flat is Justice - Merge images manually">
+    <meta name="twitter:description" content="Merges overlapping images manually">
+    <style type="text/css">
+        body {
+            background-color: #ccc;
+        }
+    </style>
+</head>
 
-        Output<br>
-        <canvas id="graphMerge" width="786" height="435" style="border:1px solid black;image-rendering: pixelated;"></canvas><br>
-        <canvas id="graphA" width="786" height="435" style="border:1px solid black;image-rendering: pixelated;"></canvas><br>
-        <canvas id="graphB" width="786" height="435" style="border:1px solid black;image-rendering: pixelated;"></canvas><br>
+<body>
+    <a href="."><b>Flat is Justice - Home</b></a><br>
 
-        <br><br>
-        <script type="text/javascript">
-            const canvas = document.getElementById("graphMerge"), canvasA = document.getElementById("graphA"), canvasB = document.getElementById("graphB");
-            const context = canvas.getContext("2d"), contextA = graphA.getContext("2d"), contextB = graphB.getContext("2d");
-            const clickedCoords = {"A":[{"x":81,"y":231},{"x":417,"y":431}],"B":[{"x":30,"y":11},{"x":333,"y":192}]}
-            var imgA, imgB;
+    URL A: <input type="text" id="urlA" onchange="update()" value="https://i.imgur.com/GFHH3e8.png"><br>
+    URL B: <input type="text" id="urlB" onchange="update()" value="https://i.imgur.com/1Iy83nL.png"><br>
+    <button name="Update" onclick="update()">Update</button><br><br>
 
-            function update() {
-                imgA = new Image();
-                imgA.onload = function() {
-                    canvasA.height = imgA.height;
-                    canvasA.width = imgA.width;
+    Output<br>
+    <canvas id="graphMerge" width="786" height="435"
+        style="border:1px solid black;image-rendering: pixelated;"></canvas><br>
+    <canvas id="graphA" width="786" height="435"
+        style="border:1px solid black;image-rendering: pixelated;"></canvas><br>
+    <canvas id="graphB" width="786" height="435"
+        style="border:1px solid black;image-rendering: pixelated;"></canvas><br>
 
-                    contextA.drawImage(imgA, 0, 0);
-                    if(imgB.height) redraw();
-                }
-                imgA.crossOrigin = "Anonymous";
-                imgA.src = document.getElementById("urlA").value;
+    <br><br>
+    <script type="text/javascript">
+        const canvas = document.getElementById("graphMerge"), canvasA = document.getElementById("graphA"), canvasB = document.getElementById("graphB");
+        const context = canvas.getContext("2d"), contextA = graphA.getContext("2d"), contextB = graphB.getContext("2d");
+        const clickedCoords = { "A": [{ "x": 81, "y": 231 }, { "x": 417, "y": 431 }], "B": [{ "x": 30, "y": 11 }, { "x": 333, "y": 192 }] }
+        var imgA, imgB;
 
-
-                imgB = new Image();
-                imgB.onload = function() {
-                    canvasB.height = imgB.height;
-                    canvasB.width = imgB.width;
-
-                    contextB.drawImage(imgB, 0, 0);
-                    if(imgA.height) redraw();
-                }
-                imgB.crossOrigin = "Anonymous";
-                imgB.src = document.getElementById("urlB").value;
-            }
-
-            canvasA.onmousedown = function (e) {
-                if(e.which != 1) return;
-                handleClick(canvasA.relMouseCoords(e), "A");
-            }
-            canvasB.onmousedown = function (e) {
-                if(e.which != 1) return;
-                handleClick(canvasB.relMouseCoords(e), "B");
-            }
-            function getLen(a,b) {
-                return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2)
-            }
-            function handleClick(pos, c) {
+        function update() {
+            imgA = new Image();
+            imgA.onload = function () {
+                canvasA.height = imgA.height;
                 canvasA.width = imgA.width;
-                canvasB.width = imgB.width;
+
                 contextA.drawImage(imgA, 0, 0);
+                if (imgB.height) redraw();
+            }
+            imgA.crossOrigin = "Anonymous";
+            imgA.src = document.getElementById("urlA").value;
+
+
+            imgB = new Image();
+            imgB.onload = function () {
+                canvasB.height = imgB.height;
+                canvasB.width = imgB.width;
+
                 contextB.drawImage(imgB, 0, 0);
-                console.log("Clicked at ", pos, c);
-
-                clickedCoords[c].push(pos);
-                clickedCoords[c] = clickedCoords[c].slice(1);
-                redraw();
+                if (imgA.height) redraw();
             }
-            function redraw() {
-                console.log(clickedCoords);
-                for(let letter of Object.keys(clickedCoords)) {
-                    let con = (letter == "A") ? contextA : contextB;
-                    con.strokeStyle = "#FF0000";
-                    con.strokeRect(clickedCoords[letter][0].x - 1, clickedCoords[letter][0].y - 1, 1, 1)
-                    con.strokeStyle = "#00FF00";
-                    con.strokeRect(clickedCoords[letter][1].x - 1, clickedCoords[letter][1].y - 1, 1, 1)
-                }
+            imgB.crossOrigin = "Anonymous";
+            imgB.src = document.getElementById("urlB").value;
+        }
 
-                let lengA = getLen(clickedCoords.A[0], clickedCoords.A[1])
-                let lengB = getLen(clickedCoords.B[0], clickedCoords.B[1])
-                console.log(lengA, lengB);
+        canvasA.onmousedown = function (e) {
+            if (e.which != 1) return;
+            handleClick(canvasA.relMouseCoords(e), "A");
+        }
+        canvasB.onmousedown = function (e) {
+            if (e.which != 1) return;
+            handleClick(canvasB.relMouseCoords(e), "B");
+        }
+        function getLen(a, b) {
+            return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2)
+        }
+        function handleClick(pos, c) {
+            canvasA.width = imgA.width;
+            canvasB.width = imgB.width;
+            contextA.drawImage(imgA, 0, 0);
+            contextB.drawImage(imgB, 0, 0);
+            console.log("Clicked at ", pos, c);
 
-                let biggest = (lengA >= lengB) ? "A" : "B"
-                let ratio = (biggest == "A") ? lengA / lengB : lengB / lengA;
-                console.log(biggest, ratio);
-
-                // Middle position
-                let middleA = {
-                    "x": (clickedCoords.A[0].x + clickedCoords.A[1].x) / 2,
-                    "y": (clickedCoords.A[0].y + clickedCoords.A[1].y) / 2
-                }
-                let middleB = {
-                    "x": (clickedCoords.B[0].x + clickedCoords.B[1].x) / 2,
-                    "y": (clickedCoords.B[0].y + clickedCoords.B[1].y) / 2
-                }
-                console.log(middleA, middleB);
-                let endX, endY;
-                if (biggest == "A") {
-                    // A is bigger, ending middle pos needs to be at max(A, B * ratio)
-                    endX = Math.max(middleA.x, ratio * middleB.x);
-                    endY = Math.max(middleA.y, ratio * middleB.y);
-                } else {
-                    // B is bigger, ending middle pos needs to be at max(A * ratio, B)
-                    endX = Math.max(middleA.x * ratio, middleB.x);
-                    endY = Math.max(middleA.y * ratio, middleB.y);
-                } 
-                console.log(endX, endY)
-
-                let startBX, startBY, bw, bh, startAX, startAY, aw, ah;
-                if(biggest == "A") {
-                    startBX = endX - (middleB.x * ratio);
-                    startBY = endY - (middleB.y * ratio);
-                    bw = imgB.width * ratio;
-                    bh = imgB.height * ratio;
-
-                    startAX = endX - middleA.x;
-                    startAY = endY - middleA.y;
-                    aw = imgA.width;
-                    ah = imgA.height;
-                } else {
-                    startBX = endX - middleB.x;
-                    startBY = endY - middleB.y;
-                    bw = imgB.width;
-                    bh = imgB.height;
-
-                    startAX = endX - (middleA.x * ratio);
-                    startAY = endY - (middleA.y * ratio);
-                    aw = imgA.width * ratio;
-                    ah = imgA.height * ratio;
-                }
-
-                canvas.width = Math.max(startBX + bw, startAX + aw)
-                canvas.height = Math.max(startAY + ah, startBY + bh)
-                
-                if(biggest == "A") {
-                    context.drawImage(imgB, startBX, startBY, bw, bh)
-                    context.drawImage(imgA, startAX, startAY, aw, ah)
-                } else {
-                    context.drawImage(imgA, startAX, startAY, aw, ah)
-                    context.drawImage(imgB, startBX, startBY, bw, bh)
-                }
+            clickedCoords[c].push(pos);
+            clickedCoords[c] = clickedCoords[c].slice(1);
+            redraw();
+        }
+        function redraw() {
+            console.log(clickedCoords);
+            for (let letter of Object.keys(clickedCoords)) {
+                let con = (letter == "A") ? contextA : contextB;
+                con.strokeStyle = "#FF0000";
+                con.strokeRect(clickedCoords[letter][0].x - 1, clickedCoords[letter][0].y - 1, 1, 1)
+                con.strokeStyle = "#00FF00";
+                con.strokeRect(clickedCoords[letter][1].x - 1, clickedCoords[letter][1].y - 1, 1, 1)
             }
-            function relMouseCoords(event){
-                var totalOffsetX = 0;
-                var totalOffsetY = 0;
-                var canvasX = 0;
-                var canvasY = 0;
-                var currentElement = this;
 
-                do{
-                    totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
-                    totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
-                }
-                while(currentElement = currentElement.offsetParent)
+            let lengA = getLen(clickedCoords.A[0], clickedCoords.A[1])
+            let lengB = getLen(clickedCoords.B[0], clickedCoords.B[1])
+            console.log(lengA, lengB);
 
-                canvasX = event.pageX - totalOffsetX;
-                canvasY = event.pageY - totalOffsetY;
+            let biggest = (lengA >= lengB) ? "A" : "B"
+            let ratio = (biggest == "A") ? lengA / lengB : lengB / lengA;
+            console.log(biggest, ratio);
 
-                return {x:canvasX, y:canvasY}
+            // Middle position
+            let middleA = {
+                "x": (clickedCoords.A[0].x + clickedCoords.A[1].x) / 2,
+                "y": (clickedCoords.A[0].y + clickedCoords.A[1].y) / 2
             }
-            HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords;
+            let middleB = {
+                "x": (clickedCoords.B[0].x + clickedCoords.B[1].x) / 2,
+                "y": (clickedCoords.B[0].y + clickedCoords.B[1].y) / 2
+            }
+            console.log(middleA, middleB);
+            let endX, endY;
+            if (biggest == "A") {
+                // A is bigger, ending middle pos needs to be at max(A, B * ratio)
+                endX = Math.max(middleA.x, ratio * middleB.x);
+                endY = Math.max(middleA.y, ratio * middleB.y);
+            } else {
+                // B is bigger, ending middle pos needs to be at max(A * ratio, B)
+                endX = Math.max(middleA.x * ratio, middleB.x);
+                endY = Math.max(middleA.y * ratio, middleB.y);
+            }
+            console.log(endX, endY)
 
-            update();
-        </script>
-    </body>
+            let startBX, startBY, bw, bh, startAX, startAY, aw, ah;
+            if (biggest == "A") {
+                startBX = endX - (middleB.x * ratio);
+                startBY = endY - (middleB.y * ratio);
+                bw = imgB.width * ratio;
+                bh = imgB.height * ratio;
+
+                startAX = endX - middleA.x;
+                startAY = endY - middleA.y;
+                aw = imgA.width;
+                ah = imgA.height;
+            } else {
+                startBX = endX - middleB.x;
+                startBY = endY - middleB.y;
+                bw = imgB.width;
+                bh = imgB.height;
+
+                startAX = endX - (middleA.x * ratio);
+                startAY = endY - (middleA.y * ratio);
+                aw = imgA.width * ratio;
+                ah = imgA.height * ratio;
+            }
+
+            canvas.width = Math.max(startBX + bw, startAX + aw)
+            canvas.height = Math.max(startAY + ah, startBY + bh)
+
+            if (biggest == "A") {
+                context.drawImage(imgB, startBX, startBY, bw, bh)
+                context.drawImage(imgA, startAX, startAY, aw, ah)
+            } else {
+                context.drawImage(imgA, startAX, startAY, aw, ah)
+                context.drawImage(imgB, startBX, startBY, bw, bh)
+            }
+        }
+        function relMouseCoords(event) {
+            var totalOffsetX = 0;
+            var totalOffsetY = 0;
+            var canvasX = 0;
+            var canvasY = 0;
+            var currentElement = this;
+
+            do {
+                totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
+                totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
+            }
+            while (currentElement = currentElement.offsetParent)
+
+            canvasX = event.pageX - totalOffsetX;
+            canvasY = event.pageY - totalOffsetY;
+
+            return { x: canvasX, y: canvasY }
+        }
+        HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords;
+
+        update();
+    </script>
+</body>
+
 </html>

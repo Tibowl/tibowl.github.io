@@ -62,9 +62,9 @@
         function generateXP() {
             const nodeXP = parseFloat(document.getElementById('nodeXP').value)
             const xplist = document.getElementById("xplist")
-            
+
             xplist.innerHTML =
-                `Border: 1.0 ~ ${(Math.floor(nodeXP/12)/10).toFixed(1)}XP
+                `Border: 1.0 ~ ${(Math.floor(nodeXP / 12) / 10).toFixed(1)}XP
                 <tr>
                     <th>Kanmusu XP left till level up</th>
                     <th>Plays animation?</th>
@@ -72,15 +72,15 @@
 
             let xp = nodeXP
             let isLastBugged = 0
-            while(isLastBugged < 5) {
-                const isBugged = xp > 119/120 * nodeXP && nodeXP !== xp
+            while (isLastBugged < 5) {
+                const isBugged = xp > 119 / 120 * nodeXP && nodeXP !== xp
 
                 xplist.innerHTML +=
-                `<tr>
-                    <td>${xp} = ${nodeXP}-${nodeXP-xp}</td>
-                    <td style="background-color: ${isBugged ?"#DD5555" : "#55DD55"};text-align: center;">${isBugged ? "❌" : "✔️"}</td>
+                    `<tr>
+                    <td>${xp} = ${nodeXP}-${nodeXP - xp}</td>
+                    <td style="background-color: ${isBugged ? "#DD5555" : "#55DD55"};text-align: center;">${isBugged ? "❌" : "✔️"}</td>
                 </tr>`
-                if(!isBugged) isLastBugged++
+                if (!isBugged) isLastBugged++
                 xp--
             }
         }

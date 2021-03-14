@@ -78,7 +78,7 @@ function frame() {
         uelevel,
         rank,
         stars: starInfo.starCount
-    } 
+    }
 
     console.log("Detected", info, starInfo, rank, uelevel)
 
@@ -334,7 +334,7 @@ function zoom() {
     const zoomedTL = prepareContext(zoomingTL)
     const offsetXTL = Math.max(xOffset - (zoomingTL.width / scale / 2), 0)
     const offsetYTL = Math.max(yOffset - (zoomingTL.height / scale / 2), 0)
-    
+
     drawZoomed(zoomedTL, offsetXTL, offsetYTL, scale)
     drawLines(zoomedTL, scale)
 
@@ -345,33 +345,33 @@ function zoom() {
     const zoomedBR = prepareContext(zoomingBR)
     const offsetXBR = Math.max(xOffset - (zoomingBR.width / scale / 2) + 1280, 0)
     const offsetYBR = Math.max(yOffset - (zoomingBR.height / scale / 2) + 720, 0)
-    
+
     drawZoomed(zoomedBR, offsetXBR, offsetYBR, scale)
     drawLines(zoomedBR, scale)
 
     zoomedBR.fillStyle = "#FF0000"
     zoomedBR.fillRect((zoomingBR.width / scale / 2) * scale, 0, 1, zoomingBR.height)
     zoomedBR.fillRect(0, (zoomingBR.height / scale / 2) * scale, zoomingBR.width, 1)
-    
+
     scale = 4
     const zoomedTLChar = prepareContext(zoomingTLChar)
     const offsetXTLChar = Math.max(xOffset - (zoomingTLChar.width / scale / 2) + 48, 0)
     const offsetYTLChar = Math.max(yOffset - (zoomingTLChar.height / scale / 2) + 518, 0)
-    
+
     drawZoomed(zoomedTLChar, offsetXTLChar, offsetYTLChar, scale)
     drawLines(zoomedTLChar, scale)
-    
+
     zoomedTLChar.fillStyle = "#FF0000"
     zoomedTLChar.fillRect((zoomingTLChar.width / scale / 2) * scale, 0, 1, zoomingTLChar.height)
     zoomedTLChar.fillRect(0, (zoomingTLChar.height / scale / 2) * scale, zoomingTLChar.width, 1)
-    
+
     const zoomedBRChar = prepareContext(zoomingBRChar)
     const offsetXBRChar = Math.max(xOffset - (zoomingBRChar.width / scale / 2) + 148, 0)
     const offsetYBRChar = Math.max(yOffset - (zoomingBRChar.height / scale / 2) + 618, 0)
-    
+
     drawZoomed(zoomedBRChar, offsetXBRChar, offsetYBRChar, scale)
     drawLines(zoomedBRChar, scale)
-    
+
     zoomedBRChar.fillStyle = "#FF0000"
     zoomedBRChar.fillRect((zoomingBRChar.width / scale / 2) * scale, 0, 1, zoomingBRChar.height)
     zoomedBRChar.fillRect(0, (zoomingBRChar.height / scale / 2) * scale, zoomingBRChar.width, 1)

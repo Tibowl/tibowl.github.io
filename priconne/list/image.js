@@ -121,9 +121,9 @@ Object.entries(configDetails).forEach(([id, settings]) => {
     document.getElementById("config").appendChild(label)
 
     let input
-    if(settings.type == "select") {
+    if (settings.type == "select") {
         input = document.createElement("select")
-        
+
         for (const opt of settings.options) {
             const option = document.createElement("option")
             option.text = opt
@@ -208,7 +208,7 @@ async function updateOutput() {
             for (const sorter of ["sort1", "sort2", "sort3"]) {
                 const sorting = config[sorter]
                 const compared = compares[Math.floor(sorting / 2)]
-                if(compared !== 0)
+                if (compared !== 0)
                     return (sorting % 2 == 0 ? 1 : -1) * compared
             }
             return a.id - b.id

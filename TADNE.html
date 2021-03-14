@@ -1,15 +1,16 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <title>This Asashio Does Not Exist</title>
-        <meta name="theme-color" content="#082E6B"/>
-        <meta name=viewport content="width=device-width, initial-scale=1">
-        <meta name="twitter:card" content="summary">
-        <meta name="twitter:title" content="This Asashio Does Not Exist">
-        <meta name="twitter:description" content="StyleGAN generated Asashio pictures">
-        <meta name="twitter:image" content="http://flatisjustice.moe/TADNE/119.png">
-        <meta name="author" content="Tibi">
-        <style>
+
+<head>
+    <title>This Asashio Does Not Exist</title>
+    <meta name="theme-color" content="#082E6B" />
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="This Asashio Does Not Exist">
+    <meta name="twitter:description" content="StyleGAN generated Asashio pictures">
+    <meta name="twitter:image" content="http://flatisjustice.moe/TADNE/119.png">
+    <meta name="author" content="Tibi">
+    <style>
         @import url(https://fonts.googleapis.com/css?family=Advent+Pro:100);
         @import url(https://fonts.googleapis.com/css?family=Advent+Pro:100&effect=shadow-multiple);
 
@@ -19,14 +20,18 @@
                 top: 0;
                 width: 40%;
             }
-            html,body{
-                overflow:hidden;
+
+            html,
+            body {
+                overflow: hidden;
             }
+
             img {
                 margin-left: auto;
                 margin-right: 5% !important;
             }
         }
+
         #links {
             font-family: 'Advent Pro', sans-serif;
             font-size: 1.5em;
@@ -35,9 +40,12 @@
             color: #f44;
             text-shadow: 1px 1px 3px #222;
         }
-        a, #imgid {
+
+        a,
+        #imgid {
             color: #2f2;
         }
+
         img {
             max-height: 100%;
             max-width: 100%;
@@ -45,16 +53,21 @@
             margin-left: auto;
             margin-right: auto;
         }
+
         html {
             background-color: black;
         }
-        h2, h1 {
+
+        h2,
+        h1 {
             display: inline;
             font-weight: bolder;
         }
+
         h1 {
             font-size: 1.25em;
         }
+
         .bar {
             background: rgb(14, 251, 73);
             bottom: 0;
@@ -63,67 +76,70 @@
             position: absolute;
             width: 5%;
         }
-        html,body{
-            margin:0;
-            height:100%;
+
+        html,
+        body {
+            margin: 0;
+            height: 100%;
         }
-        </style>
-    </head>
-    <body>
-        <img id="face" src="TADNE/119.jpg">
-        <div id="bar" class="bar"></div>
+    </style>
+</head>
 
-        <main>
-            <div id="links">
-                <a href="."><b>Home</b></a><br>
-                <h1>Controls:</h1><br>
-                Current image id: <span id="imgid">119</span><br>
-                <a onclick="progress=TIME;">New picture</a> - 
-                Automatic update <a id="pause" onclick="running=!running;progress=0;pause.innerText=running?'pause':'continue'">pause</a><br>
-                <br>
-                <h1>Inspired by:</h1><br>
-                This <a href="https://thispersondoesnotexist.com/" target="">Person</a>/<a href="https://www.thiswaifudoesnotexist.net/" target="">Waifu</a> Does Not Exist<br>
-                <br>
-                <h1>Made possible by:</h1><br>
-                StyleGAN <a href="https://github.com/NVlabs/stylegan/" target="">GitHub</a> <a href="https://stylegan.xyz/paper" target="">paper</a><br>
-                <a href="https://www.gwern.net/Faces" target="">Making Anime Faces With StyleGAN - Gwern.net</a><br>
-                <br>
-                <h1>More Asashio:</h1><br>
-                <a href="https://twitter.com/FlatIsNice/status/1113186721523535872" target="">Circular interpolation video (Twitter)</a><br>
-                <a href="https://mega.nz/#!wfZmAIgB!f2L0b1HRtWZkljwkjExlCslRj8diE2MC02AyzmQ3Vwc" target="">Download .pkl model</a><br>
-                <br>
-                There are 1000 images (𝜓=0.6) generated on this site.<br>
-                The model used is transfer learned from Gwern's model with 988 original Asashio pictures, 18772 after data augmentation. The model was trained for a total of 42 hours on a single GTX970.<br>
-            </div>
-        </main>
+<body>
+    <img id="face" src="TADNE/119.png">
+    <div id="bar" class="bar"></div>
 
-        <script>
-            const TIME = 15000;
-            const DELAY = 10;
+    <main>
+        <div id="links">
+            <a href="."><b>Home</b></a><br>
+            <h1>Controls:</h1><br>
+            Current image id: <span id="imgid">119</span><br>
+            <a onclick="progress=TIME;">New picture</a> -
+            Automatic update <a id="pause"
+                onclick="running=!running;progress=0;pause.innerText=running?'pause':'continue'">pause</a><br>
+            <br>
+            <h1>Inspired by:</h1><br>
+            This <a href="https://thispersondoesnotexist.com/" target="">Person</a>/<a
+                href="https://www.thiswaifudoesnotexist.net/" target="">Waifu</a> Does Not Exist<br>
+            <br>
+            <h1>Made possible by:</h1><br>
+            StyleGAN <a href="https://github.com/NVlabs/stylegan/" target="">GitHub</a> <a
+                href="https://stylegan.xyz/paper" target="">paper</a><br>
+            <a href="https://www.gwern.net/Faces" target="">Making Anime Faces With StyleGAN - Gwern.net</a><br>
+            <br>
+            There are 1000 images (𝜓=0.6) generated on this site.<br>
+            The model used is transfer learned from Gwern's model with 988 original Asashio pictures, 18772 after data
+            augmentation. The model was trained for a total of 42 hours on a single GTX970.<br>
+        </div>
+    </main>
 
-            const img = document.getElementById("face");
-            const bar = document.getElementById("bar");
-            const imgid = document.getElementById("imgid");
-            const pause = document.getElementById("pause");
+    <script>
+        const TIME = 15000;
+        const DELAY = 10;
 
-            let progress = 0;
-            let animationProgress = 0;
-            let running = true;
+        const img = document.getElementById("face");
+        const bar = document.getElementById("bar");
+        const imgid = document.getElementById("imgid");
+        const pause = document.getElementById("pause");
 
-            const updateImg = () => img.setAttribute("src", `TADNE/${imgid.innerText = Math.floor(Math.random() * 1000)}.jpg`);
-            const updateBar = () => {
-                if(running)
-                    progress += DELAY;
-                if(progress >= TIME) {
-                    progress = 0;
-                    animationProgress *= .5;
-                    updateImg();
-                }
-                animationProgress = (progress / TIME * .2 + animationProgress * .8)
-                bar.style.width = `${animationProgress * 100}%`
-            };
-            updateImg();
-            setInterval(() => updateBar(), DELAY);
-        </script>
-    </body>
+        let progress = 0;
+        let animationProgress = 0;
+        let running = true;
+
+        const updateImg = () => img.setAttribute("src", `TADNE/${imgid.innerText = Math.floor(Math.random() * 1000)}.jpg`);
+        const updateBar = () => {
+            if (running)
+                progress += DELAY;
+            if (progress >= TIME) {
+                progress = 0;
+                animationProgress *= .5;
+                updateImg();
+            }
+            animationProgress = (progress / TIME * .2 + animationProgress * .8)
+            bar.style.width = `${animationProgress * 100}%`
+        };
+        updateImg();
+        setInterval(() => updateBar(), DELAY);
+    </script>
+</body>
 </html>

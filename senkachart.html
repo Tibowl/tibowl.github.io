@@ -1,690 +1,700 @@
 <!doctype html>
 <html>
-    <head>
-        <title>Flat is Justice! - Senka Chart</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <meta name="theme-color" content="#082E6B"/>
-        <meta name=viewport content="width=device-width, initial-scale=1">
-        <meta name="twitter:card" content="summary">
-        <meta name="twitter:title" content="Flat is Justice - Senka Chart">
-        <meta name="twitter:description" content="Make chart of senka stuff">
-        <script src="https://unpkg.com/blob-util/dist/blob-util.min.js"></script>
-        <style type="text/css">
-            div {
-                display:inline;
-            }
-            textarea {
-                width: 700px;
-                height: 200px;
-            }
-            table > tr > th, table > tr > td, table > * > tr > th, table > * > tr > td {
-                border: 1px #aaa solid;
-                padding: 0.1em
-            }
-        </style>
-    </head>
-    <body> 
-        <div id='clipboard'></div>
-        <a href="."><b>Flat is Justice - Home</b></a>
-        <button style='float:right' onclick='watchForNewServers()'>Watch updates</button><br>
-        <label>Month: <input id="month" placeholder="2019/7"><input id="serverhistory" value="0" type="number" min="0" max="20" step="1"></label><button id="loadmonth" onclick='loadMonth()'>Load</button>
-        <br>
-        Output: Download: <a id='downloadSumTop'>Summary/Top</a> <a id='download'>All graphs</a> <a id='download10k'>10k+ Players</a> <a id='download1'>#1</a> <a id='download5'>#5</a> <a id='download20'>#20</a> <a id='download100'>#100</a> <a id='download500'>#500</a><br><br>
 
-        <label>Search by username/comment: <input id="playername" onclick="findUser(this)" oninput="findUser(this)"></input></label><br>
-        <div id="found"></div>
+<head>
+    <title>Flat is Justice! - Senka Chart</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="theme-color" content="#082E6B" />
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Flat is Justice - Senka Chart">
+    <meta name="twitter:description" content="Make chart of senka stuff">
+    <script src="https://unpkg.com/blob-util/dist/blob-util.min.js"></script>
+    <style type="text/css">
+        div {
+            display: inline;
+        }
 
-        <br><b>Graphs:</b><br>
-        Summary and Top players:<br>
-        <canvas id="graphSumTop" width="1446" height="550"></canvas><br>
-        All top XXX graphs<br>
-        <canvas id="graphOfGraphs" width="1935" height="1640"></canvas><br><br>
+        textarea {
+            width: 700px;
+            height: 200px;
+        }
 
-        <label>All ranks server (0 = normal): <input type="number" id="server" min="0" max="20" step="1" onchange="update(true);" onclick="update(true);" value="0"><br></label>
-        <canvas id="graphMix" width="960" height="540"></canvas><br>
-        <canvas id="10kPlayers" width="726" height="540"></canvas>
-        <br>
-        <canvas style="display:none" id="graphSummary" width="705" height="540"></canvas>
-        <canvas style="display:none" id="graphTopPlayers" width="726" height="540"></canvas>
-        <canvas style="display:none" id="graph1" width="960" height="540"></canvas>
-        <canvas style="display:none" id="graph5" width="960" height="540"></canvas>
-        <canvas style="display:none" id="graph20" width="960" height="540"></canvas>
-        <canvas style="display:none" id="graph100" width="960" height="540"></canvas>
-        <canvas style="display:none" id="graph500" width="960" height="540"></canvas>
-        <script type="text/javascript">
-            var data = {};
-            let colors = ["#e6194b", "#3cb44b", "#ffe119", "#0082c8", "#f58231", "#911eb4", "#46f0f0", "#f032e6", "#d2f53c", "#fabebe", "#008080", "#e6beff", "#aa6e28", "#808080", "#800000", "#aaffc3", "#808000", "#ffd8b1", "#000080", "#a873b7"];
-            const jp_names = ["横須賀", "呉", "佐世保", "舞鶴", "大湊", "トラック", "リンガ", "ラバウル", "ショートランド", "ブイン", "タウイタウイ", "パラオ", "ブルネイ", "単冠", "幌筵", "宿毛", "鹿屋", "岩川", "佐伯湾", "柱島"];
-            const en_names = ["Yokosuka", "Kure", "Sasebo", "Maizuru", "Ominato", "Truk", "Lingga", "Rabaul", "Shortland", "Buin", "Tawi-Tawi", "Palau", "Brunei", "Hitokappu", "Paramushir", "Sukumo", "Kanoya", "Iwagawa", "Saiki Bay", "Hashirajima"];
-            const ranks = [500, 100, 20, 5, 1];
+        table>tr>th,
+        table>tr>td,
+        table>*>tr>th,
+        table>*>tr>td {
+            border: 1px #aaa solid;
+            padding: 0.1em
+        }
+    </style>
+</head>
 
-            var canvas, width, height, ctx;
-            var yOffset = 32, rectSize, xOffset = 34;
-            let descW = 330, descH = 150;
-            var minTime, maxTime;
-            var parsed = {}, maxOfRank = {};
-            var longestJP, longestScore;
-            let allRanksServer = 0;
-            let players = [];
-            var hostname = "https://api.kancolle.moe";
+<body>
+    <div id='clipboard'></div>
+    <a href="."><b>Flat is Justice - Home</b></a>
+    <button style='float:right' onclick='watchForNewServers()'>Watch updates</button><br>
+    <label>Month: <input id="month" placeholder="2019/7"><input id="serverhistory" value="0" type="number" min="0"
+            max="20" step="1"></label><button id="loadmonth" onclick='loadMonth()'>Load</button>
+    <br>
+    Output: Download: <a id='downloadSumTop'>Summary/Top</a> <a id='download'>All graphs</a> <a id='download10k'>10k+
+        Players</a> <a id='download1'>#1</a> <a id='download5'>#5</a> <a id='download20'>#20</a> <a
+        id='download100'>#100</a> <a id='download500'>#500</a><br><br>
 
-            function update(onlyServerRanks) {
-                minTime = undefined; maxTime = undefined;
-                parsed = {}; maxOfRank = {};
-                players = []
-                allRanksServer = parseInt(document.getElementById('server').value);
-                // Convert data to another format:
-                // parsed[rank][ts][serverId - 1] = points
+    <label>Search by username/comment: <input id="playername" onclick="findUser(this)"
+            oninput="findUser(this)"></input></label><br>
+    <div id="found"></div>
 
-                rectSize = 8;
-                parsed = {}; maxOfRank = {};
-                for(let i = 1; i <= 20; i++) {
-                    if(data[i].code == 1 || data[i].data.cutofflist == undefined) continue;
+    <br><b>Graphs:</b><br>
+    Summary and Top players:<br>
+    <canvas id="graphSumTop" width="1446" height="550"></canvas><br>
+    All top XXX graphs<br>
+    <canvas id="graphOfGraphs" width="1935" height="1640"></canvas><br><br>
 
-                    if(allRanksServer)
-                        for(let player of data[i].data.players) {
-                            for(let senka of player.senka) {
-                                let ts = senka.timestamp;
-                                let rank = player.rankno;
-                                if(minTime == undefined || ts < minTime) minTime = ts;
-                                if(maxTime == undefined || ts > maxTime) maxTime = ts;
-                                if(parsed[rank] == undefined) parsed[rank] = {};
-                                if(parsed[rank][ts] == undefined) parsed[rank][ts] = [];
-                                parsed[rank][ts][i - 1] = senka.senka;
-                            }
+    <label>All ranks server (0 = normal): <input type="number" id="server" min="0" max="20" step="1"
+            onchange="update(true);" onclick="update(true);" value="0"><br></label>
+    <canvas id="graphMix" width="960" height="540"></canvas><br>
+    <canvas id="10kPlayers" width="726" height="540"></canvas>
+    <br>
+    <canvas style="display:none" id="graphSummary" width="705" height="540"></canvas>
+    <canvas style="display:none" id="graphTopPlayers" width="726" height="540"></canvas>
+    <canvas style="display:none" id="graph1" width="960" height="540"></canvas>
+    <canvas style="display:none" id="graph5" width="960" height="540"></canvas>
+    <canvas style="display:none" id="graph20" width="960" height="540"></canvas>
+    <canvas style="display:none" id="graph100" width="960" height="540"></canvas>
+    <canvas style="display:none" id="graph500" width="960" height="540"></canvas>
+    <script type="text/javascript">
+        var data = {};
+        let colors = ["#e6194b", "#3cb44b", "#ffe119", "#0082c8", "#f58231", "#911eb4", "#46f0f0", "#f032e6", "#d2f53c", "#fabebe", "#008080", "#e6beff", "#aa6e28", "#808080", "#800000", "#aaffc3", "#808000", "#ffd8b1", "#000080", "#a873b7"];
+        const jp_names = ["横須賀", "呉", "佐世保", "舞鶴", "大湊", "トラック", "リンガ", "ラバウル", "ショートランド", "ブイン", "タウイタウイ", "パラオ", "ブルネイ", "単冠", "幌筵", "宿毛", "鹿屋", "岩川", "佐伯湾", "柱島"];
+        const en_names = ["Yokosuka", "Kure", "Sasebo", "Maizuru", "Ominato", "Truk", "Lingga", "Rabaul", "Shortland", "Buin", "Tawi-Tawi", "Palau", "Brunei", "Hitokappu", "Paramushir", "Sukumo", "Kanoya", "Iwagawa", "Saiki Bay", "Hashirajima"];
+        const ranks = [500, 100, 20, 5, 1];
+
+        var canvas, width, height, ctx;
+        var yOffset = 32, rectSize, xOffset = 34;
+        let descW = 330, descH = 150;
+        var minTime, maxTime;
+        var parsed = {}, maxOfRank = {};
+        var longestJP, longestScore;
+        let allRanksServer = 0;
+        let players = [];
+        var hostname = "https://api.kancolle.moe";
+
+        function update(onlyServerRanks) {
+            minTime = undefined; maxTime = undefined;
+            parsed = {}; maxOfRank = {};
+            players = []
+            allRanksServer = parseInt(document.getElementById('server').value);
+            // Convert data to another format:
+            // parsed[rank][ts][serverId - 1] = points
+
+            rectSize = 8;
+            parsed = {}; maxOfRank = {};
+            for (let i = 1; i <= 20; i++) {
+                if (data[i].code == 1 || data[i].data.cutofflist == undefined) continue;
+
+                if (allRanksServer)
+                    for (let player of data[i].data.players) {
+                        for (let senka of player.senka) {
+                            let ts = senka.timestamp;
+                            let rank = player.rankno;
+                            if (minTime == undefined || ts < minTime) minTime = ts;
+                            if (maxTime == undefined || ts > maxTime) maxTime = ts;
+                            if (parsed[rank] == undefined) parsed[rank] = {};
+                            if (parsed[rank][ts] == undefined) parsed[rank][ts] = [];
+                            parsed[rank][ts][i - 1] = senka.senka;
                         }
-                    else {
-                        for(let cutoff of data[i].data.cutofflist) {
-                            let ts = cutoff.timestamp;
-                            if(minTime == undefined || ts < minTime) minTime = ts;
-                            if(maxTime == undefined || ts > maxTime) maxTime = ts;
-                            for(let rank in cutoff.cutoff) {
-                                if(parsed[rank] == undefined) parsed[rank] = {};
-                                if(parsed[rank][ts] == undefined) parsed[rank][ts] = [];
-                                parsed[rank][ts][i - 1] = cutoff.cutoff[rank];
-                            }
+                    }
+                else {
+                    for (let cutoff of data[i].data.cutofflist) {
+                        let ts = cutoff.timestamp;
+                        if (minTime == undefined || ts < minTime) minTime = ts;
+                        if (maxTime == undefined || ts > maxTime) maxTime = ts;
+                        for (let rank in cutoff.cutoff) {
+                            if (parsed[rank] == undefined) parsed[rank] = {};
+                            if (parsed[rank][ts] == undefined) parsed[rank][ts] = [];
+                            parsed[rank][ts][i - 1] = cutoff.cutoff[rank];
                         }
                     }
                 }
+            }
 
-                players = [];
-                for(let i = 1; i <= 20; i++) {
-                    if(data[i].code == 1) continue;
-                    players.push(...data[i].data.players.map(function(pl) {
-                        pl.server = i;
-                        return pl;
-                    }));
-                }
-                players.forEach((p) => p.curRanking = p.curRanking || p.ranking || 0)
-                players.forEach((p) => p.curMedal = p.curMedal || p.medal || 0)
-                players.forEach((p) => p.senka = p.senka || p.history || [])
-                players.forEach((p) => p.senka.forEach((s) => s.senka = s.senka || s.ranking || []))
-                players.forEach((p) => p.rankno = p.rankno || (p.senka.length ? p.senka[p.senka.length-1].rankno : 0) || 0)
-                
-                players.sort((a, b) => b.curRanking - a.curRanking || a.rankno - b.rankno || a.name - b.name);
+            players = [];
+            for (let i = 1; i <= 20; i++) {
+                if (data[i].code == 1) continue;
+                players.push(...data[i].data.players.map(function (pl) {
+                    pl.server = i;
+                    return pl;
+                }));
+            }
+            players.forEach((p) => p.curRanking = p.curRanking || p.ranking || 0)
+            players.forEach((p) => p.curMedal = p.curMedal || p.medal || 0)
+            players.forEach((p) => p.senka = p.senka || p.history || [])
+            players.forEach((p) => p.senka.forEach((s) => s.senka = s.senka || s.ranking || []))
+            players.forEach((p) => p.rankno = p.rankno || (p.senka.length ? p.senka[p.senka.length - 1].rankno : 0) || 0)
 
-                // Not updated
-                /*
-                parsed[500][maxTime][20-1] = 0;
-                parsed[100][maxTime][20-1] = 0;
-                parsed[ 20][maxTime][20-1] = 0;
-                parsed[  5][maxTime][20-1] = 0;
-                parsed[  1][maxTime][20-1] = 0;
-                */
+            players.sort((a, b) => b.curRanking - a.curRanking || a.rankno - b.rankno || a.name - b.name);
 
-                for(let rank of Object.keys(parsed))
-                    maxOfRank[rank] = Math.max(...Object.values(parsed[rank]).map((a) => Math.max(...a.filter((b) => b))).filter((b) => b))
+            // Not updated
+            /*
+            parsed[500][maxTime][20-1] = 0;
+            parsed[100][maxTime][20-1] = 0;
+            parsed[ 20][maxTime][20-1] = 0;
+            parsed[  5][maxTime][20-1] = 0;
+            parsed[  1][maxTime][20-1] = 0;
+            */
 
-                //console.log(parsed, minTime, maxTime, maxOfRank);
+            for (let rank of Object.keys(parsed))
+                maxOfRank[rank] = Math.max(...Object.values(parsed[rank]).map((a) => Math.max(...a.filter((b) => b))).filter((b) => b))
 
-                canvas = document.getElementById("graph1");
-                ctx = canvas.getContext("2d");
-                ctx.font = `500 10px sans-serif`
-                longestScore = ctx.measureText(" (88888) ").width;
-                ctx.font = `500 10px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`
-                // Get some widths of longest names;
-                longestJP = [0, 0];
-                for(let i = 0; i < 20; i++)
-                    longestJP[i%2] = Math.max(longestJP[i%2], ctx.measureText(jp_names[i]).width);
+            //console.log(parsed, minTime, maxTime, maxOfRank);
 
-                for(let rank of ranks) {
-                    if(onlyServerRanks) continue;
-                    canvas = document.getElementById("graph" + rank);
-                    width = canvas.width;
-                    height = canvas.height;
-                    ctx = canvas.getContext("2d");
+            canvas = document.getElementById("graph1");
+            ctx = canvas.getContext("2d");
+            ctx.font = `500 10px sans-serif`
+            longestScore = ctx.measureText(" (88888) ").width;
+            ctx.font = `500 10px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`
+            // Get some widths of longest names;
+            longestJP = [0, 0];
+            for (let i = 0; i < 20; i++)
+                longestJP[i % 2] = Math.max(longestJP[i % 2], ctx.measureText(jp_names[i]).width);
 
-                    clearScreen(); // Clear screen, setup
-                    drawVerticalLines(rank); // Draw vertical lines per cycle
-                    drawHorizontalLines(maxOfRank[rank]); // Draw horizontal lines depending on max points
-                    drawServerLines(rank); // Draw each server's line
-                    drawServerLegend(rank); // Draw servers in legend box
-                    drawMisc(); // Draw some other shit
-                    drawTitle(`All servers - #${rank}`); // Draw title
-                    drawBorder();
-
-                    blobUtil.canvasToBlob(canvas, 'image/png').then(function (blob) {
-                        document.getElementById("download" + rank).href = blobUtil.createObjectURL(blob);
-                    });
-                    document.getElementById("download" + rank).addEventListener('click', function() {
-                        let d = new Date();
-                        this.download = `Top${rank} @ ${d.getFullYear()}-${("0"+(d.getMonth()+1)).slice(-2)}-${("0" + d.getDate()).slice(-2)}-${("0" + d.getHours()).slice(-2)}.png`;
-                    }, false);
-                }
-
-                // Draw mix of servers
-                canvas = document.getElementById("graphMix");
+            for (let rank of ranks) {
+                if (onlyServerRanks) continue;
+                canvas = document.getElementById("graph" + rank);
                 width = canvas.width;
                 height = canvas.height;
                 ctx = canvas.getContext("2d");
 
-                let maxPoints = maxOfRank[1];
-                if(allRanksServer)
-                    maxPoints = Math.max(...Object.values(parsed[1]).map((a) => a[allRanksServer - 1]).filter((b) => b));
-                // maxPoints = 5000;
-
-                ranks.reverse();
-
                 clearScreen(); // Clear screen, setup
-                drawVerticalLines(1); // Draw vertical lines per cycle                
-                drawHorizontalLines(maxPoints); // Draw horizontal lines depending on max points
-                if(allRanksServer) {
-                    rectSize = 5;
-                    ctx.lineWidth = 1;
-                    for(let rank of Object.keys(maxOfRank).sort((a, b) => b-a))
-                        drawServerLines(rank, maxPoints); // Draw each server's line
-                } else {
-                    for(let rank of ranks)
-                        drawServerLines(rank, maxPoints); // Draw each server's line
-                    drawServerLegend(-1); // Draw servers in legend box
-                }
+                drawVerticalLines(rank); // Draw vertical lines per cycle
+                drawHorizontalLines(maxOfRank[rank]); // Draw horizontal lines depending on max points
+                drawServerLines(rank); // Draw each server's line
+                drawServerLegend(rank); // Draw servers in legend box
                 drawMisc(); // Draw some other shit
-                drawTitle(`All ranks${allRanksServer ? ` - ${jp_names[allRanksServer-1]} - ${en_names[allRanksServer-1]}`:''}`); // Draw title
-                drawBorder(); // Draw border
-                if(onlyServerRanks) return ranks.reverse();
-
-                // Draw summary graph
-                canvas = document.getElementById("graphSummary");
-                ctx = canvas.getContext("2d");
-                canvas.width = Math.floor(drawSummary());
-                width = canvas.width;
-                height = canvas.height;
-                ctx = canvas.getContext("2d");
-                clearScreen(); // Clear screen, setup
-                drawTitle(`Summary`); // Draw title
-                drawBorder(); // Draw border
-                drawSummary();
-                drawMisc(true);
-
-                // Draw top players
-                canvas = document.getElementById("graphTopPlayers");
-                ctx = canvas.getContext("2d");
-                canvas.width = drawTopPlayers(20);
-                width = canvas.width;
-                height = canvas.height;
-                ctx = canvas.getContext("2d");
-                clearScreen(); // Clear screen, setup
-                drawTitle(`Global top 20 players`); // Draw title
-                drawBorder(); // Draw border
-                drawTopPlayers(20);
-                drawMisc(true);
-
-                canvas = document.getElementById("10kPlayers");
-                ctx = canvas.getContext("2d");
-                canvas.width = drawTopPlayers(players.filter((p) => p.curRanking >= 9995).length);
-                width = canvas.width;
-                height = canvas.height = (32+25*(players.filter((p) => p.curRanking >= 9995).length + 1));
-                ctx = canvas.getContext("2d");
-                clearScreen(); // Clear screen, setup
-                drawTitle(`10k players`); // Draw title
-                drawBorder(); // Draw border
-                drawTopPlayers(players.filter((p) => p.curRanking >= 9995).length);
-                drawMisc(true);
+                drawTitle(`All servers - #${rank}`); // Draw title
+                drawBorder();
 
                 blobUtil.canvasToBlob(canvas, 'image/png').then(function (blob) {
-                    document.getElementById("download10k").href = blobUtil.createObjectURL(blob);
+                    document.getElementById("download" + rank).href = blobUtil.createObjectURL(blob);
                 });
-                document.getElementById("download10k").addEventListener('click', function() {
+                document.getElementById("download" + rank).addEventListener('click', function () {
                     let d = new Date();
-                    this.download = `10k+ Players @ ${d.getFullYear()}-${("0"+(d.getMonth()+1)).slice(-2)}-${("0" + d.getDate()).slice(-2)}-${("0" + d.getHours()).slice(-2)}-${("0" + d.getMinutes()).slice(-2)}.png`;
-                }, false);
-
-                ranks.reverse();
-
-                // All graphs combined
-                let totalCanvas = document.getElementById("graphOfGraphs");
-                ctx = totalCanvas.getContext("2d");
-                let coords = [[0, 0], [1, 0], [0, 1], [1, 1], [0, 2], [1, 2]]
-
-                for(let rank of [...ranks, -1]) {
-                    if(rank !== -1) {
-                        let canvas = document.getElementById("graph" + rank);
-                        ctx.drawImage(canvas, 5+coords[ranks.indexOf(rank)][0] * (canvas.width + 5), 5+coords[ranks.indexOf(rank)][1] * (canvas.height + 5))
-                    } else {
-                        let canvas = document.getElementById("graphMix");
-                        ctx.drawImage(canvas, 5+coords[ranks.length][0] * (canvas.width + 5), 5+coords[ranks.length][1] * (canvas.height + 5))
-                    }
-                }
-
-                blobUtil.canvasToBlob(totalCanvas, 'image/png').then(function (blob) {
-                    document.getElementById("download").href = blobUtil.createObjectURL(blob);
-                });
-                document.getElementById("download").addEventListener('click', function() {
-                    let d = new Date();
-                    this.download = `Graph of graphs @ ${d.getFullYear()}-${("0"+(d.getMonth()+1)).slice(-2)}-${("0" + d.getDate()).slice(-2)}-${("0" + d.getHours()).slice(-2)}.png`;
-                }, false);
-
-                let canvasSumTop = document.getElementById("graphSumTop");
-                let canvasSum = document.getElementById("graphSummary");
-                let canvasTop = document.getElementById("graphTopPlayers");
-                canvasSumTop.width = 5 + canvasSum.width + 5 + canvasTop.width + 5;
-
-                ctx = canvasSumTop.getContext("2d");
-                ctx.drawImage(canvasSum, 5, 5)
-                ctx.drawImage(canvasTop, 5 + canvasSum.width + 5, 5)
-
-                blobUtil.canvasToBlob(canvasSumTop, 'image/png').then(function (blob) {
-                    document.getElementById("downloadSumTop").href = blobUtil.createObjectURL(blob);
-                });
-                document.getElementById("downloadSumTop").addEventListener('click', function() {
-                    let d = new Date();
-                    this.download = `Summary and Top @ ${d.getFullYear()}-${("0"+(d.getMonth()+1)).slice(-2)}-${("0" + d.getDate()).slice(-2)}-${("0" + d.getHours()).slice(-2)}.png`;
+                    this.download = `Top${rank} @ ${d.getFullYear()}-${("0" + (d.getMonth() + 1)).slice(-2)}-${("0" + d.getDate()).slice(-2)}-${("0" + d.getHours()).slice(-2)}.png`;
                 }, false);
             }
 
-            function clearScreen() {
-                ctx.fillStyle = "#fff";
+            // Draw mix of servers
+            canvas = document.getElementById("graphMix");
+            width = canvas.width;
+            height = canvas.height;
+            ctx = canvas.getContext("2d");
+
+            let maxPoints = maxOfRank[1];
+            if (allRanksServer)
+                maxPoints = Math.max(...Object.values(parsed[1]).map((a) => a[allRanksServer - 1]).filter((b) => b));
+            // maxPoints = 5000;
+
+            ranks.reverse();
+
+            clearScreen(); // Clear screen, setup
+            drawVerticalLines(1); // Draw vertical lines per cycle                
+            drawHorizontalLines(maxPoints); // Draw horizontal lines depending on max points
+            if (allRanksServer) {
+                rectSize = 5;
                 ctx.lineWidth = 1;
-                ctx.fillRect(0, 0, width - 1, height);
-                ctx.lineWidth = 2;
-                height -= yOffset; 
-                ctx.font = `500 10px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`
+                for (let rank of Object.keys(maxOfRank).sort((a, b) => b - a))
+                    drawServerLines(rank, maxPoints); // Draw each server's line
+            } else {
+                for (let rank of ranks)
+                    drawServerLines(rank, maxPoints); // Draw each server's line
+                drawServerLegend(-1); // Draw servers in legend box
             }
+            drawMisc(); // Draw some other shit
+            drawTitle(`All ranks${allRanksServer ? ` - ${jp_names[allRanksServer - 1]} - ${en_names[allRanksServer - 1]}` : ''}`); // Draw title
+            drawBorder(); // Draw border
+            if (onlyServerRanks) return ranks.reverse();
 
-            function drawVerticalLines(rank) {
-                ctx.fillStyle = "#000";
-                ctx.fillRect(0, yOffset, width, 1);
-                for(let ts in parsed[rank]) {
-                    let xPos = Math.round(xOffset + (ts - minTime) / (maxTime - minTime) * (width - xOffset));
-                    ctx.fillRect(xPos, yOffset, 1, height);
+            // Draw summary graph
+            canvas = document.getElementById("graphSummary");
+            ctx = canvas.getContext("2d");
+            canvas.width = Math.floor(drawSummary());
+            width = canvas.width;
+            height = canvas.height;
+            ctx = canvas.getContext("2d");
+            clearScreen(); // Clear screen, setup
+            drawTitle(`Summary`); // Draw title
+            drawBorder(); // Draw border
+            drawSummary();
+            drawMisc(true);
 
-                    let str = timeStr(ts);
+            // Draw top players
+            canvas = document.getElementById("graphTopPlayers");
+            ctx = canvas.getContext("2d");
+            canvas.width = drawTopPlayers(20);
+            width = canvas.width;
+            height = canvas.height;
+            ctx = canvas.getContext("2d");
+            clearScreen(); // Clear screen, setup
+            drawTitle(`Global top 20 players`); // Draw title
+            drawBorder(); // Draw border
+            drawTopPlayers(20);
+            drawMisc(true);
 
-                    ctx.save();
-                    ctx.translate(xPos, height + yOffset);
-                    ctx.rotate(Math.PI/2);
-                    ctx.textAlign = "right";
-                    ctx.fillText(str, -1, -3);
-                    ctx.restore();
+            canvas = document.getElementById("10kPlayers");
+            ctx = canvas.getContext("2d");
+            canvas.width = drawTopPlayers(players.filter((p) => p.curRanking >= 9995).length);
+            width = canvas.width;
+            height = canvas.height = (32 + 25 * (players.filter((p) => p.curRanking >= 9995).length + 1));
+            ctx = canvas.getContext("2d");
+            clearScreen(); // Clear screen, setup
+            drawTitle(`10k players`); // Draw title
+            drawBorder(); // Draw border
+            drawTopPlayers(players.filter((p) => p.curRanking >= 9995).length);
+            drawMisc(true);
+
+            blobUtil.canvasToBlob(canvas, 'image/png').then(function (blob) {
+                document.getElementById("download10k").href = blobUtil.createObjectURL(blob);
+            });
+            document.getElementById("download10k").addEventListener('click', function () {
+                let d = new Date();
+                this.download = `10k+ Players @ ${d.getFullYear()}-${("0" + (d.getMonth() + 1)).slice(-2)}-${("0" + d.getDate()).slice(-2)}-${("0" + d.getHours()).slice(-2)}-${("0" + d.getMinutes()).slice(-2)}.png`;
+            }, false);
+
+            ranks.reverse();
+
+            // All graphs combined
+            let totalCanvas = document.getElementById("graphOfGraphs");
+            ctx = totalCanvas.getContext("2d");
+            let coords = [[0, 0], [1, 0], [0, 1], [1, 1], [0, 2], [1, 2]]
+
+            for (let rank of [...ranks, -1]) {
+                if (rank !== -1) {
+                    let canvas = document.getElementById("graph" + rank);
+                    ctx.drawImage(canvas, 5 + coords[ranks.indexOf(rank)][0] * (canvas.width + 5), 5 + coords[ranks.indexOf(rank)][1] * (canvas.height + 5))
+                } else {
+                    let canvas = document.getElementById("graphMix");
+                    ctx.drawImage(canvas, 5 + coords[ranks.length][0] * (canvas.width + 5), 5 + coords[ranks.length][1] * (canvas.height + 5))
                 }
             }
 
-            function drawHorizontalLines(maxPoints = 3500) {
-                ctx.textAlign = "center"; 
-                let rankOff = Math.ceil(maxPoints / 10 / 50) * 50;
-                for(let i = rankOff; i < maxPoints; i += rankOff) {
-                    let yPos = Math.round(yOffset + height - (i / maxPoints * height));
-                    ctx.fillRect(xOffset, yPos, width, 1);
-                    ctx.fillText(i, xOffset / 2, yPos + 3);
-                }
-            }
+            blobUtil.canvasToBlob(totalCanvas, 'image/png').then(function (blob) {
+                document.getElementById("download").href = blobUtil.createObjectURL(blob);
+            });
+            document.getElementById("download").addEventListener('click', function () {
+                let d = new Date();
+                this.download = `Graph of graphs @ ${d.getFullYear()}-${("0" + (d.getMonth() + 1)).slice(-2)}-${("0" + d.getDate()).slice(-2)}-${("0" + d.getHours()).slice(-2)}.png`;
+            }, false);
 
-            function drawServerLines(rank, maximum) {
-                let isAll = true;
-                if(!maximum) {
-                    maximum = maxOfRank[rank];
-                    isAll = false;
-                }
-                for(let i = 0; i < 20; i++) {
-                    if(!isAll) {
-                        ctx.strokeStyle = colors[i];
-                        ctx.fillStyle = colors[i];
-                    } else {
-                        if(allRanksServer)
-                            ctx.strokeStyle = ctx.fillStyle = "hsl(" + (rank / 500 * 360) + ", 100%, 50%)";
-                        else
-                            ctx.strokeStyle = ctx.fillStyle = colors[ranks.indexOf(parseInt(rank))];
-                        if(i != (allRanksServer - 1) && allRanksServer) continue;
-                    }
-                    let firstOne = true;
+            let canvasSumTop = document.getElementById("graphSumTop");
+            let canvasSum = document.getElementById("graphSummary");
+            let canvasTop = document.getElementById("graphTopPlayers");
+            canvasSumTop.width = 5 + canvasSum.width + 5 + canvasTop.width + 5;
 
-                    for(let ts of Object.keys(parsed[rank]).sort()) {
-                        let xPos = xOffset + (ts - minTime) / (maxTime - minTime) * (width - xOffset);
-                        let yPos = yOffset + height - (parsed[rank][ts][i] / maximum * height);
-                        if(parsed[rank][ts][i] == undefined) continue;
-                        ctx.fillRect(xPos - rectSize / 2, yPos - rectSize / 2, rectSize, rectSize)
-                        
-                        if(firstOne) {
-                            ctx.beginPath();
-                            ctx.moveTo(xPos, yPos);
-                        } else {
-                            ctx.lineTo(xPos, yPos);
-                        }
-                        firstOne = false;
-                    }
-                    ctx.stroke();
-                }
-            }
+            ctx = canvasSumTop.getContext("2d");
+            ctx.drawImage(canvasSum, 5, 5)
+            ctx.drawImage(canvasTop, 5 + canvasSum.width + 5, 5)
 
-            function drawServerLegend(rank) {
-                drawServerLegendBox(rank);
-                if(rank == -1)
-                    drawRankingLegend();
-                else
-                    drawServerLegendServers(rank);
-            }
+            blobUtil.canvasToBlob(canvasSumTop, 'image/png').then(function (blob) {
+                document.getElementById("downloadSumTop").href = blobUtil.createObjectURL(blob);
+            });
+            document.getElementById("downloadSumTop").addEventListener('click', function () {
+                let d = new Date();
+                this.download = `Summary and Top @ ${d.getFullYear()}-${("0" + (d.getMonth() + 1)).slice(-2)}-${("0" + d.getDate()).slice(-2)}-${("0" + d.getHours()).slice(-2)}.png`;
+            }, false);
+        }
 
-            function drawServerLegendBox(rank) {
-                ctx.beginPath();
-                ctx.fillStyle = "rgba(255, 255, 255, 90%)";
-                ctx.strokeStyle = "rgba(0, 0, 0, 90%)";
+        function clearScreen() {
+            ctx.fillStyle = "#fff";
+            ctx.lineWidth = 1;
+            ctx.fillRect(0, 0, width - 1, height);
+            ctx.lineWidth = 2;
+            height -= yOffset;
+            ctx.font = `500 10px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`
+        }
 
-                if(rank == -1)
-                    ctx.rect(xOffset + 5, yOffset + 5, 48, 77);
-                else
-                    ctx.rect(width - descW - 5, height - descH + yOffset - 7, descW, descH + 2);
+        function drawVerticalLines(rank) {
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, yOffset, width, 1);
+            for (let ts in parsed[rank]) {
+                let xPos = Math.round(xOffset + (ts - minTime) / (maxTime - minTime) * (width - xOffset));
+                ctx.fillRect(xPos, yOffset, 1, height);
 
-                ctx.fill();
-                ctx.stroke();
-            }
+                let str = timeStr(ts);
 
-            function drawRankingLegend() {
-                ctx.textAlign = "left";
-                for(let i = 0; i < ranks.length; i++) {
-                    let x = xOffset + 15;
-                    let y = yOffset + 10 + i * 15;
-                    ctx.fillStyle = colors[i];
-                    ctx.fillRect(x - rectSize / 2, y, rectSize, rectSize)
-                    ctx.fillStyle = "#000";
-                    ctx.fillText("#" + ranks[i], x + rectSize, y + rectSize)
-                }
-            }
-
-            function drawServerLegendServers(rank){
-                for(let i = 0; i < 20; i++) {
-                    let x = width - descW + 2 + Math.floor(i%2) * 177;
-                    let y = height - descH + yOffset - 3 + Math.floor(i/2) * descH / 10;
-                    ctx.fillStyle = colors[i];
-
-                    let currentOffset = longestJP[i%2] + longestScore;
-                    ctx.fillRect(x - rectSize / 2, y, rectSize, rectSize);
-                    if(data[i + 1].code != 2)
-                        ctx.fillStyle = "#f00";
-                    else if (parsed[rank][maxTime][i] == undefined)
-                        ctx.fillStyle = "#f88";
-                    else {
-                        let currentServer = parsed[rank][maxTime][i];
-
-                        let score = ` (${currentServer}) `;
-                        ctx.textAlign = "center";
-                        if(colorServer(parsed[rank][maxTime], currentServer))
-                            ctx.font = `700 10px sans-serif`
-                        else
-                            ctx.font = `500 10px sans-serif`
-                        ctx.fillText(score, x + rectSize + currentOffset - longestScore / 2 , y + rectSize);
-                        ctx.fillStyle = "#000";
-                    }
-                    ctx.textAlign = "left";
-                    ctx.font = `500 10px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`
-                    ctx.fillText(jp_names[i], x + rectSize, y + rectSize)
-                    ctx.font = `500 10px sans-serif`
-                    ctx.fillText(en_names[i], x + rectSize + currentOffset, y + rectSize)
-                }
-            }
-
-            function drawMisc(onlyEnd) {
-                let txt;
-                ctx.fillStyle = "#888";
+                ctx.save();
+                ctx.translate(xPos, height + yOffset);
+                ctx.rotate(Math.PI / 2);
                 ctx.textAlign = "right";
-                ctx.font = `500 10px sans-serif`
-                txt = "Data: senka.su ";
-                ctx.fillText(txt, width, 9);
-                txt = "Graph generator: @FlatIsNice ";
-                ctx.fillText(txt, width, 19);
-                if(onlyEnd)
-                    txt = `Timestamp: ${timeStr(maxTime)} `;
-                else
-                    txt = `Timeframe: ${timeStr(minTime)} ~ ${timeStr(maxTime)} `;
-                ctx.fillText(txt, width, 29);
+                ctx.fillText(str, -1, -3);
+                ctx.restore();
             }
+        }
 
-            function drawTitle(txt) {
-                ctx.font = `800 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
-                ctx.fillStyle = "#000";
-                ctx.textAlign = "center";
-                ctx.fillText(txt, width / 2, 20);
+        function drawHorizontalLines(maxPoints = 3500) {
+            ctx.textAlign = "center";
+            let rankOff = Math.ceil(maxPoints / 10 / 50) * 50;
+            for (let i = rankOff; i < maxPoints; i += rankOff) {
+                let yPos = Math.round(yOffset + height - (i / maxPoints * height));
+                ctx.fillRect(xOffset, yPos, width, 1);
+                ctx.fillText(i, xOffset / 2, yPos + 3);
             }
+        }
 
-            function drawBorder() {              
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.strokeStyle = ctx.fillStyle = "#000";  
-                ctx.rect(0, 0, canvas.width, canvas.height);
+        function drawServerLines(rank, maximum) {
+            let isAll = true;
+            if (!maximum) {
+                maximum = maxOfRank[rank];
+                isAll = false;
+            }
+            for (let i = 0; i < 20; i++) {
+                if (!isAll) {
+                    ctx.strokeStyle = colors[i];
+                    ctx.fillStyle = colors[i];
+                } else {
+                    if (allRanksServer)
+                        ctx.strokeStyle = ctx.fillStyle = "hsl(" + (rank / 500 * 360) + ", 100%, 50%)";
+                    else
+                        ctx.strokeStyle = ctx.fillStyle = colors[ranks.indexOf(parseInt(rank))];
+                    if (i != (allRanksServer - 1) && allRanksServer) continue;
+                }
+                let firstOne = true;
+
+                for (let ts of Object.keys(parsed[rank]).sort()) {
+                    let xPos = xOffset + (ts - minTime) / (maxTime - minTime) * (width - xOffset);
+                    let yPos = yOffset + height - (parsed[rank][ts][i] / maximum * height);
+                    if (parsed[rank][ts][i] == undefined) continue;
+                    ctx.fillRect(xPos - rectSize / 2, yPos - rectSize / 2, rectSize, rectSize)
+
+                    if (firstOne) {
+                        ctx.beginPath();
+                        ctx.moveTo(xPos, yPos);
+                    } else {
+                        ctx.lineTo(xPos, yPos);
+                    }
+                    firstOne = false;
+                }
                 ctx.stroke();
             }
+        }
 
-            function drawSummary() {
-                ctx.textAlign = 'left';
-                ctx.font = `800 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
+        function drawServerLegend(rank) {
+            drawServerLegendBox(rank);
+            if (rank == -1)
+                drawRankingLegend();
+            else
+                drawServerLegendServers(rank);
+        }
 
-                let longestNames = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                for(let i = 0; i < 20; i++)
-                    longestNames[0] = Math.max(longestNames[0], ctx.measureText(jp_names[i]).width);
-                for(let i = 0; i < 20; i++)
-                    longestNames[1] = Math.max(longestNames[1], ctx.measureText(en_names[i]).width);
+        function drawServerLegendBox(rank) {
+            ctx.beginPath();
+            ctx.fillStyle = "rgba(255, 255, 255, 90%)";
+            ctx.strokeStyle = "rgba(0, 0, 0, 90%)";
 
-                for(let rankIndex in ranks)
-                    for(let i = 0; i < 20; i++) {
-                        ctx.font = `800 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
-                        longestNames[parseInt(rankIndex) + 2] = Math.max(longestNames[parseInt(rankIndex) + 2], ctx.measureText(parsed[ranks[rankIndex]][maxTime][i]||"----").width);
-                        if (parsed[ranks[rankIndex]][maxTime-43200000] && parsed[ranks[rankIndex]][maxTime-43200000][i]) {
-                            let diff = parsed[ranks[rankIndex]][maxTime][i] - parsed[ranks[rankIndex]][maxTime - 43200000][i];
-                            ctx.font = `500 8px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
-                            longestNames[parseInt(rankIndex) + 7] = Math.max(longestNames[parseInt(rankIndex) + 7], ctx.measureText(` (+${diff})`).width);
-                        }
-                    }
-                longestNames = longestNames.map((a) => Math.ceil(a))
-                //console.log(longestNames)
+            if (rank == -1)
+                ctx.rect(xOffset + 5, yOffset + 5, 48, 77);
+            else
+                ctx.rect(width - descW - 5, height - descH + yOffset - 7, descW, descH + 2);
 
-                let maxx = 3;
-                for (let i = -1; i <= 20; i++){
-                    let y = Math.round(yOffset + height / 22 * (i + 1));
-                    let x = 3;
-                    ctx.fillRect(0, y, width, 1);
-                    let liney = y + height / 22 - 4;
+            ctx.fill();
+            ctx.stroke();
+        }
 
-                    let serverJP = jp_names[i] || "Average"
-                    if(i == -1)
-                        serverJP = "Server JP";
-
-                    ctx.font = `800 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
-                    ctx.fillText(serverJP, x, liney);
-                    x += longestNames[0] + 5;
-                    ctx.fillRect(x, y, 1, height / 22);
-                    x += 5;
-
-                    for (let rankIndex in ranks) {
-                        let rank = ranks[rankIndex = parseInt(rankIndex)];
-                        let score = parsed[rank][maxTime][i] || "-----";
-                        let diff = -999;
-                        ctx.font = `800 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
-
-                        if(i == 20)
-                            score = Math.round(parsed[rank][maxTime].reduce((a, b) => a+b) / 20);
-                        else if(i == -1)
-                            score = "Top " + rank;
-                        else {
-                            if (!colorServer(parsed[rank][maxTime], score))
-                                ctx.font = `500 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
-                            if (parsed[rank][maxTime - 43200000] && parsed[rank][maxTime - 43200000][i])
-                                diff = score - parsed[rank][maxTime - 43200000][i];
-                        }
-
-                        ctx.textAlign = 'center';
-                        ctx.fillText(score, x  + longestNames[rankIndex + 2] / 2 + ((diff == -999) ? longestNames[rankIndex + 7]/2:0), liney);
-                        x += longestNames[rankIndex + 2] + longestNames[rankIndex + 7] + 5;
-
-                        ctx.fillStyle = "#000";
-                        if(diff != -999) {
-                            ctx.textAlign = 'right';
-                            ctx.font = `500 8px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
-                            ctx.fillText(`(+${diff})`, x - 2, liney);
-                        }
-
-                        ctx.fillRect(x, y, 1, height / 22);
-                        x += 5;
-                    }
-
-                    ctx.textAlign = 'left';
-                    ctx.font = `800 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
-                    let serverEN = en_names[i] || "";
-                    if(i == -1)
-                        serverEN = "Server EN";
-
-                    ctx.fillText(serverEN, x, liney);
-                    x += longestNames[1] + 5;
-                    ctx.fillRect(x, y, 1, height / 22);
-
-                    maxx = Math.max(x, maxx);
-                    //console.log(x)
-                }
-                return maxx;
-            }
-
-            function drawTopPlayers(amount) {
-                ctx.textAlign = 'left';
-
-                let longestNames = [0, 0, 0, 0, 0, 0, 0];
-                ctx.font = `800 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
-
-                longestNames[0] = ctx.measureText("#" + amount).width;
-
-                for(let i = 0; i < 20; i++)
-                    longestNames[1] = Math.max(longestNames[1], ctx.measureText(jp_names[i]).width);
-                for(let i = 0; i < 20; i++)
-                    longestNames[2] = Math.max(longestNames[2], ctx.measureText(en_names[i]).width);
-                for(let i = 0; i < amount; i++)
-                    longestNames[3] = Math.max(longestNames[3], ctx.measureText(players[i].name).width);
-                longestNames[4] = ctx.measureText("Points").width;
-                for(let i = 0; i < amount; i++)
-                    longestNames[4] = Math.max(longestNames[4], ctx.measureText(players[i].curRanking).width);
-                ctx.font = `500 8px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
-
-                for(let i = 0; i < amount; i++)
-                    if(players[i].senka.length > 1)
-                        longestNames[5] = Math.max(longestNames[5], ctx.measureText(`(+${players[i].curRanking - players[i].senka[1].senka})`).width);
-
-                longestNames = longestNames.map((a) => Math.ceil(a))
-
-                let maxx = 3;
-                for (let i = -1; i < amount; i++){
-                    let y = Math.round(yOffset + height / (amount + 1) * (i + 1));
-                    let x = 3;
-                    ctx.fillRect(0, y, width, 1);
-                    let liney = y + height / (amount + 1) - 4;
-
-                    ctx.font = `800 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
-
-                    let index = (i + 1) || "#"
-                    ctx.textAlign = 'center';
-                    ctx.fillText(index, x + longestNames[0]/2, liney);
-                    x += longestNames[0] + 5;
-                    ctx.fillRect(x, y, 1, height / (amount + 1));
-                    x += 5;
-
-                    let player = players[i] || { server: 0, rankno: "#", curMedal: "甲", curRanking: "Points", name: "Name", comment: "Comment"};
-
-                    ctx.textAlign = 'left';
-                    ctx.fillText(player.name, x, liney);
-                    x += longestNames[3] + 5;
-                    ctx.fillRect(x, y, 1, height / (amount + 1));
-                    x += 5;
-
-                    ctx.textAlign = 'center';
-                    ctx.fillText(player.curRanking, x + longestNames[4] / 2 + (i==-1?longestNames[5]/2:0), liney);
-                    x += longestNames[4] + longestNames[5] + 5;
-
-                    ctx.textAlign = 'right';
-                    if(i != -1 && player.senka.length > 1) {
-                        ctx.font = `500 8px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
-                        let diff = player.curRanking - player.senka[1].senka;
-                        ctx.fillText(`(+${diff}) `, x, liney);
-                    }
-                    ctx.fillRect(x, y, 1, height / (amount + 1));
-                    x += 5;
-                    ctx.font = `800 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
-
-                    ctx.textAlign = 'center';
-                    ctx.fillText(player.rankno, x + longestNames[0] / 2, liney);
-                    x += longestNames[0] + 5;
-                    ctx.fillRect(x, y, 1, height / (amount + 1));
-                    x += 5;
-
-                    let serverJP = jp_names[player.server - 1] || "Server JP";
-                    ctx.textAlign = 'left';
-                    ctx.fillText(serverJP, x, liney);
-                    x += longestNames[1] + 5;
-                    ctx.fillRect(x, y, 1, height / (amount + 1));
-                    x += 5;
-                    
-                    let serverEN = en_names[player.server - 1] || "Server EN";
-                    ctx.textAlign = 'left';
-                    ctx.fillText(serverEN, x, liney);
-                    x += longestNames[2] + 5;
-                    ctx.fillRect(x, y, 1, height / (amount + 1));
-                    x += 5;
-
-                    ctx.textAlign = 'center';
-                    ctx.fillText(player.curMedal, x + longestNames[0] / 2, liney);
-                    x += longestNames[0] + 5;
-                    ctx.fillRect(x, y, 1, height / (amount + 1));
-                    x += 5;
-
-                    ctx.textAlign = 'left';
-                    ctx.fillText(player.comment, x, liney);
-                    x += ctx.measureText(player.comment).width + 3;
-                    maxx = Math.max(x, maxx);
-                }
-                return maxx;
-            }
-
-            function colorServer(ranklist, score) {
-                let top = ranklist.filter((a) => a).sort((a,b) => b-a);
-
+        function drawRankingLegend() {
+            ctx.textAlign = "left";
+            for (let i = 0; i < ranks.length; i++) {
+                let x = xOffset + 15;
+                let y = yOffset + 10 + i * 15;
+                ctx.fillStyle = colors[i];
+                ctx.fillRect(x - rectSize / 2, y, rectSize, rectSize)
                 ctx.fillStyle = "#000";
-                if(score == top[top.length - 1]) {
-                    ctx.fillStyle = "#17e204";
-                    return true;
-                } else if(score <= top[top.length - 3]) {
-                    ctx.fillStyle = "#0fb700";
-                } else if (score == top[0]) {
-                    ctx.fillStyle = "#e20404";
-                    return true;
-                } else if (score >= top[2]) {
-                    ctx.fillStyle = "#b20000";
+                ctx.fillText("#" + ranks[i], x + rectSize, y + rectSize)
+            }
+        }
+
+        function drawServerLegendServers(rank) {
+            for (let i = 0; i < 20; i++) {
+                let x = width - descW + 2 + Math.floor(i % 2) * 177;
+                let y = height - descH + yOffset - 3 + Math.floor(i / 2) * descH / 10;
+                ctx.fillStyle = colors[i];
+
+                let currentOffset = longestJP[i % 2] + longestScore;
+                ctx.fillRect(x - rectSize / 2, y, rectSize, rectSize);
+                if (data[i + 1].code != 2)
+                    ctx.fillStyle = "#f00";
+                else if (parsed[rank][maxTime][i] == undefined)
+                    ctx.fillStyle = "#f88";
+                else {
+                    let currentServer = parsed[rank][maxTime][i];
+
+                    let score = ` (${currentServer}) `;
+                    ctx.textAlign = "center";
+                    if (colorServer(parsed[rank][maxTime], currentServer))
+                        ctx.font = `700 10px sans-serif`
+                    else
+                        ctx.font = `500 10px sans-serif`
+                    ctx.fillText(score, x + rectSize + currentOffset - longestScore / 2, y + rectSize);
+                    ctx.fillStyle = "#000";
                 }
-                return false;
+                ctx.textAlign = "left";
+                ctx.font = `500 10px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`
+                ctx.fillText(jp_names[i], x + rectSize, y + rectSize)
+                ctx.font = `500 10px sans-serif`
+                ctx.fillText(en_names[i], x + rectSize + currentOffset, y + rectSize)
             }
+        }
 
-            function convertTime(ts) {
-                let timestampTime = new Date(parseInt(ts));
-                return new Date(timestampTime.getTime() + timestampTime.getTimezoneOffset() * 60000 + 9 * 3600000);
+        function drawMisc(onlyEnd) {
+            let txt;
+            ctx.fillStyle = "#888";
+            ctx.textAlign = "right";
+            ctx.font = `500 10px sans-serif`
+            txt = "Data: senka.su ";
+            ctx.fillText(txt, width, 9);
+            if (onlyEnd)
+                txt = `Timestamp: ${timeStr(maxTime)} `;
+            else
+                txt = `Timeframe: ${timeStr(minTime)} ~ ${timeStr(maxTime)} `;
+            ctx.fillText(txt, width, 29);
+        }
+
+        function drawTitle(txt) {
+            ctx.font = `800 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
+            ctx.fillStyle = "#000";
+            ctx.textAlign = "center";
+            ctx.fillText(txt, width / 2, 20);
+        }
+
+        function drawBorder() {
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.strokeStyle = ctx.fillStyle = "#000";
+            ctx.rect(0, 0, canvas.width, canvas.height);
+            ctx.stroke();
+        }
+
+        function drawSummary() {
+            ctx.textAlign = 'left';
+            ctx.font = `800 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
+
+            let longestNames = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            for (let i = 0; i < 20; i++)
+                longestNames[0] = Math.max(longestNames[0], ctx.measureText(jp_names[i]).width);
+            for (let i = 0; i < 20; i++)
+                longestNames[1] = Math.max(longestNames[1], ctx.measureText(en_names[i]).width);
+
+            for (let rankIndex in ranks)
+                for (let i = 0; i < 20; i++) {
+                    ctx.font = `800 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
+                    longestNames[parseInt(rankIndex) + 2] = Math.max(longestNames[parseInt(rankIndex) + 2], ctx.measureText(parsed[ranks[rankIndex]][maxTime][i] || "----").width);
+                    if (parsed[ranks[rankIndex]][maxTime - 43200000] && parsed[ranks[rankIndex]][maxTime - 43200000][i]) {
+                        let diff = parsed[ranks[rankIndex]][maxTime][i] - parsed[ranks[rankIndex]][maxTime - 43200000][i];
+                        ctx.font = `500 8px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
+                        longestNames[parseInt(rankIndex) + 7] = Math.max(longestNames[parseInt(rankIndex) + 7], ctx.measureText(` (+${diff})`).width);
+                    }
+                }
+            longestNames = longestNames.map((a) => Math.ceil(a))
+            //console.log(longestNames)
+
+            let maxx = 3;
+            for (let i = -1; i <= 20; i++) {
+                let y = Math.round(yOffset + height / 22 * (i + 1));
+                let x = 3;
+                ctx.fillRect(0, y, width, 1);
+                let liney = y + height / 22 - 4;
+
+                let serverJP = jp_names[i] || "Average"
+                if (i == -1)
+                    serverJP = "Server JP";
+
+                ctx.font = `800 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
+                ctx.fillText(serverJP, x, liney);
+                x += longestNames[0] + 5;
+                ctx.fillRect(x, y, 1, height / 22);
+                x += 5;
+
+                for (let rankIndex in ranks) {
+                    let rank = ranks[rankIndex = parseInt(rankIndex)];
+                    let score = parsed[rank][maxTime][i] || "-----";
+                    let diff = -999;
+                    ctx.font = `800 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
+
+                    if (i == 20)
+                        score = Math.round(parsed[rank][maxTime].reduce((a, b) => a + b) / 20);
+                    else if (i == -1)
+                        score = "Top " + rank;
+                    else {
+                        if (!colorServer(parsed[rank][maxTime], score))
+                            ctx.font = `500 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
+                        if (parsed[rank][maxTime - 43200000] && parsed[rank][maxTime - 43200000][i])
+                            diff = score - parsed[rank][maxTime - 43200000][i];
+                    }
+
+                    ctx.textAlign = 'center';
+                    ctx.fillText(score, x + longestNames[rankIndex + 2] / 2 + ((diff == -999) ? longestNames[rankIndex + 7] / 2 : 0), liney);
+                    x += longestNames[rankIndex + 2] + longestNames[rankIndex + 7] + 5;
+
+                    ctx.fillStyle = "#000";
+                    if (diff != -999) {
+                        ctx.textAlign = 'right';
+                        ctx.font = `500 8px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
+                        ctx.fillText(`(+${diff})`, x - 2, liney);
+                    }
+
+                    ctx.fillRect(x, y, 1, height / 22);
+                    x += 5;
+                }
+
+                ctx.textAlign = 'left';
+                ctx.font = `800 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
+                let serverEN = en_names[i] || "";
+                if (i == -1)
+                    serverEN = "Server EN";
+
+                ctx.fillText(serverEN, x, liney);
+                x += longestNames[1] + 5;
+                ctx.fillRect(x, y, 1, height / 22);
+
+                maxx = Math.max(x, maxx);
+                //console.log(x)
             }
+            return maxx;
+        }
 
-            function timeStr(ts) {
-                let d = convertTime(ts);
-                return `${d.getFullYear()}-${("0"+(d.getMonth()+1)).slice(-2)}-${("0" + d.getDate()).slice(-2)} ${("0" + d.getHours()).slice(-2)}:${("0" + d.getMinutes()).slice(-2)}`
+        function drawTopPlayers(amount) {
+            ctx.textAlign = 'left';
+
+            let longestNames = [0, 0, 0, 0, 0, 0, 0];
+            ctx.font = `800 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
+
+            longestNames[0] = ctx.measureText("#" + amount).width;
+
+            for (let i = 0; i < 20; i++)
+                longestNames[1] = Math.max(longestNames[1], ctx.measureText(jp_names[i]).width);
+            for (let i = 0; i < 20; i++)
+                longestNames[2] = Math.max(longestNames[2], ctx.measureText(en_names[i]).width);
+            for (let i = 0; i < amount; i++)
+                longestNames[3] = Math.max(longestNames[3], ctx.measureText(players[i].name).width);
+            longestNames[4] = ctx.measureText("Points").width;
+            for (let i = 0; i < amount; i++)
+                longestNames[4] = Math.max(longestNames[4], ctx.measureText(players[i].curRanking).width);
+            ctx.font = `500 8px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
+
+            for (let i = 0; i < amount; i++)
+                if (players[i].senka.length > 1)
+                    longestNames[5] = Math.max(longestNames[5], ctx.measureText(`(+${players[i].curRanking - players[i].senka[1].senka})`).width);
+
+            longestNames = longestNames.map((a) => Math.ceil(a))
+
+            let maxx = 3;
+            for (let i = -1; i < amount; i++) {
+                let y = Math.round(yOffset + height / (amount + 1) * (i + 1));
+                let x = 3;
+                ctx.fillRect(0, y, width, 1);
+                let liney = y + height / (amount + 1) - 4;
+
+                ctx.font = `800 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
+
+                let index = (i + 1) || "#"
+                ctx.textAlign = 'center';
+                ctx.fillText(index, x + longestNames[0] / 2, liney);
+                x += longestNames[0] + 5;
+                ctx.fillRect(x, y, 1, height / (amount + 1));
+                x += 5;
+
+                let player = players[i] || { server: 0, rankno: "#", curMedal: "甲", curRanking: "Points", name: "Name", comment: "Comment" };
+
+                ctx.textAlign = 'left';
+                ctx.fillText(player.name, x, liney);
+                x += longestNames[3] + 5;
+                ctx.fillRect(x, y, 1, height / (amount + 1));
+                x += 5;
+
+                ctx.textAlign = 'center';
+                ctx.fillText(player.curRanking, x + longestNames[4] / 2 + (i == -1 ? longestNames[5] / 2 : 0), liney);
+                x += longestNames[4] + longestNames[5] + 5;
+
+                ctx.textAlign = 'right';
+                if (i != -1 && player.senka.length > 1) {
+                    ctx.font = `500 8px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
+                    let diff = player.curRanking - player.senka[1].senka;
+                    ctx.fillText(`(+${diff}) `, x, liney);
+                }
+                ctx.fillRect(x, y, 1, height / (amount + 1));
+                x += 5;
+                ctx.font = `800 16px "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",Osaka, "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif`;
+
+                ctx.textAlign = 'center';
+                ctx.fillText(player.rankno, x + longestNames[0] / 2, liney);
+                x += longestNames[0] + 5;
+                ctx.fillRect(x, y, 1, height / (amount + 1));
+                x += 5;
+
+                let serverJP = jp_names[player.server - 1] || "Server JP";
+                ctx.textAlign = 'left';
+                ctx.fillText(serverJP, x, liney);
+                x += longestNames[1] + 5;
+                ctx.fillRect(x, y, 1, height / (amount + 1));
+                x += 5;
+
+                let serverEN = en_names[player.server - 1] || "Server EN";
+                ctx.textAlign = 'left';
+                ctx.fillText(serverEN, x, liney);
+                x += longestNames[2] + 5;
+                ctx.fillRect(x, y, 1, height / (amount + 1));
+                x += 5;
+
+                ctx.textAlign = 'center';
+                ctx.fillText(player.curMedal, x + longestNames[0] / 2, liney);
+                x += longestNames[0] + 5;
+                ctx.fillRect(x, y, 1, height / (amount + 1));
+                x += 5;
+
+                ctx.textAlign = 'left';
+                ctx.fillText(player.comment, x, liney);
+                x += ctx.measureText(player.comment).width + 3;
+                maxx = Math.max(x, maxx);
             }
+            return maxx;
+        }
 
-            function findUser(us) {
-                let username = us.value;
-                let filteredPlayers = players.filter((a) => a.name.toLowerCase().includes(username.toLowerCase()) || a.comment.toLowerCase().includes(username.toLowerCase()));
-                let maxRank = Math.max(...Object.keys(parsed));
-                let minimumCertain = Math.max(...Object.values(parsed[maxRank]).map((a) => Math.max(...a.filter((b) => b))).filter((b) => b)); // Select highest of max rank
-                //console.log(minimumCertain);
-                let html = `Found ${filteredPlayers.length} player(s) containing '<code>${username}</code>'${filteredPlayers.length>100?` showing top 100`:''}`
-                if(filteredPlayers.length > 100) filteredPlayers = filteredPlayers.slice(0, 100);
-                html += `<table><tbody>
+        function colorServer(ranklist, score) {
+            let top = ranklist.filter((a) => a).sort((a, b) => b - a);
+
+            ctx.fillStyle = "#000";
+            if (score == top[top.length - 1]) {
+                ctx.fillStyle = "#17e204";
+                return true;
+            } else if (score <= top[top.length - 3]) {
+                ctx.fillStyle = "#0fb700";
+            } else if (score == top[0]) {
+                ctx.fillStyle = "#e20404";
+                return true;
+            } else if (score >= top[2]) {
+                ctx.fillStyle = "#b20000";
+            }
+            return false;
+        }
+
+        function convertTime(ts) {
+            let timestampTime = new Date(parseInt(ts));
+            return new Date(timestampTime.getTime() + timestampTime.getTimezoneOffset() * 60000 + 9 * 3600000);
+        }
+
+        function timeStr(ts) {
+            let d = convertTime(ts);
+            return `${d.getFullYear()}-${("0" + (d.getMonth() + 1)).slice(-2)}-${("0" + d.getDate()).slice(-2)} ${("0" + d.getHours()).slice(-2)}:${("0" + d.getMinutes()).slice(-2)}`
+        }
+
+        function findUser(us) {
+            let username = us.value;
+            let filteredPlayers = players.filter((a) => a.name.toLowerCase().includes(username.toLowerCase()) || a.comment.toLowerCase().includes(username.toLowerCase()));
+            let maxRank = Math.max(...Object.keys(parsed));
+            let minimumCertain = Math.max(...Object.values(parsed[maxRank]).map((a) => Math.max(...a.filter((b) => b))).filter((b) => b)); // Select highest of max rank
+            //console.log(minimumCertain);
+            let html = `Found ${filteredPlayers.length} player(s) containing '<code>${username}</code>'${filteredPlayers.length > 100 ? ` showing top 100` : ''}`
+            if (filteredPlayers.length > 100) filteredPlayers = filteredPlayers.slice(0, 100);
+            html += `<table><tbody>
                     <tr>
                         <th>Rank (global*)</th>
                         <th>Username</th>
@@ -695,12 +705,12 @@
                         <th>Rank (server)</th>
                         <th>Current points</th>
                     </tr>`;
-                for (let player of filteredPlayers) {
-                    //console.log(player);
-                    let warn = "";
-                    if(player.curRanking < minimumCertain)
-                        warn = ` style="color:red"`;
-                    html += `
+            for (let player of filteredPlayers) {
+                //console.log(player);
+                let warn = "";
+                if (player.curRanking < minimumCertain)
+                    warn = ` style="color:red"`;
+                html += `
                     <tr>
                         <td${warn}>${players.indexOf(player) + 1}</td>
                         <td>${player.name}</td>
@@ -711,100 +721,100 @@
                         <td>${player.rankno}</td>
                         <td>${player.curRanking}</td>
                     </tr>`
-                }
+            }
 
-                html += `</tbody></table>
+            html += `</tbody></table>
                 Note: ranking is uncertain after ${minimumCertain} ranking points, these are marked red<br>
                 Note2: sorting is ranking points > server rank > name<br>`
-                document.getElementById("found").innerHTML = html;
+            document.getElementById("found").innerHTML = html;
+        }
+
+        function fallbackCopyTextToClipboard(text) {
+            var textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.getElementById("clipboard").appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                var successful = document.execCommand('copy');
+                var msg = successful ? 'successful' : 'unsuccessful';
+                console.log('Fallback: Copying text command was ' + msg);
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+            }
+            document.getElementById("clipboard").removeChild(textArea);
+        }
+
+        function spawnNotification(body, icon, title, onclick, delay = 5000) {
+            let options = {
+                body: body,
+                icon: icon
+            };
+            let noti = new Notification(title, options);
+            noti.onclick = onclick ? onclick : function () {
+                let data = body.split("\n").filter((a) => a).map((a) => a.split(": ")[0] + "\t" + a.split(": ")[2].split("/").join("\t"))
+
+                console.log(data.join("\n"));
+                fallbackCopyTextToClipboard(data.join("\n"));
             }
 
-            function fallbackCopyTextToClipboard(text) {
-                var textArea = document.createElement("textarea");
-                textArea.value = text;
-                document.getElementById("clipboard").appendChild(textArea);
-                textArea.focus();
-                textArea.select();
+            setTimeout(function () {
+                noti.close();
+            }, delay);
+        }
 
-                try {
-                    var successful = document.execCommand('copy');
-                    var msg = successful ? 'successful' : 'unsuccessful';
-                    console.log('Fallback: Copying text command was ' + msg);
-                } catch (err) {
-                    console.error('Fallback: Oops, unable to copy', err);
+        function refreshServer(serverid, force = false) {
+            let oldData = data[serverid];
+            console.log("refresh", serverid)
+            get(`${hostname}/server/${serverid}?date=${new Date().getTime()}`, serverid, function (newData) {
+                console.log(oldData.data.lastmodifided, newData.data.lastmodifided);
+                if (oldData.data.lastmodifided == newData.data.lastmodifided) {
+                    console.log("same")
+                    if (force)
+                        setTimeout(() => refreshServer(serverid, true), 1000);
+                } else {
+                    console.log("new data")
+                    data[serverid] = newData;
+                    update()
                 }
-                document.getElementById("clipboard").removeChild(textArea);
-            }
+            });
+        }
 
-            function spawnNotification(body, icon, title, onclick, delay = 5000) {
-                let options = {
-                    body: body,
-                    icon: icon
-                };
-                let noti = new Notification(title, options);
-                noti.onclick = onclick?onclick:function() {
-                    let data = body.split("\n").filter((a) => a).map((a) => a.split(": ")[0] + "\t" + a.split(": ")[2].split("/").join("\t"))
+        var listening = 0;
+        function watchForNewServers() {
+            if (listening) return alert("Already listening");
+            Notification.requestPermission().then(function (result) {
+                if (result != "granted")
+                    return alert("Please enable notifications Nyoron");
+                document.getElementById("found").innerHTML = `Listening for new data on ${hostname}...`;
 
-                    console.log(data.join("\n"));
-                    fallbackCopyTextToClipboard(data.join("\n"));
-                }
+                let permachanged = ''
+                let currentData;
+                let processData = (wipdata) => {
+                    let isFirst = false;
+                    wipdata = wipdata.data;
 
-                setTimeout(function() {
-                    noti.close();
-                }, delay);
-            }
-
-            function refreshServer(serverid, force = false) {
-                let oldData = data[serverid];
-                console.log("refresh" , serverid)
-                get(`${hostname}/server/${serverid}?date=${new Date().getTime()}`, serverid, function(newData) {
-                    console.log(oldData.data.lastmodifided, newData.data.lastmodifided);
-                    if(oldData.data.lastmodifided == newData.data.lastmodifided) {
-                        console.log("same")
-                        if(force)
-                            setTimeout(() => refreshServer(serverid, true), 1000);
-                    } else {
-                        console.log("new data")
-                        data[serverid] = newData;
-                        update()
-                    }
-                });
-            }
-
-            var listening = 0;
-            function watchForNewServers() {
-                if(listening) return alert("Already listening");
-                Notification.requestPermission().then(function(result) {
-                    if(result != "granted") 
-                        return alert("Please enable notifications Nyoron");
-                    document.getElementById("found").innerHTML = `Listening for new data on ${hostname}...`;
-
-                    let permachanged = ''
-                    let currentData;
-                    let processData = (wipdata) => {
-                        let isFirst = false;
-                        wipdata = wipdata.data;
-
-                        if(currentData == undefined) {
-                            isFirst = true;
-                            currentData = wipdata;
-
-                            let serversleft = wipdata.filter((a) => a.lastmodifided < maxTime).length;
-                            if (serversleft == 0 && confirm("No servers left, wanna force scan anyway?")) maxTime = Math.max(...wipdata.map((a) => a.lastmodifided)) + 1;
-                        }
+                    if (currentData == undefined) {
+                        isFirst = true;
+                        currentData = wipdata;
 
                         let serversleft = wipdata.filter((a) => a.lastmodifided < maxTime).length;
-                        let oldserversleft = currentData.filter((a) => a.lastmodifided < maxTime).length;
-                        console.log(maxTime, currentData.map((a) => a.lastmodifided), wipdata.map((a) => a.lastmodifided), serversleft);
+                        if (serversleft == 0 && confirm("No servers left, wanna force scan anyway?")) maxTime = Math.max(...wipdata.map((a) => a.lastmodifided)) + 1;
+                    }
 
-                        let hasOutdated = false;
-                        let changed = '';
-                        for(let serverid in currentData) {
-                            let newData = wipdata[serverid];
-                            if(currentData[serverid].lastmodifided != newData.lastmodifided) {
-                                changed += `${parseInt(serverid)+1}: ${en_names[serverid]}: ${newData.cutoff[1]}/${newData.cutoff[5]}/${newData.cutoff[20]}/${newData.cutoff[100]}/${newData.cutoff[500]}\n`;
-                                permachanged += `<tr>
-                                    <td>${parseInt(serverid)+1}</td>
+                    let serversleft = wipdata.filter((a) => a.lastmodifided < maxTime).length;
+                    let oldserversleft = currentData.filter((a) => a.lastmodifided < maxTime).length;
+                    console.log(maxTime, currentData.map((a) => a.lastmodifided), wipdata.map((a) => a.lastmodifided), serversleft);
+
+                    let hasOutdated = false;
+                    let changed = '';
+                    for (let serverid in currentData) {
+                        let newData = wipdata[serverid];
+                        if (currentData[serverid].lastmodifided != newData.lastmodifided) {
+                            changed += `${parseInt(serverid) + 1}: ${en_names[serverid]}: ${newData.cutoff[1]}/${newData.cutoff[5]}/${newData.cutoff[20]}/${newData.cutoff[100]}/${newData.cutoff[500]}\n`;
+                            permachanged += `<tr>
+                                    <td>${parseInt(serverid) + 1}</td>
                                     <td>${en_names[serverid]}</td>
                                     <td>${newData.cutoff[1]}</td>
                                     <td>${newData.cutoff[5]}</td>
@@ -812,14 +822,14 @@
                                     <td>${newData.cutoff[100]}</td>
                                     <td>${newData.cutoff[500]}</td>
                                 </tr>`;
-                            }
-                            if(data[parseInt(serverid)+1].data.lastmodifided < maxTime && newData.lastmodifided > maxTime)
-                                refreshServer(parseInt(serverid)+1);
-                            if(newData.lastmodifided < maxTime)
-                                hasOutdated = true;
                         }
+                        if (data[parseInt(serverid) + 1].data.lastmodifided < maxTime && newData.lastmodifided > maxTime)
+                            refreshServer(parseInt(serverid) + 1);
+                        if (newData.lastmodifided < maxTime)
+                            hasOutdated = true;
+                    }
 
-                        let table = `<table>
+                    let table = `<table>
                         <tr>
                             <td>Serverid</td>
                             <td>Name</td>
@@ -832,132 +842,133 @@
                         ${permachanged}
                         </table>`
 
-                        currentData = wipdata;
+                    currentData = wipdata;
 
-                        if(hasOutdated) {
-                            listening = setTimeout(function() {
-                                get(`${hostname}/server/list?date=${new Date().getTime()}`, "", processData)
-                            }, 5000);
+                    if (hasOutdated) {
+                        listening = setTimeout(function () {
+                            get(`${hostname}/server/list?date=${new Date().getTime()}`, "", processData)
+                        }, 5000);
 
-                            if(changed) {
-                                console.log("changed: ", changed);
-                                spawnNotification(changed, '', `Changes detected (${oldserversleft}>${serversleft}/20 left)!`)
-                            }
-                            if(isFirst || changed) {
-                                document.getElementById("found").innerHTML = `Listening for new data on ${hostname}... ${serversleft}/20 left<br>${table}`;
-                                document.title = `${serversleft}/20 updates left`;
-                            }
-                        } else {
-                            listening = 0;
-                            document.getElementById("found").innerHTML = `<br>${table}`;
-                            document.title = `Done!`;
-                            setTimeout(function() {
-                                document.title = "Flat is Justice! - Senka Chart";
-                            }, 10000);
-                            setTimeout(function() {
-                                for(let i = 1; i <= 20; i++)
-                                    refreshServer(i);
-                            }, 1000);
-                            spawnNotification(`Click to copy full board! Last changes:\n${changed}`, '', `All servers are updated! (${oldserversleft}>${serversleft}/20 left)`, function() {
-                                wipdata = wipdata.map((a) => [1,5,20,100,500].map((b) => a.cutoff[b]).join("\t")).join("\n");
-                                console.log(wipdata);
-                                fallbackCopyTextToClipboard(wipdata);
-                            }, 30000)
+                        if (changed) {
+                            console.log("changed: ", changed);
+                            spawnNotification(changed, '', `Changes detected (${oldserversleft}>${serversleft}/20 left)!`)
                         }
+                        if (isFirst || changed) {
+                            document.getElementById("found").innerHTML = `Listening for new data on ${hostname}... ${serversleft}/20 left<br>${table}`;
+                            document.title = `${serversleft}/20 updates left`;
+                        }
+                    } else {
+                        listening = 0;
+                        document.getElementById("found").innerHTML = `<br>${table}`;
+                        document.title = `Done!`;
+                        setTimeout(function () {
+                            document.title = "Flat is Justice! - Senka Chart";
+                        }, 10000);
+                        setTimeout(function () {
+                            for (let i = 1; i <= 20; i++)
+                                refreshServer(i);
+                        }, 1000);
+                        spawnNotification(`Click to copy full board! Last changes:\n${changed}`, '', `All servers are updated! (${oldserversleft}>${serversleft}/20 left)`, function () {
+                            wipdata = wipdata.map((a) => [1, 5, 20, 100, 500].map((b) => a.cutoff[b]).join("\t")).join("\n");
+                            console.log(wipdata);
+                            fallbackCopyTextToClipboard(wipdata);
+                        }, 30000)
                     }
-                    get(`${hostname}/server/list?date=${new Date().getTime()}`, "", processData);
-                });
-            }
-
-            function get(url, name, callback, onError) {
-                var xmlhttp = new XMLHttpRequest();
-                xmlhttp.onreadystatechange = function() {
-                    if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-                        if (xmlhttp.status == 200) {
-                            let resp = JSON.parse(xmlhttp.responseText);
-                            if(callback)
-                                callback(resp);
-                            else {
-                                data[name] = resp;
-
-                                if(Object.keys(data).length < 20)
-                                    document.getElementById("found").innerHTML = `Downloading from ${hostname}: ${Object.keys(data).length}/20...`;
-                                else
-                                    document.getElementById("found").innerHTML = '';
-
-                                for(let i = 1; i <= 20; i++)
-                                    if(data[i] == undefined) return;
-
-                                update();
-                            }
-                       }
-                    }
-                };
-                if(onError)
-                    xmlhttp.onerror = onError;
-                xmlhttp.open("GET", url);
-                xmlhttp.setRequestHeader("x-access-token", localStorage.api_token);
-                xmlhttp.send();
-            }
-
-            function loadMonth() {
-                let month = document.getElementById("month").value;
-                let serverFilter = document.getElementById("serverhistory").value
-                if(month.length < 6 || month.length > 7 || !month.includes("/") || !month.split("/").length == 2 || !month.split("/")[0].match(/20\d\d/) || !month.split("/")[1].match(/^(\d|1[0-2])$/)) {
-                    alert("Wrong date format: expected year/month. Example: 2019/6");
-                    return;
                 }
-                document.getElementById("found").innerHTML = `Loading... This can take up to 5 minutes`;
-                document.getElementById("month").disabled = true;
-                document.getElementById("loadmonth").disabled = true;
-                for(let i = 1; i <= 20; i++) 
-                    data[i] = undefined;
-                if(serverFilter != 0)
-                    for(let i = 1; i <= 20; i++)
-                        if(serverFilter != i)
-                            data[i] = {code: 1};
-                            
-                let grab = (i) => get(`${hostname}/history/${i}/${month}`, i, (resp) => {
-                        data[i] = {
-                            "data":{
-                                "cutofflist": resp.cutoff,
-                                "players": resp.senka
-                            }
+                get(`${hostname}/server/list?date=${new Date().getTime()}`, "", processData);
+            });
+        }
+
+        function get(url, name, callback, onError) {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+                    if (xmlhttp.status == 200) {
+                        let resp = JSON.parse(xmlhttp.responseText);
+                        if (callback)
+                            callback(resp);
+                        else {
+                            data[name] = resp;
+
+                            if (Object.keys(data).length < 20)
+                                document.getElementById("found").innerHTML = `Downloading from ${hostname}: ${Object.keys(data).length}/20...`;
+                            else
+                                document.getElementById("found").innerHTML = '';
+
+                            for (let i = 1; i <= 20; i++)
+                                if (data[i] == undefined) return;
+
+                            update();
                         }
+                    }
+                }
+            };
+            if (onError)
+                xmlhttp.onerror = onError;
+            xmlhttp.open("GET", url);
+            xmlhttp.setRequestHeader("x-access-token", localStorage.api_token);
+            xmlhttp.send();
+        }
 
-                        for(let j = 1; j <= 20; j++)
-                            if(data[j] == undefined) {
-                                document.getElementById("found").innerHTML = `Downloading from ${hostname}: ${j-1}/20...`;
-                                grab(j);
-                                return;
-                            };
-
-                        document.getElementById("found").innerHTML = '';
-                        document.getElementById("month").disabled = false;
-                        document.getElementById("loadmonth").disabled = false;
-
-                        update();
-                        update();
-                    });
-
-                grab(serverFilter || 1);
+        function loadMonth() {
+            let month = document.getElementById("month").value;
+            let serverFilter = document.getElementById("serverhistory").value
+            if (month.length < 6 || month.length > 7 || !month.includes("/") || !month.split("/").length == 2 || !month.split("/")[0].match(/20\d\d/) || !month.split("/")[1].match(/^(\d|1[0-2])$/)) {
+                alert("Wrong date format: expected year/month. Example: 2019/6");
+                return;
             }
-            
-            // if(!localStorage.api_token) localStorage.api_token = prompt("API key?");
+            document.getElementById("found").innerHTML = `Loading... This can take up to 5 minutes`;
+            document.getElementById("month").disabled = true;
+            document.getElementById("loadmonth").disabled = true;
+            for (let i = 1; i <= 20; i++)
+                data[i] = undefined;
+            if (serverFilter != 0)
+                for (let i = 1; i <= 20; i++)
+                    if (serverFilter != i)
+                        data[i] = { code: 1 };
 
-            /*document.getElementById("found").innerHTML = `Testing ${hostname}...`;
-            get(`${hostname}/server/1?date=${new Date().getTime()}`, 1, function(update) {
-                data[1] = update;
-                document.getElementById("found").innerHTML = `Downloading from ${hostname}: 1/20...`;
-                for(let i = 2; i <= 20; i++)
-                    get(`${hostname}/server/${i}?date=${new Date().getTime()}`, i);
-            }, function() {*/
-                hostname = "https://api.kancolle.moe";
-                document.getElementById("found").innerHTML = `Loading ${hostname}...`;
-                for(let i = 1; i <= 20; i++)
-                    get(`${hostname}/server/${i}?date=${new Date().getTime()}`, i);
+            let grab = (i) => get(`${hostname}/history/${i}/${month}`, i, (resp) => {
+                data[i] = {
+                    "data": {
+                        "cutofflist": resp.cutoff,
+                        "players": resp.senka
+                    }
+                }
+
+                for (let j = 1; j <= 20; j++)
+                    if (data[j] == undefined) {
+                        document.getElementById("found").innerHTML = `Downloading from ${hostname}: ${j - 1}/20...`;
+                        grab(j);
+                        return;
+                    };
+
+                document.getElementById("found").innerHTML = '';
+                document.getElementById("month").disabled = false;
+                document.getElementById("loadmonth").disabled = false;
+
+                update();
+                update();
+            });
+
+            grab(serverFilter || 1);
+        }
+
+        // if(!localStorage.api_token) localStorage.api_token = prompt("API key?");
+
+        /*document.getElementById("found").innerHTML = `Testing ${hostname}...`;
+        get(`${hostname}/server/1?date=${new Date().getTime()}`, 1, function(update) {
+            data[1] = update;
+            document.getElementById("found").innerHTML = `Downloading from ${hostname}: 1/20...`;
+            for(let i = 2; i <= 20; i++)
+                get(`${hostname}/server/${i}?date=${new Date().getTime()}`, i);
+        }, function() {*/
+        hostname = "https://api.kancolle.moe";
+        document.getElementById("found").innerHTML = `Loading ${hostname}...`;
+        for (let i = 1; i <= 20; i++)
+            get(`${hostname}/server/${i}?date=${new Date().getTime()}`, i);
             //});
-            
-        </script>
-    </body>
+
+    </script>
+</body>
+
 </html>

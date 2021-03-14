@@ -23,12 +23,16 @@
         <p>Click on 'Start' and select Princess Connect window. Make sure the game is running at maximum resolution
             (1280x720). Open the UE equipment screen and go through all characters.</p>
 
-        <p><button id="start" class="green">Start</button><button id="stop" class="red" style="display: none;">Stop</button></p>
+        <p><button id="start" class="green">Start</button><button id="stop" class="red"
+                style="display: none;">Stop</button></p>
         <details>
             <summary>Having problems with detection? Try override offsets</summary>
-            If some things aren't being detected correctly, try changing these. The top left corners should match with game. Use -1 for auto.<br>
-            <label for="x-offset">Override X-offset</label><input id="x-offset" type="number" min="-1" value="-1" max="128"> - using <span id="x-offset-used">0</span><br>
-            <label for="x-offset">Override Y-offset</label><input id="y-offset" type="number" min="-1" value="-1" max="128"> - using <span id="y-offset-used">0</span><br>
+            If some things aren't being detected correctly, try changing these. The top left corners should match with
+            game. Use -1 for auto.<br>
+            <label for="x-offset">Override X-offset</label><input id="x-offset" type="number" min="-1" value="-1"
+                max="128"> - using <span id="x-offset-used">0</span><br>
+            <label for="x-offset">Override Y-offset</label><input id="y-offset" type="number" min="-1" value="-1"
+                max="128"> - using <span id="y-offset-used">0</span><br>
         </details>
         Check corner pixel alignment:<br>
         <canvas id="zoomTL" width="128" height="128"></canvas>
