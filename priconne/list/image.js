@@ -380,6 +380,7 @@ function getStarColor(stars) {
     return "#FDE77E"
 }
 function getRankColor(rank) {
+    if (rank >= 21) return "#2CE080"
     if (rank >= 18) return "#FE4854"
     if (rank >= 11) return "#C382FD"
     if (rank >= 7) return "#FDDC63"
